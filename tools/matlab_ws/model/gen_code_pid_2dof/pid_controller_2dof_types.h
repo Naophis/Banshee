@@ -1,0 +1,5 @@
+#ifndef RTW_HEADER_pid_controller_2dof_types_h_
+#define RTW_HEADER_pid_controller_2dof_types_h_
+
+#endif
+

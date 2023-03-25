@@ -1,0 +1,81 @@
+# goals: [[7, 7], [7, 8], [8, 7], [8, 8]]
+# goals: [[1, 0], [1, 1], [2, 0], [2, 1]]
+# goals: [[1, 1], [1, 2], [2, 1], [2, 2]]
+# goals: [[3, 0], [3, 1], [2, 0], [2, 1]]
+# goals: [[7, 3], [7, 4], [8, 3], [8, 4]]
+# goals: [[1, 0], [2, 0]]
+# goals: [[6, 9], [6, 10], [7, 9], [7, 10]]
+# goals: [[11, 0], [11, 1], [12, 0], [12, 1]]
+# goals: [[5, 0], [5, 1], [6, 0], [6, 1]]
+# goals: [[9, 9], [9, 10], [10, 9], [10, 10]] #北信越
+# goals: [[6, 9], [6, 10], [7, 9], [7, 10]] #東日本
+
+# goals: [[24, 23], [25, 23], [24, 22], [25, 22]] # 2010hef
+# goals: [[25, 29], [26, 29], [27, 29], [25, 28], [26, 28], [27, 28],[25, 27], [26, 27], [27, 27]] # 2011hef
+
+# goals: [[17, 15], [18, 15], [19, 15], [17, 14], [18, 14], [19, 14],[17, 13], [18, 13], [19, 13]] # 2019hef
+# goals: [[16,16],[16,17],[16,18],[17,16],[17,17],[17,18],[18,16],[18,17],[18,18]] # 2021hf
+goals: [[14,14],[14,15],[14,16],[15,14],[14,15],[15,16],[16,14],[16,15],[14,16]] # 2022hf
+
+# goals: [[14, 14], [14, 15], [15, 14], [15, 15]] #東日本
+# goals: [ [6,9],[6,10], [7,9],[7,10]]
+
+# goals: [ [4,4],[4,5],[5,4],[5,5]]
+
+#  27 *55
+maze_size: 32
+give_up_time: 30
+debug: 0 #
+mode: 0 # メイン
+# mode: 1 # 最短スローム
+# mode: 2 # 直進
+# mode: 3 # 超信地
+# mode: 5 # 探索スラローム
+# mode: 7 # front ctrl
+# mode: 9 # wall off
+# mode: 11 # vacume/suction test
+# mode: 13 # keep_pos
+# mode: 14 # sensing
+# mode: 15 # sensor calib
+# mode: 20 # pivot turn n
+# mode: 21 # pivot turn n2
+
+test: # テスト走行時に使用するパラメータ群
+  v_max: 300
+  end_v: 1
+  accl: 1250
+  decel: -1250
+  dist:  360 #直進全部
+  # dist: 540 #直進全部　
+  # dist: 180 # スラロームテスト
+  dia: 0
+  w_max: 10.5
+  alpha: 75
+  ang: 3600
+  suction_active: 0
+  suction_duty: 2.75
+  # suction_duty_low: 2.75
+  suction_duty_low: 2.65
+  # suction_duty: 3.25
+  file_idx: 12
+  sla_dist: 90
+  # sla_type: 3
+  sla_type: 4
+  sla_type2: 6 #復路ターン種類
+  sla_return: 0 # 往復フラグ
+  # sla_type: 1 normal
+  # sla_type: 2 #orval
+  # sla_type: 3 #large
+  # sla_type: 4 #dia45
+  # sla_type: 5 #dia135
+  # sla_type: 6 #dia90
+  # sla_type: 7 #Kojima
+  # sla_type: 8 #dia45_2
+  # sla_type: 9 #dia135_2
+  turn_times: 0
+  ignore_opp_sen: 2 #斜めターン後の直進テスト 0無効、1斜め制御なし、2斜め制御あり
+  sysid_test_mode: 0 #システム同定のテスト:0 直進、1回転
+  sysid_duty: 4.25 #duty 
+  sysid_time: 2000 #duty 
+  start_turn: 0 #開幕ターンテスト
+  

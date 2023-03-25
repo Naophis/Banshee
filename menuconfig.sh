@@ -1,0 +1,1 @@
+idf.py menuconfig

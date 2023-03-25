@@ -1,0 +1,1 @@
+res=readtable('sysid/logs/latest.csv')

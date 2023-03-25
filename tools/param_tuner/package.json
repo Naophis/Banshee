@@ -1,0 +1,17 @@
+{
+  "name": "param_tuner",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@serialport/list": "^8.0.4",
+    "js-yaml": "^4.1.0",
+    "serialport": "^8.0.5"
+  }
+}

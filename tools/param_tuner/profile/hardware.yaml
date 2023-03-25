@@ -1,0 +1,286 @@
+dt: 0.001
+# tire: 13.025
+# tire: 13.6725
+# tire: 13.46
+# tire: 13.367
+# tire: 15.15
+# tire: 13.23
+tire: 13.5725
+# tire: 13.095
+# tire: 13.135
+offset_start_dist: 21.0
+# offset_start_dist: 45.0
+gear_a: 37
+gear_b: 9
+# max_duty: 99.9
+max_duty: 99.999
+FF_front: 1
+FF_roll: 1
+FF_keV: 1
+# FF_front: 0
+# FF_roll: 0
+# FF_keV: 0
+
+# Ke: 0.00125
+# Km: 0.0005
+Ke: 0.00185 # 大：逆起電力大
+Km: 0.0025 # 大：縦系の出力小
+# Ke: 0.00105 # 大：逆起電力大
+# Km: 0.00085 # 大：縦系の出力小
+
+# Ke: 0.00105
+# Km: 0.0025
+# Resist: 2.93
+Resist: 2.4
+Mass: 0.022
+
+slip_param_K: 0.5
+# slip_param_k2: 150
+slip_param_k2: 135
+# slip_param_k2: 5
+
+Lm: 0.0000035
+sakiyomi_time: 10
+clear_angle: 5
+clear_dist_order: 80
+
+# 探索スラローム
+front_dist_offset: 92.50 # 探索時の前壁補正
+# スラロームオフセット距離壁補正リファレンス値
+# sla_wall_ref_l: 44.0
+# sla_wall_ref_r: 49.5
+sla_wall_ref_l: 44.50
+sla_wall_ref_r: 46.50
+sla_max_offset_dist: 6
+normal_sla_offset: 6
+
+# Orvalスラロームオフセット距離壁補正リファレンス値
+sla_wall_ref_l_orval: 45.5
+sla_wall_ref_r_orval: 45.50
+orval_offset_enable: 1
+dia45_offset_enable: 1
+
+# front_dist_offset2: 137.0
+led_light_delay_cnt: 1700
+
+front_dist_offset_pivot_th: 78
+front_dist_offset_pivot: 90
+
+front_dist_offset_dia_front: 139
+front_dist_offset_dia_45_th: 77
+# front_dist_offset_dia_right45: 74
+front_dist_offset_dia_right45: 54
+front_dist_offset_dia_left45: 50
+
+seach_timer: 450
+seach_timer_slowdown: 450
+
+clear_dist_ragne_from: 30
+clear_dist_ragne_to: 60
+
+wall_off_hold_dist: 30
+
+# 探索壁あり判定
+ctrl_exist_wall_th_l: 50
+ctrl_exist_wall_th_r: 50
+
+# 壁切れ壁あり判定
+wall_off_exist_wall_th_l: 50
+wall_off_exist_wall_th_r: 55
+# 壁切れ In
+wall_off_hold_exist_dist_l: 72
+wall_off_hold_exist_dist_r: 72
+# 壁切れ Out
+wall_off_hold_noexist_th_l: 75
+wall_off_hold_noexist_th_r: 75
+# 壁切れ Out(最初からあるとき)
+wall_off_hold_noexist_th_l2: 65
+wall_off_hold_noexist_th_r2: 65
+# 壁切れ オフセット距離
+# wall_off_hold_dist_str_l: -4.0
+# wall_off_hold_dist_str_r: -5.5
+wall_off_hold_dist_str_l: -5.5
+wall_off_hold_dist_str_r: -7.5
+wall_off_hold_dist_str_l_exist: -4.5
+wall_off_hold_dist_str_r_exist: -6.25
+# wall_off_hold_dist_str_r_exist: -1.25
+# wall_off_hold_dist_str_r_exist: 0.5
+# wall_off_hold_dist_str_r_exist: 3.50
+# 壁切れ：前壁補正
+front_dist_offset2: 133.0
+# 壁切れ：前壁補正
+front_dist_offset3: 135
+
+# 壁切れ In(斜め)
+wall_off_hold_exist_dist_dia_l: 50
+wall_off_hold_exist_dist_dia_r: 50
+# 壁切れ Out(斜め)
+wall_off_hold_noexist_dia_th_l: 55
+wall_off_hold_noexist_dia_th_r: 55
+# 壁切れ オフセット距離
+wall_off_hold_dist_dia_l2: 1.0
+wall_off_hold_dist_dia_r2: 2.0
+#斜めターン壁有り補正
+dia_turn_th_l: 60
+dia_turn_th_r: 60
+# 壁切れ オフセット距離(反対側の壁有り)
+wall_off_hold_dist_dia_l: -6.0
+wall_off_hold_dist_dia_r: 2.0
+#斜め壁切れ時のmax接近距離
+dia_wall_off_ref_l: 31.0
+# dia_wall_off_ref_r: 35.5
+dia_wall_off_ref_r: 30.5
+
+dia_offset_max_dist: 10
+
+#ターン後オフセット距離
+offset_after_turn_l: 18
+offset_after_turn_r: 18
+offset_after_turn_l2: 15
+offset_after_turn_r2: 15
+offset_after_turn_dia_l: 20
+offset_after_turn_dia_r: 20
+
+#ログON_OFF
+logging_time: 4.0
+search_log_enable: 0
+test_log_enable: 1
+fast_log_enable: 1
+sen_log_size: 100
+log_size: 1400
+
+front_ctrl_error_th: 1
+front_diff_th: 9
+
+ff_v_th: 200
+ff_front_dury: 0.95
+
+fail_duty_cnt: 150
+fail_v_cnt: 30000
+fail_w_cnt: 4500
+
+cell: 90
+cell2: 90
+
+axel_degenerate_x: [0, 1, 2, 4, 6, 8, 10]
+# axel_degenerate_y: [1, 1, 0.65, 0.5, 0.45, 0.3, 0.25]
+# axel_degenerate_y: [1, 1, 0.45, 0.3, 0.2, 0.15, 0.125]
+axel_degenerate_y: [1, 1, 0.2, 0.1, 0.1, 0.1, 0.1]
+# axel_degenerate_y: [1, 1, 0.7, 0.4, 0.075, 0.05, 0.025]
+# axel_degenerate_y: [1, 1, 0.45, 0.2, 0.1, 0.05, 0.025]
+
+motor_pid:
+  p: 0.00575
+  i: 1.725
+  d: 0.0
+  b: 0
+  c: 0
+  mode: 1
+motor_pid2:
+  # p: 0.00275
+  p: 0.00275
+  # p: 0.00575
+  # i: 2.35
+  i: 1.85
+  d: 0.0
+  b: 0
+  c: 0
+  mode: 1
+dist_pid:
+  p: 0.75
+  i: 0.0015
+  d: 0.175
+  b: 0
+  c: 0
+  mode: 1
+  # p: 0.0
+  # i: 0.0
+  # d: 0.0
+gyro_pid:
+  # 速度型 mode=1
+  # p: 0.165
+  # i: 15.25
+  # d: 0.0
+  # mode: 1
+  # 通常 mode=0
+  p: 0.275
+  i: 0.0225
+  d: 0.275
+  mode: 0
+  # p: 0.0
+  # i: 0.0
+  # d: 0
+  b: 0.0225
+  c: 0.275
+angle_pid:
+  p: 0.45
+  i: 0.0
+  d: 0.0
+  mode: 1
+  b: 0
+  c: 0
+str_agl_pid:
+  # p: 0.095
+  # d: 1.25
+  p: 20.75
+  d: 0.375
+  i: 0.0
+  mode: 1
+  b: 0
+  c: 0
+sensor_pid:
+  p: 0.095 #search_mode
+  b: 0.175 #!searchm_mode
+
+  # p: 0.5 #search_mode
+  # b: 0.1 #!searchm_mode
+
+  # p: 0.075
+  # i: 0.0
+  # d: 0.045
+  # p: 0.0
+  i: 0.0
+  d: 0.0
+  c: 0
+  mode: 1
+sensor_pid_dia:
+  p: 0.0975
+  # p: 0.15
+  # p: 0.0
+  i: 0.0
+  d: 0.0
+  b: 0
+  c: 0
+  mode: 0
+gyro_param:
+  # gyro_w_gain_right: 0.0024635
+  # gyro_w_gain_left: 0.00246375
+  gyro_w_gain_right: 0.00247265
+  gyro_w_gain_left: 0.00247265
+  lp_delay: 1
+accel_x_param:
+  # gain: 315.56 # 16g
+  # gain: 155.75 # 8g
+  gain: 77.5 # 4g
+  # gain: 0.161595
+  # gain: 1.212 # 4g
+
+comp_v_param:
+  enc_v_lp: 0
+  acc_x_hp: 0.85
+  gain_v: 0.75
+  enable: 0
+
+battery_param:
+  # lp_delay: 0.25
+  lp_delay: 0.65
+led_param:
+  # lp_delay: 0.925
+  lp_delay: 1
+kalman_config:
+  # q_ang: 0.01 #大：応答早
+  # q_bias: 0.01 # 大：gyro_wの値を類似する
+  # r_measure: 0.8 #大：応答送れ
+  q_ang: 2 #大：応答早
+  q_bias: 0.003 # 大：gyro_wの値を類似する
+  r_measure: 0.03 #大：応答送れ

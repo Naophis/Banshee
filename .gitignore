@@ -1,0 +1,8 @@
+build/
+*.pdf
+node_modules/
+*.csv
+slprj/
+*_ert_rtw/
+*.slxc
+*.pyc
