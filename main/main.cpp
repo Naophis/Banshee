@@ -1,5 +1,6 @@
 #include "driver/adc.h"
 #include "driver/gpio.h"
+#include "driver/i2c.h"
 #include "driver/ledc.h"
 #include "driver/mcpwm.h"
 #include "driver/pcnt.h"
@@ -10,6 +11,7 @@
 #include "esp_adc_cal.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
+#include "include/adachi.hpp"
 #include "include/defines.hpp"
 #include "sdkconfig.h"
 #include "soc/adc_channel.h"
@@ -21,8 +23,6 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-
-#include "include/adachi.hpp"
 // #include "VL53L0X.h"
 // #include "esp_efuse_rtc_calib.h"
 
@@ -72,10 +72,13 @@ void init_gpio() {
   io_conf.mode = GPIO_MODE_OUTPUT;
   // 設定したいピンのビットマスク
   io_conf.pin_bit_mask = 0;
-  io_conf.pin_bit_mask |= 1ULL << LED_R90;
-  io_conf.pin_bit_mask |= 1ULL << LED_R45;
-  io_conf.pin_bit_mask |= 1ULL << LED_L45;
-  io_conf.pin_bit_mask |= 1ULL << LED_L90;
+  // io_conf.pin_bit_mask |= 1ULL << LED_R90;
+  // io_conf.pin_bit_mask |= 1ULL << LED_R45;
+  // io_conf.pin_bit_mask |= 1ULL << LED_L45;
+  // io_conf.pin_bit_mask |= 1ULL << LED_L90;
+  io_conf.pin_bit_mask |= 1ULL << LED_A0;
+  io_conf.pin_bit_mask |= 1ULL << LED_A1;
+  io_conf.pin_bit_mask |= 1ULL << LED_EN;
 
   io_conf.pin_bit_mask |= 1ULL << A_CW_CCW1;
   io_conf.pin_bit_mask |= 1ULL << B_CW_CCW1;
@@ -150,6 +153,39 @@ std::shared_ptr<motion_tgt_val_t> tgt_val =
 std::shared_ptr<PlanningTask> pt = std::make_shared<PlanningTask>();
 std::shared_ptr<LoggingTask> lt = std::make_shared<LoggingTask>();
 MainTask mt;
+constexpr uint32_t CONFIG_I2C_MASTER_FREQUENCY = (200000);
+void init_i2c_master() {
+  i2c_port_t port = 0;
+  i2c_config_t config;
+
+  config.mode = I2C_MODE_MASTER;
+  config.sda_io_num = SDA_PIN;
+  config.scl_io_num = SCL_PIN;
+  config.sda_pullup_en = true;
+  config.scl_pullup_en = true;
+  config.clk_flags = 0;
+  config.master.clk_speed = CONFIG_I2C_MASTER_FREQUENCY;
+
+  i2c_param_config(port, &config);
+  i2c_driver_install(port, config.mode, 0, 0, 0);
+}
+
+#define WRITE_BIT I2C_MASTER_WRITE /*!< I2C master write */
+#define ACK_CHECK_EN 0x1
+uint8_t SCCB_Write(uint8_t slv_addr, uint8_t reg, uint8_t data) {
+  i2c_port_t port = 0;
+  esp_err_t ret = ESP_FAIL;
+  i2c_cmd_handle_t cmd = i2c_cmd_link_create();
+  i2c_master_start(cmd);
+  // i2c_master_write_byte(cmd, (slv_addr << 1) | WRITE_BIT, ACK_CHECK_EN);
+  // i2c_master_write_byte(cmd, reg, ACK_CHECK_EN);
+  i2c_master_write_byte(cmd, slv_addr, ACK_CHECK_EN);
+  i2c_master_write_byte(cmd, data, ACK_CHECK_EN);
+  i2c_master_stop(cmd);
+  ret = i2c_master_cmd_begin(port, cmd, 1000 / portTICK_RATE_MS);
+  i2c_cmd_link_delete(cmd);
+  return ret == ESP_OK ? 0 : -1;
+}
 extern "C" void app_main() {
   // Adachi adachi;
 
@@ -206,28 +242,28 @@ extern "C" void app_main() {
   st.set_input_param_entity(param);
   st.create_task(0);
 
-  pt->set_sensing_entity(sensing_entity);
-  pt->set_input_param_entity(param);
-  // pt->set_ego_entity(ego);
-  pt->set_tgt_val(tgt_val);
-  pt->set_queue_handler(xQueue);
-  pt->create_task(0);
+  // pt->set_sensing_entity(sensing_entity);
+  // pt->set_input_param_entity(param);
+  // // pt->set_ego_entity(ego);
+  // pt->set_tgt_val(tgt_val);
+  // pt->set_queue_handler(xQueue);
+  // pt->create_task(0);
 
-  lt->set_sensing_entity(sensing_entity);
-  lt->set_input_param_entity(param);
-  // lt->set_ego_entity(ego);
-  lt->set_tgt_val(tgt_val);
-  lt->create_task(1);
-  pt->set_logging_task(lt);
+  // lt->set_sensing_entity(sensing_entity);
+  // lt->set_input_param_entity(param);
+  // // lt->set_ego_entity(ego);
+  // lt->set_tgt_val(tgt_val);
+  // lt->create_task(1);
+  // pt->set_logging_task(lt);
 
-  mt.set_sensing_entity(sensing_entity);
-  mt.set_input_param_entity(param);
-  // mt.set_ego_entity(ego);
-  mt.set_tgt_val(tgt_val);
-  mt.set_planning_task(pt);
-  mt.set_logging_task(lt);
-  mt.set_queue_handler(xQueue);
-  mt.create_task(1);
+  // mt.set_sensing_entity(sensing_entity);
+  // mt.set_input_param_entity(param);
+  // // mt.set_ego_entity(ego);
+  // mt.set_tgt_val(tgt_val);
+  // mt.set_planning_task(pt);
+  // mt.set_logging_task(lt);
+  // mt.set_queue_handler(xQueue);
+  // mt.create_task(1);
 
   // /* Set the GPIO as a push/pull output */
 
@@ -239,14 +275,37 @@ extern "C" void app_main() {
   esp_task_wdt_reset();
   esp_task_wdt_add(xTaskGetIdleTaskHandleForCPU(0));
   esp_task_wdt_add(xTaskGetIdleTaskHandleForCPU(1));
+
+  init_i2c_master();
+  int i = 1;
+  uint8_t writeBuffer[2];
+  writeBuffer[0] = 0x00;
+  writeBuffer[1] = 0x00;
   while (1) {
-    vTaskDelay(5000.0 / portTICK_RATE_MS);
-    if (mt.ui->button_state()) {
-      printf("time_stamp: %d\n", tgt_val->nmr.timstamp);
-      printf("motion_type: %d\n", static_cast<int>(tgt_val->motion_type));
-      printf("fss.error: %d\n", tgt_val->fss.error);
-      printf("motor_en: %d\n", (pt->motor_en) ? 1 : 0);
-      printf("suction_en: %d\n", (pt->suction_en) ? 1 : 0);
+    printf("hello world\n");
+    vTaskDelay(100.0 / portTICK_RATE_MS);
+    // writeBuffer[0] = (i << 5) | 0x18;
+    writeBuffer[0] = (i << 5) | 0x1f;
+
+    printf("%c[2J", ESC);   /* 画面消去 */
+    printf("%c[0;0H", ESC); /* 戦闘戻す*/
+    printf("%d, %d\n", st.sensing_result->led_sen.left90.raw,
+           st.sensing_result->led_sen.right90.raw);
+
+    // i2c_master_write_to_device(0, 0x9A, writeBuffer, 2, 1 /
+    // portTICK_RATE_MS); printf("%x, %x\n", (i << 5) | 0x18, (0x04 << 5) |
+    // 0x18);
+    // SCCB_Write(0x9A, writeBuffer[0], writeBuffer[0]);
+    i++;
+    if (i == 6) {
+      i = 1;
     }
+    // if (mt.ui->button_state()) {
+    //   printf("time_stamp: %d\n", tgt_val->nmr.timstamp);
+    //   printf("motion_type: %d\n", static_cast<int>(tgt_val->motion_type));
+    //   printf("fss.error: %d\n", tgt_val->fss.error);
+    //   printf("motor_en: %d\n", (pt->motor_en) ? 1 : 0);
+    //   printf("suction_en: %d\n", (pt->suction_en) ? 1 : 0);
+    // }
   }
 }

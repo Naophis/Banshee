@@ -10,6 +10,7 @@
 #include "soc/gpio_struct.h"
 #include "soc/ledc_periph.h"
 
+#include "fs.hpp"
 #include "include/enums.hpp"
 #include "include/structs.hpp"
 #include "sdkconfig.h"
@@ -22,7 +23,6 @@
 #include <string_view>
 #include <unordered_map>
 #include <vector>
-#include "fs.hpp"
 
 #define portTICK_RATE_MS portTICK_PERIOD_MS
 #define xTaskHandle TaskHandle_t
@@ -40,10 +40,22 @@ constexpr gpio_num_t LED_R45 = GPIO_NUM_9;
 // constexpr gpio_num_t LED_F = GPIO_NUM_13;
 constexpr gpio_num_t LED_L45 = GPIO_NUM_18;
 constexpr gpio_num_t LED_L90 = GPIO_NUM_21;
-constexpr unsigned int LED_R90_BIT = 8;
-constexpr unsigned int LED_R45_BIT = 9;
-constexpr unsigned int LED_L45_BIT = 18;
-constexpr unsigned int LED_L90_BIT = 21;
+
+constexpr gpio_num_t SDA_PIN = GPIO_NUM_36;
+constexpr gpio_num_t SCL_PIN = GPIO_NUM_37;
+
+// constexpr unsigned int LED_R90_BIT = 8;
+// constexpr unsigned int LED_R45_BIT = 9;
+// constexpr unsigned int LED_L45_BIT = 18;
+// constexpr unsigned int LED_L90_BIT = 21;
+
+constexpr gpio_num_t LED_EN = GPIO_NUM_7;
+constexpr gpio_num_t LED_A0 = GPIO_NUM_8;
+constexpr gpio_num_t LED_A1 = GPIO_NUM_9;
+
+constexpr unsigned int LED_EN_BIT = 7;
+constexpr unsigned int LED_A0_BIT = 8;
+constexpr unsigned int LED_A1_BIT = 9;
 
 constexpr gpio_num_t TXD = GPIO_NUM_43;
 constexpr gpio_num_t RXD = GPIO_NUM_44;
@@ -92,7 +104,7 @@ constexpr gpio_num_t ENC_MOSI = GPIO_NUM_35; // A
 
 constexpr gpio_num_t SUCTION_PWM = GPIO_NUM_5;
 
-#define SEN_R90 ADC2_CHANNEL_0
+#define SEN_R90 ADC2_CHANNEL_3
 #define SEN_R45 ADC2_CHANNEL_1
 // #define SEN_F ADC2_CHANNEL_4
 #define SEN_L45 ADC2_CHANNEL_6

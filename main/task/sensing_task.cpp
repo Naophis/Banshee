@@ -101,22 +101,52 @@ void SensingTask::task() {
         tgt_val->motion_type == MotionType::SLALOM) {
       led_on = false;
     }
-    if (led_on) {
-      GPIO.out_w1ts = BIT(LED_R90_BIT);
-      GPIO.out_w1ts = BIT(LED_L90_BIT);
-    }
+    // if (led_on) {
+    // GPIO.out_w1ts = BIT(LED_R90_BIT);
+    // GPIO.out_w1ts = BIT(LED_L90_BIT);
+    // }
+
     lec_cnt = 0;
     for (int i = 0; i < param->led_light_delay_cnt; i++) {
       lec_cnt++;
     }
-    adc2_get_raw(SEN_R90, width, &sensing_result->led_sen_after.right90.raw);
-    adc2_get_raw(SEN_L90, width, &sensing_result->led_sen_after.left90.raw);
-    GPIO.out_w1tc = BIT(LED_R90_BIT);
-    GPIO.out_w1tc = BIT(LED_L90_BIT);
-    if (led_on) {
-      GPIO.out_w1ts = BIT(LED_R45_BIT);
-      GPIO.out_w1ts = BIT(LED_L45_BIT);
+    // R90
+    // GPIO.out_w1ts = BIT(LED_A0_BIT); // low
+    // GPIO.out_w1ts = BIT(LED_A1_BIT); // low
+    // GPIO.out_w1tc = BIT(LED_EN_BIT); // high
+
+    gpio_set_level(LED_A0, false);
+    gpio_set_level(LED_A1, false);
+    gpio_set_level(LED_EN, true);
+
+    lec_cnt = 0;
+    for (int i = 0; i < 400; i++) {
+      lec_cnt++;
     }
+    adc2_get_raw(SEN_R90, width, &sensing_result->led_sen_after.right90.raw);
+    // GPIO.out_w1ts = BIT(LED_EN_BIT); // low
+
+    gpio_set_level(LED_EN, false);
+
+    // // L90
+
+    gpio_set_level(LED_A0, true);
+    gpio_set_level(LED_A1, false);
+    gpio_set_level(LED_EN, true);
+    lec_cnt = 0;
+    for (int i = 0; i < 400; i++) {
+      lec_cnt++;
+    }
+    adc2_get_raw(SEN_L90, width, &sensing_result->led_sen_after.left90.raw);
+    gpio_set_level(LED_EN, false);
+    // GPIO.out_w1ts = BIT(LED_EN_BIT);// low
+    // GPIO.out_w1tc = BIT(LED_R90_BIT);
+    // GPIO.out_w1tc = BIT(LED_L90_BIT);
+    // if (led_on) {
+    //   GPIO.out_w1ts = BIT(LED_R45_BIT);
+    //   GPIO.out_w1ts = BIT(LED_L45_BIT);
+    // }
+
     lec_cnt = 0;
     // sensing_result->gyro.raw = gyro_if.read_2byte_itr();
     // gyro_if.req_read2byte_itr(0x3B);
@@ -126,8 +156,8 @@ void SensingTask::task() {
     adc2_get_raw(SEN_R45, width, &sensing_result->led_sen_after.right45.raw);
     adc2_get_raw(SEN_L45, width, &sensing_result->led_sen_after.left45.raw);
 
-    GPIO.out_w1tc = BIT(LED_R45_BIT);
-    GPIO.out_w1tc = BIT(LED_L45_BIT);
+    // GPIO.out_w1tc = BIT(LED_R45_BIT);
+    // GPIO.out_w1tc = BIT(LED_L45_BIT);
 
     sensing_result->led_sen.right90.raw =
         std::max(sensing_result->led_sen_after.right90.raw -
@@ -148,10 +178,10 @@ void SensingTask::task() {
     sensing_result->led_sen.front.raw = (sensing_result->led_sen.left90.raw +
                                          sensing_result->led_sen.right90.raw) /
                                         2;
-    GPIO.out_w1tc = BIT(LED_R90_BIT);
-    GPIO.out_w1tc = BIT(LED_R45_BIT);
-    GPIO.out_w1tc = BIT(LED_R45_BIT);
-    GPIO.out_w1tc = BIT(LED_L45_BIT);
+    // GPIO.out_w1tc = BIT(LED_R90_BIT);
+    // GPIO.out_w1tc = BIT(LED_R45_BIT);
+    // GPIO.out_w1tc = BIT(LED_R45_BIT);
+    // GPIO.out_w1tc = BIT(LED_L45_BIT);
     // pcnt_get_counter_value(PCNT_UNIT_0, &sensing_result->encoder_raw.right);
     // pcnt_counter_clear(PCNT_UNIT_0);
     // pcnt_get_counter_value(PCNT_UNIT_1, &sensing_result->encoder_raw.left);

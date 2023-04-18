@@ -1,0 +1,9 @@
+uint16[]    wall
+uint16[]    res_wall
+uint16[]    dist
+float32[]    dia_dist_n
+float32[]    dia_dist_e
+uint8       maze_size
+int8        motion
+int8        cost_mode
+my_msgs/Ego  ego
