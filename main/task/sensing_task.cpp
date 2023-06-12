@@ -4,20 +4,22 @@ SensingTask::SensingTask() {}
 
 SensingTask::~SensingTask() {}
 
-void SensingTask::timer_200ms_callback(void *arg) {
+void SensingTask::timer_200us_callback(void *arg) {
   SensingTask *instance = static_cast<SensingTask *>(arg);
-  instance->timer_200ms_callback_main();
+  instance->timer_200us_callback_main();
 }
-void SensingTask::timer_10ms_callback(void *arg) {
+void SensingTask::timer_10us_callback(void *arg) {
   SensingTask *instance = static_cast<SensingTask *>(arg);
-  instance->timer_10ms_callback_main();
+  instance->timer_10us_callback_main();
 }
 
-void SensingTask::timer_10ms_callback_main() {
+void SensingTask::timer_10us_callback_main() {
   const auto se = get_sensing_entity();
+  int32_t enc = 0;
   switch (cnt_a) {
   case 0:
     adc2_get_raw(BATTERY, ADC_WIDTH_BIT_12, &se->battery.raw);
+    se->battery.data = BATTERY_GAIN * 4.2 * sensing_result->battery.raw / 4096;
     se->gyro_list[0] = gyro_if.read_2byte_itr();
     break;
   case 1:
@@ -27,11 +29,19 @@ void SensingTask::timer_10ms_callback_main() {
   case 2:
     adc2_get_raw(SEN_L90, width, &se->led_sen_after.left90.raw);
     se->gyro_list[2] = gyro_if.read_2byte_itr();
+
+    enc = enc_if.read2byte(0x3F, 0xFF, false) & 0x3FFF;
+    se->encoder.left_old = se->encoder.left;
+    se->encoder.left = -enc;
     break;
   case 3:
     adc2_get_raw(SEN_R45, width, &se->led_sen_after.right45.raw);
     adc2_get_raw(SEN_R45_2, width, &se->led_sen_after.right45_2.raw);
     se->gyro_list[3] = gyro_if.read_2byte_itr();
+
+    enc = enc_if.read2byte(0x3F, 0xFF, true) & 0x3FFF;
+    se->encoder.right_old = se->encoder.right;
+    se->encoder.right = -enc;
     break;
   case 4:
     adc2_get_raw(SEN_L45, width, &se->led_sen_after.left45.raw);
@@ -51,15 +61,17 @@ void SensingTask::timer_10ms_callback_main() {
         se->led_sen_after.left90.raw - se->led_sen_before.left90.raw, 0);
     se->led_sen.front.raw =
         (se->led_sen.left90.raw + se->led_sen.right90.raw) / 2;
+    mt->notify();
+    mt->mp->notify();
     cnt_a = -1;
     break;
   }
-  esp_timer_stop(timer_50us);
+  esp_timer_stop(timer_10us);
   gpio_set_level(LED_EN, false);
   cnt_a++;
 }
 
-void SensingTask::timer_200ms_callback_main() {
+void SensingTask::timer_200us_callback_main() {
   const auto se = get_sensing_entity();
   switch (cnt_a) {
   case 0:
@@ -96,24 +108,24 @@ void SensingTask::timer_200ms_callback_main() {
     gyro_if.req_read2byte_itr(0x26);
     break;
   }
-  esp_timer_stop(timer_50us);
-  esp_timer_start_once(timer_50us, 10); // 1ms/4
+  esp_timer_stop(timer_10us);
+  esp_timer_start_once(timer_10us, 10); // 1ms/4
 }
 
 void SensingTask::create_task(const BaseType_t xCoreID) {
   xTaskCreatePinnedToCore(task_entry_point, "sensing_task", 8192, this, 2,
                           &handle, xCoreID);
   const esp_timer_create_args_t timer_200us_args = {
-      .callback = &SensingTask::timer_200ms_callback,
+      .callback = &SensingTask::timer_200us_callback,
       .arg = this,
-      .name = "timer_200us"};
+      .name = "timer_100us"};
   esp_timer_create(&timer_200us_args, &timer_200us);
 
-  const esp_timer_create_args_t timer_50us_args = {
-      .callback = &SensingTask::timer_10ms_callback,
+  const esp_timer_create_args_t timer_10us_args = {
+      .callback = &SensingTask::timer_10us_callback,
       .arg = this,
-      .name = "timer_50us"};
-  esp_timer_create(&timer_50us_args, &timer_50us);
+      .name = "timer_10us"};
+  esp_timer_create(&timer_10us_args, &timer_10us);
 }
 void SensingTask::set_input_param_entity(
     std::shared_ptr<input_param_t> &_param) {
@@ -169,7 +181,7 @@ void SensingTask::task() {
   adc2_config_channel_atten(SEN_L90, atten);
   adc2_config_channel_atten(BATTERY, atten);
 
-  esp_timer_start_periodic(timer_200us, 200);
+  esp_timer_start_periodic(timer_200us, 150);
 
   while (1) {
     // gyro_if.req_read2byte_itr(0x26);
@@ -181,18 +193,8 @@ void SensingTask::task() {
       led_on = false;
     }
 
-    auto enc_l = enc_if.read2byte(0x3F, 0xFF, false) & 0x3FFF;
-    auto enc_r = enc_if.read2byte(0x3F, 0xFF, true) & 0x3FFF;
-
-    sensing_result->battery.data =
-        BATTERY_GAIN * 4.2 * sensing_result->battery.raw / 4096;
-
-    sensing_result->encoder.right_old = sensing_result->encoder.right;
-    sensing_result->encoder.left_old = sensing_result->encoder.left;
-    sensing_result->encoder.right = -enc_r;
-    sensing_result->encoder.left = -enc_l;
-
-    vTaskDelay(xDelay);
+    // vTaskDelay(xDelay);
+    vTaskDelay(100 / portTICK_PERIOD_MS);
   }
 }
 

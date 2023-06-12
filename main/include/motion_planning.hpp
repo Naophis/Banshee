@@ -73,7 +73,12 @@ public:
   QueueHandle_t *qh;
   void set_queue_handler(QueueHandle_t &_qh) { qh = &_qh; }
 
+  void notify() {
+    xTaskNotifyGive(notify_handle); //
+  }
+
 private:
+  TaskHandle_t notify_handle = xTaskGetCurrentTaskHandle();
   void calc_dia135_offset(param_straight_t &front, param_straight_t &back,
                           TurnDirection dir, bool exec_wall_off);
   void calc_dia45_offset(param_straight_t &front, param_straight_t &back,

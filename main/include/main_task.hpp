@@ -65,12 +65,15 @@ public:
     mp->set_queue_handler(_qh);
     ui->set_queue_handler(_qh);
   }
+  void notify() {
+    xTaskNotifyGive(notify_handle); //
+  }
+  std::shared_ptr<MotionPlanning> mp;
 
 private:
   SearchResult sr;
   xTaskHandle handle = 0;
-
-  std::shared_ptr<MotionPlanning> mp;
+  TaskHandle_t notify_handle = xTaskGetCurrentTaskHandle();
 
   std::shared_ptr<PlanningTask> pt;
   std::shared_ptr<LoggingTask> lt;

@@ -151,7 +151,7 @@ std::shared_ptr<motion_tgt_val_t> tgt_val =
     std::make_shared<motion_tgt_val_t>();
 std::shared_ptr<PlanningTask> pt = std::make_shared<PlanningTask>();
 std::shared_ptr<LoggingTask> lt = std::make_shared<LoggingTask>();
-MainTask mt;
+std::shared_ptr<MainTask> mt = std::make_shared<MainTask>();
 
 std::shared_ptr<sensing_result_entity_t> get_sensing_entity() {
   return sensing_entity;
@@ -233,6 +233,7 @@ extern "C" void app_main() {
 
   st.set_sensing_entity(sensing_entity);
   st.set_tgt_val(tgt_val);
+  st.set_main_task(mt);
   st.set_input_param_entity(param);
   st.create_task(0);
 
@@ -248,13 +249,13 @@ extern "C" void app_main() {
   lt->create_task(1);
   pt->set_logging_task(lt);
 
-  mt.set_sensing_entity(sensing_entity);
-  mt.set_input_param_entity(param);
-  mt.set_tgt_val(tgt_val);
-  mt.set_planning_task(pt);
-  mt.set_logging_task(lt);
-  mt.set_queue_handler(xQueue);
-  mt.create_task(1);
+  mt->set_sensing_entity(sensing_entity);
+  mt->set_input_param_entity(param);
+  mt->set_tgt_val(tgt_val);
+  mt->set_planning_task(pt);
+  mt->set_logging_task(lt);
+  mt->set_queue_handler(xQueue);
+  mt->create_task(1);
 
   // /* Set the GPIO as a push/pull output */
 
@@ -296,7 +297,7 @@ extern "C" void app_main() {
     // if (i < 1) {
     //   i = 6;
     // }
-    if (mt.ui->button_state()) {
+    if (mt->ui->button_state()) {
       printf("time_stamp: %d\n", tgt_val->nmr.timstamp);
       printf("motion_type: %d\n", static_cast<int>(tgt_val->motion_type));
       printf("fss.error: %d\n", tgt_val->fss.error);

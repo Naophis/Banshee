@@ -10,6 +10,7 @@
 #include "freertos/task.h"
 #include "icm20689.hpp"
 #include "lsm6dsr.hpp"
+#include "main_task.hpp"
 #include <deque>
 #include <driver/adc.h>
 #include <stdio.h>
@@ -20,18 +21,22 @@ class SensingTask {
 public:
   SensingTask();
   virtual ~SensingTask();
-
   void create_task(const BaseType_t xCoreID);
 
   std::shared_ptr<sensing_result_entity_t> sensing_result;
   void set_sensing_entity(std::shared_ptr<sensing_result_entity_t> &_entity);
 
+  std::shared_ptr<MainTask> mt;
+  void set_main_task(std::shared_ptr<MainTask> &_mt) {
+    mt = _mt; //
+  }
+
   static void task_entry_point(void *task_instance);
   virtual void task();
   static void task_entry_point0(void *task_instance);
 
-  void timer_10ms_callback_main();
-  void timer_200ms_callback_main();
+  void timer_10us_callback_main();
+  void timer_200us_callback_main();
   void set_input_param_entity(std::shared_ptr<input_param_t> &_param);
 
   // ICM20689 gyro_if;
@@ -44,10 +49,10 @@ public:
 private:
   volatile int cnt_a = 0;
   esp_timer_handle_t timer_200us;
-  esp_timer_handle_t timer_50us;
+  esp_timer_handle_t timer_10us;
 
-  static void timer_10ms_callback(void *arg);
-  static void timer_200ms_callback(void *arg);
+  static void timer_10us_callback(void *arg);
+  static void timer_200us_callback(void *arg);
 
   float calc_sensor(float data, float a, float b);
   volatile int lec_cnt = 0;

@@ -85,15 +85,21 @@ TurnType MainTask::cast_turn_type(std::string str) {
   return TurnType::None;
 }
 void MainTask::dump1() {
-
+  notify_handle = xTaskGetCurrentTaskHandle();
   mp->reset_gyro_ref_with_check();
   tgt_val->nmr.motion_type = MotionType::READY;
   tgt_val->nmr.timstamp++;
   xQueueReset(*qh);
   xQueueSendToFront(*qh, &tgt_val, 1);
   while (1) {
+
     printf("%c[2J", ESC);   /* 画面消去 */
     printf("%c[0;0H", ESC); /* 戦闘戻す*/
+
+    if (ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(1))) {
+      printf("notification recieve\n");
+    }
+
     printf("SW1 %d \n", gpio_get_level(SW1));
 
     printf("gyro: %d\t(%0.3f)\n", sensing_result->gyro.raw,
@@ -162,9 +168,10 @@ void MainTask::dump1() {
            sensing_result->ego.w_lp, tgt_val->ego_in.ang,
            tgt_val->ego_in.ang * 180 / m_PI);
 
-    printf("gyro_raw[]: %4d, %4d, %4d, %4d, %4d\n", sensing_result->gyro_list[0],
-           sensing_result->gyro_list[1], sensing_result->gyro_list[2],
-           sensing_result->gyro_list[3], sensing_result->gyro_list[4]);
+    printf("gyro_raw[]: %4d, %4d, %4d, %4d, %4d\n",
+           sensing_result->gyro_list[0], sensing_result->gyro_list[1],
+           sensing_result->gyro_list[2], sensing_result->gyro_list[3],
+           sensing_result->gyro_list[4]);
 
     const float tgt_gain =
         1000.0 /
@@ -178,7 +185,7 @@ void MainTask::dump1() {
       tgt_val->ego_in.ang = tgt_val->ego_in.dist = 0;
     }
 
-    vTaskDelay(xDelay100);
+    // vTaskDelay(xDelay100);
   }
 }
 

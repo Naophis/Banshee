@@ -787,10 +787,10 @@ void MotionPlanning::exec_path_running(param_set_t &p_set) {
   }
   if (param->fast_log_enable > 0) {
     tgt_val->global_pos.ang = 0;
-    tgt_val->global_pos.dist= 0;
+    tgt_val->global_pos.dist = 0;
     lt->start_slalom_log();
     tgt_val->global_pos.ang = 0;
-    tgt_val->global_pos.dist= 0;
+    tgt_val->global_pos.dist = 0;
   }
   // reset();
   reset_tgt_data();
@@ -976,6 +976,8 @@ void MotionPlanning::wall_off(TurnDirection td, param_straight_t &ps_front) {
   vTaskDelay(1.0 / portTICK_RATE_MS);
   if (td == TurnDirection::Right) {
     while (true) {
+      // if (ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(1))) {
+      // }
       if (sensing_result->ego.right45_dist <
           param->wall_off_dist.exist_dist_r) {
         break;
