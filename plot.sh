@@ -1,4 +1,4 @@
-source /opt/ros/noetic/setup.sh
+source tools/rosws/install/setup.bash
 if [ $# -ne 0 ];then
     idx=$1
     if expr "$idx" : "[0-9]*$" >&/dev/null; then
@@ -11,7 +11,7 @@ if [ $# -ne 0 ];then
             if [ $i -eq 0 ]; then
                 echo ./tools/param_tuner/logs/$file
                 read -p "Press [Enter] key to resume."
-                `rosrun plotjuggler plotjuggler -d ./tools/param_tuner/logs/$file -l ./tools/param_tuner/profile.xml`
+                `ros2 run plotjuggler plotjuggler -d ./tools/param_tuner/logs/$file -l ./tools/param_tuner/profile.xml`
                 break
             fi
             i=$(($i+1))
@@ -21,5 +21,5 @@ if [ $# -ne 0 ];then
     fi
 
 else
-    rosrun plotjuggler plotjuggler -d ./tools/param_tuner/logs/latest.csv -l ./tools/param_tuner/profile.xml
+    ros2 run plotjuggler plotjuggler -d ./tools/param_tuner/logs/latest.csv -l ./tools/param_tuner/profile.xml
 fi

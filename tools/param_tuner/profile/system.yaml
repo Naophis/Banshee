@@ -26,7 +26,7 @@ goals: [[14,14],[14,15],[14,16],[15,14],[14,15],[15,16],[16,14],[16,15],[14,16]]
 maze_size: 32
 give_up_time: 30
 debug: 0 #
-mode: 0 # メイン
+# mode: 0 # メイン
 # mode: 1 # 最短スローム
 # mode: 2 # 直進
 # mode: 3 # 超信地
@@ -35,7 +35,7 @@ mode: 0 # メイン
 # mode: 9 # wall off
 # mode: 11 # vacume/suction test
 # mode: 13 # keep_pos
-# mode: 14 # sensing
+mode: 14 # sensing
 # mode: 15 # sensor calib
 # mode: 20 # pivot turn n
 # mode: 21 # pivot turn n2
@@ -45,7 +45,7 @@ test: # テスト走行時に使用するパラメータ群
   end_v: 1
   accl: 1250
   decel: -1250
-  dist:  360 #直進全部
+  dist:  180 #直進全部
   # dist: 540 #直進全部　
   # dist: 180 # スラロームテスト
   dia: 0

@@ -1,6 +1,7 @@
 #ifndef UI_HPP
 #define UI_HPP
 
+#include "driver/i2c.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/queue.h"
 #include "freertos/task.h"
@@ -14,6 +15,9 @@ enum class MODE : int {
   FAST2 = 3,
 };
 
+#define WRITE_BIT I2C_MASTER_WRITE /*!< I2C master write */
+#define ACK_CHECK_EN 0x1
+constexpr uint32_t CONFIG_I2C_MASTER_FREQUENCY = (400000);
 class UserInterface {
 public:
   UserInterface(){};
@@ -46,12 +50,14 @@ public:
   QueueHandle_t *qh;
 
   void set_queue_handler(QueueHandle_t &_qh) { qh = &_qh; }
+  void init_i2c_master();
 
 private:
   std::shared_ptr<sensing_result_entity_t> sensing_result;
   std::shared_ptr<motion_tgt_val_t> tgt_val;
 
   void LED_on_off(gpio_num_t gpio_num, int on_off);
+  uint8_t SCCB_Write(uint8_t slv_addr, uint8_t reg, uint8_t data);
 };
 
 #endif

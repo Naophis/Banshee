@@ -107,22 +107,24 @@ void MainTask::dump1() {
     printf("encoder: %d, %d\n", sensing_result->encoder.left,
            sensing_result->encoder.right);
     printf(
-        "sensor: %4d, %4d, %4d, %4d, %4d\n", sensing_result->led_sen.left90.raw,
-        sensing_result->led_sen.left45.raw, sensing_result->led_sen.front.raw,
+        "sensor: %4d, %4d, %4d, %4d, %4d, %4d, %4d\n",
+        sensing_result->led_sen.left90.raw, sensing_result->led_sen.left45.raw,
+        sensing_result->led_sen.left45_2.raw, sensing_result->led_sen.front.raw,
+        sensing_result->led_sen.right45_2.raw,
         sensing_result->led_sen.right45.raw,
         sensing_result->led_sen.right90.raw);
-    printf("sensor_before: %4d, %4d, %4d, %4d, %4d\n",
-           sensing_result->led_sen_before.left90.raw,
-           sensing_result->led_sen_before.left45.raw,
-           sensing_result->led_sen_before.front.raw,
-           sensing_result->led_sen_before.right45.raw,
-           sensing_result->led_sen_before.right90.raw);
-    printf("sensor_after: %4d, %4d, %4d, %4d, %4d\n",
-           sensing_result->led_sen_after.left90.raw,
-           sensing_result->led_sen_after.left45.raw,
-           sensing_result->led_sen_after.front.raw,
-           sensing_result->led_sen_after.right45.raw,
-           sensing_result->led_sen_after.right90.raw);
+    // printf("sensor_before: %4d, %4d, %4d, %4d, %4d\n",
+    //        sensing_result->led_sen_before.left90.raw,
+    //        sensing_result->led_sen_before.left45.raw,
+    //        sensing_result->led_sen_before.front.raw,
+    //        sensing_result->led_sen_before.right45.raw,
+    //        sensing_result->led_sen_before.right90.raw);
+    // printf("sensor_after: %4d, %4d, %4d, %4d, %4d\n",
+    //        sensing_result->led_sen_after.left90.raw,
+    //        sensing_result->led_sen_after.left45.raw,
+    //        sensing_result->led_sen_after.front.raw,
+    //        sensing_result->led_sen_after.right45.raw,
+    //        sensing_result->led_sen_after.right90.raw);
     printf("sensor_dist(near): %3.2f, %3.2f, %3.2f, %3.2f, %3.2f\n",
            sensing_result->ego.left90_dist,  //
            sensing_result->ego.left45_dist,  //
@@ -159,6 +161,11 @@ void MainTask::dump1() {
     printf("ego_w: %2.3f, %2.3f, %2.3f, %3.3f deg\n", sensing_result->ego.w_raw,
            sensing_result->ego.w_lp, tgt_val->ego_in.ang,
            tgt_val->ego_in.ang * 180 / m_PI);
+
+    printf("gyro_raw[]: %4d, %4d, %4d, %4d, %4d\n", sensing_result->gyro_list[0],
+           sensing_result->gyro_list[1], sensing_result->gyro_list[2],
+           sensing_result->gyro_list[3], sensing_result->gyro_list[4]);
+
     const float tgt_gain =
         1000.0 /
         (sensing_result->accel_x.raw - tgt_val->accel_x_zero_p_offset) * 9.8;

@@ -20,6 +20,34 @@ bool UserInterface::button_state_hold() {
     return false;
   }
 }
+void init_i2c_master() {
+  i2c_port_t port = 0;
+  i2c_config_t config;
+
+  config.mode = I2C_MODE_MASTER;
+  config.sda_io_num = SDA_PIN;
+  config.scl_io_num = SCL_PIN;
+  config.sda_pullup_en = true;
+  config.scl_pullup_en = true;
+  config.clk_flags = 0;
+  config.master.clk_speed = CONFIG_I2C_MASTER_FREQUENCY;
+
+  i2c_param_config(port, &config);
+  i2c_driver_install(port, config.mode, 0, 0, 0);
+}
+
+uint8_t SCCB_Write(uint8_t slv_addr, uint8_t reg, uint8_t data) {
+  i2c_port_t port = 0;
+  esp_err_t ret = ESP_FAIL;
+  i2c_cmd_handle_t cmd = i2c_cmd_link_create();
+  i2c_master_start(cmd);
+  i2c_master_write_byte(cmd, slv_addr, ACK_CHECK_EN);
+  i2c_master_write_byte(cmd, data, ACK_CHECK_EN);
+  i2c_master_stop(cmd);
+  ret = i2c_master_cmd_begin(port, cmd, 1 / portTICK_RATE_MS);
+  i2c_cmd_link_delete(cmd);
+  return ret == ESP_OK ? 0 : -1;
+}
 
 int UserInterface::encoder_operation() {
   float v_r = sensing_result->ego.v_r;
@@ -127,11 +155,11 @@ void UserInterface::LED_on_off(gpio_num_t gpio_num, int state) {
 }
 
 void UserInterface::LED_bit(int b0, int b1, int b2, int b3, int b4) {
-  LED_on_off(LED1, (b0 == 1));
-  LED_on_off(LED4, (b1 == 1));
-  LED_on_off(LED2, (b2 == 1));
-  LED_on_off(LED3, (b3 == 1));
-  LED_on_off(LED5, (b4 == 1));
+  // LED_on_off(LED1, (b0 == 1));
+  // LED_on_off(LED4, (b1 == 1));
+  // LED_on_off(LED2, (b2 == 1));
+  // LED_on_off(LED3, (b3 == 1));
+  // LED_on_off(LED5, (b4 == 1));
 }
 void UserInterface::LED_otherwise(int byte, int state) {}
 void UserInterface::LED(int byte, int state) {}
@@ -140,19 +168,19 @@ void UserInterface::LED_on(int byte) {}
 void UserInterface::LED_off(int byte) {}
 void UserInterface::LED_off_all() {
   const int state = 0;
-  LED_on_off(LED1, state);
-  LED_on_off(LED2, state);
-  LED_on_off(LED3, state);
-  LED_on_off(LED4, state);
-  LED_on_off(LED5, state);
+  // LED_on_off(LED1, state);
+  // LED_on_off(LED2, state);
+  // LED_on_off(LED3, state);
+  // LED_on_off(LED4, state);
+  // LED_on_off(LED5, state);
 }
 void UserInterface::LED_on_all() {
   const int state = 1;
-  LED_on_off(LED1, state);
-  LED_on_off(LED2, state);
-  LED_on_off(LED3, state);
-  LED_on_off(LED4, state);
-  LED_on_off(LED5, state);
+  // LED_on_off(LED1, state);
+  // LED_on_off(LED2, state);
+  // LED_on_off(LED3, state);
+  // LED_on_off(LED4, state);
+  // LED_on_off(LED5, state);
 }
 
 TurnDirection UserInterface::select_direction() {

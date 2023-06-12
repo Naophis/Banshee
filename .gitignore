@@ -6,3 +6,6 @@ slprj/
 *_ert_rtw/
 *.slxc
 *.pyc
+install/
+build/
+tools/rosws/log/

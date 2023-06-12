@@ -5,6 +5,7 @@
 #include "defines.hpp"
 #include "driver/pcnt.h"
 #include "driver/timer.h"
+#include "esp_timer.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/task.h"
 #include "icm20689.hpp"
@@ -28,15 +29,9 @@ public:
   static void task_entry_point(void *task_instance);
   virtual void task();
   static void task_entry_point0(void *task_instance);
-  static void task_entry_point1(void *task_instance);
-  static void task_entry_point2(void *task_instance);
-  static void task_entry_point3(void *task_instance);
-  static void task_entry_point4(void *task_instance);
-  virtual void task0();
-  virtual void task1();
-  virtual void task2();
-  virtual void task3();
-  virtual void task4();
+
+  void timer_10ms_callback_main();
+  void timer_200ms_callback_main();
   void set_input_param_entity(std::shared_ptr<input_param_t> &_param);
 
   // ICM20689 gyro_if;
@@ -47,6 +42,13 @@ public:
   void set_tgt_val(std::shared_ptr<motion_tgt_val_t> &_tgt_val);
 
 private:
+  volatile int cnt_a = 0;
+  esp_timer_handle_t timer_200us;
+  esp_timer_handle_t timer_50us;
+
+  static void timer_10ms_callback(void *arg);
+  static void timer_200ms_callback(void *arg);
+
   float calc_sensor(float data, float a, float b);
   volatile int lec_cnt = 0;
   std::shared_ptr<input_param_t> param;

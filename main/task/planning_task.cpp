@@ -825,21 +825,20 @@ void PlanningTask::update_ego_motion() {
 void PlanningTask::set_next_duty(float duty_l, float duty_r,
                                  float duty_suction) {
   if (motor_en) {
-    // duty_l = 25;
-    // duty_r = -25;
+    // duty_l = duty_r = -25;
 
-    if (duty_l > 0) {
-      GPIO.out1_w1ts.val = BIT(A_CW_CCW2_BIT);
-      GPIO.out1_w1tc.val = BIT(A_CW_CCW1_BIT);
-    } else {
+    if (duty_r < 0) {
+      // GPIO.out1_w1ts.val = BIT(A_CW_CCW2_BIT);
       GPIO.out1_w1ts.val = BIT(A_CW_CCW1_BIT);
-      GPIO.out1_w1tc.val = BIT(A_CW_CCW2_BIT);
-    }
-    if (duty_r > 0) {
-      GPIO.out1_w1ts.val = BIT(B_CW_CCW1_BIT);
-      GPIO.out1_w1tc.val = BIT(B_CW_CCW2_BIT);
     } else {
-      GPIO.out1_w1ts.val = BIT(B_CW_CCW2_BIT);
+      GPIO.out1_w1tc.val = BIT(A_CW_CCW1_BIT);
+      // GPIO.out1_w1tc.val = BIT(A_CW_CCW2_BIT);
+    }
+    if (duty_l < 0) {
+      GPIO.out1_w1ts.val = BIT(B_CW_CCW1_BIT);
+      // GPIO.out1_w1tc.val = BIT(B_CW_CCW2_BIT);
+    } else {
+      // GPIO.out1_w1ts.val = BIT(B_CW_CCW2_BIT);
       GPIO.out1_w1tc.val = BIT(B_CW_CCW1_BIT);
     }
     // GPIO.out1_w1ts.val = BIT(A_CW_CCW2_BIT);
@@ -852,11 +851,11 @@ void PlanningTask::set_next_duty(float duty_l, float duty_r,
     mcpwm_set_signal_low(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B);
     mcpwm_set_signal_low(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_B);
 
-    mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A, tmp_duty_l);
+    mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A, tmp_duty_r);
     mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A,
                         MCPWM_DUTY_MODE_0);
 
-    mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_A, tmp_duty_r);
+    mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_A, tmp_duty_l);
     mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_A,
                         MCPWM_DUTY_MODE_0);
   } else {
@@ -906,21 +905,21 @@ void PlanningTask::init_gpio() {
   io_conf.mode = GPIO_MODE_OUTPUT;
   // 設定したいピンのビットマスク
   io_conf.pin_bit_mask = 0;
-  io_conf.pin_bit_mask |= 1ULL << LED_R90;
-  io_conf.pin_bit_mask |= 1ULL << LED_R45;
-  io_conf.pin_bit_mask |= 1ULL << LED_L45;
-  io_conf.pin_bit_mask |= 1ULL << LED_L90;
+  // io_conf.pin_bit_mask |= 1ULL << LED_R90;
+  // io_conf.pin_bit_mask |= 1ULL << LED_R45;
+  // io_conf.pin_bit_mask |= 1ULL << LED_L45;
+  // io_conf.pin_bit_mask |= 1ULL << LED_L90;
 
   io_conf.pin_bit_mask |= 1ULL << A_CW_CCW1;
   io_conf.pin_bit_mask |= 1ULL << B_CW_CCW1;
-  io_conf.pin_bit_mask |= 1ULL << A_CW_CCW2;
-  io_conf.pin_bit_mask |= 1ULL << B_CW_CCW2;
+  // io_conf.pin_bit_mask |= 1ULL << A_CW_CCW2;
+  // io_conf.pin_bit_mask |= 1ULL << B_CW_CCW2;
 
-  io_conf.pin_bit_mask |= 1ULL << LED1;
-  io_conf.pin_bit_mask |= 1ULL << LED2;
-  io_conf.pin_bit_mask |= 1ULL << LED3;
-  io_conf.pin_bit_mask |= 1ULL << LED4;
-  io_conf.pin_bit_mask |= 1ULL << LED5;
+  // io_conf.pin_bit_mask |= 1ULL << LED1;
+  // io_conf.pin_bit_mask |= 1ULL << LED2;
+  // io_conf.pin_bit_mask |= 1ULL << LED3;
+  // io_conf.pin_bit_mask |= 1ULL << LED4;
+  // io_conf.pin_bit_mask |= 1ULL << LED5;
 
   // io_conf.pin_bit_mask |= 1ULL << BUZZER;
 

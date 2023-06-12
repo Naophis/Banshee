@@ -47,8 +47,10 @@ typedef struct {
 typedef struct {
   sensing_data_t right90;
   sensing_data_t right45;
+  sensing_data_t right45_2;
   sensing_data_t front;
   sensing_data_t left45;
+  sensing_data_t left45_2;
   sensing_data_t left90;
 } led_sensor_t;
 
@@ -169,7 +171,7 @@ typedef struct {
   sensing_data_t gyro;
   sensing_data_t accel_x;
   sensing_data_t accel_y;
-  int gyro_list[4];
+  int gyro_list[5];
   sensing_data_t battery;
   encoder_data_t encoder_raw;
   encoder_data_t encoder;

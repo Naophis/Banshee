@@ -24,6 +24,9 @@
 #include <unordered_map>
 #include <vector>
 
+#include "icm20689.hpp"
+#include "lsm6dsr.hpp"
+
 #define portTICK_RATE_MS portTICK_PERIOD_MS
 #define xTaskHandle TaskHandle_t
 
@@ -35,11 +38,11 @@ constexpr int GY_CYCLE = 2500; // 2500=1/4msec
 constexpr int GY_MODE = 0;
 constexpr float cell_size = 90;
 
-constexpr gpio_num_t LED_R90 = GPIO_NUM_8;
-constexpr gpio_num_t LED_R45 = GPIO_NUM_9;
+// constexpr gpio_num_t LED_R90 = GPIO_NUM_8;
+// constexpr gpio_num_t LED_R45 = GPIO_NUM_9;
 // constexpr gpio_num_t LED_F = GPIO_NUM_13;
-constexpr gpio_num_t LED_L45 = GPIO_NUM_18;
-constexpr gpio_num_t LED_L90 = GPIO_NUM_21;
+// constexpr gpio_num_t LED_L45 = GPIO_NUM_18;
+// constexpr gpio_num_t LED_L90 = GPIO_NUM_21;
 
 constexpr gpio_num_t SDA_PIN = GPIO_NUM_36;
 constexpr gpio_num_t SCL_PIN = GPIO_NUM_37;
@@ -49,9 +52,9 @@ constexpr gpio_num_t SCL_PIN = GPIO_NUM_37;
 // constexpr unsigned int LED_L45_BIT = 18;
 // constexpr unsigned int LED_L90_BIT = 21;
 
-constexpr gpio_num_t LED_EN = GPIO_NUM_7;
-constexpr gpio_num_t LED_A0 = GPIO_NUM_8;
-constexpr gpio_num_t LED_A1 = GPIO_NUM_9;
+constexpr gpio_num_t LED_EN = GPIO_NUM_10;
+constexpr gpio_num_t LED_A0 = GPIO_NUM_11;
+constexpr gpio_num_t LED_A1 = GPIO_NUM_12;
 
 constexpr unsigned int LED_EN_BIT = 7;
 constexpr unsigned int LED_A0_BIT = 8;
@@ -62,26 +65,22 @@ constexpr gpio_num_t RXD = GPIO_NUM_44;
 constexpr gpio_num_t RTS = GPIO_NUM_15;
 constexpr gpio_num_t CTS = GPIO_NUM_16;
 
-constexpr gpio_num_t A_CW_CCW1 = GPIO_NUM_46;
-constexpr gpio_num_t A_CW_CCW2 = GPIO_NUM_45;
-constexpr unsigned int A_CW_CCW1_BIT = 46 - 32;
-constexpr unsigned int A_CW_CCW2_BIT = 45 - 32;
+constexpr gpio_num_t A_CW_CCW1 = GPIO_NUM_41;
+constexpr unsigned int A_CW_CCW1_BIT = 41 - 32;
 
-constexpr gpio_num_t B_CW_CCW1 = GPIO_NUM_41;
-constexpr gpio_num_t B_CW_CCW2 = GPIO_NUM_39;
-constexpr unsigned int B_CW_CCW1_BIT = 41 - 32;
-constexpr unsigned int B_CW_CCW2_BIT = 39 - 32;
+constexpr gpio_num_t B_CW_CCW1 = GPIO_NUM_45;
+constexpr unsigned int B_CW_CCW1_BIT = 45 - 32;
 
 constexpr gpio_num_t A_PWM = GPIO_NUM_42;
-constexpr gpio_num_t B_PWM = GPIO_NUM_40;
+constexpr gpio_num_t B_PWM = GPIO_NUM_46;
 
-constexpr gpio_num_t BUZZER = GPIO_NUM_37;
+constexpr gpio_num_t BUZZER = GPIO_NUM_5;
 
-constexpr gpio_num_t LED1 = GPIO_NUM_13;
-constexpr gpio_num_t LED2 = GPIO_NUM_14;
-constexpr gpio_num_t LED3 = GPIO_NUM_15;
-constexpr gpio_num_t LED4 = GPIO_NUM_10;
-constexpr gpio_num_t LED5 = GPIO_NUM_16;
+// constexpr gpio_num_t LED1 = GPIO_NUM_13;
+// constexpr gpio_num_t LED2 = GPIO_NUM_14;
+// constexpr gpio_num_t LED3 = GPIO_NUM_15;
+// constexpr gpio_num_t LED4 = GPIO_NUM_10;
+// constexpr gpio_num_t LED5 = GPIO_NUM_16;
 
 constexpr gpio_num_t SW1 = GPIO_NUM_38;
 
@@ -90,24 +89,19 @@ constexpr gpio_num_t EN_MOSI = GPIO_NUM_2;
 constexpr gpio_num_t EN_CLK = GPIO_NUM_3;
 constexpr gpio_num_t EN_GN_SSL = GPIO_NUM_4;
 
-// constexpr gpio_num_t ENC_R_A = GPIO_NUM_6;
-// constexpr gpio_num_t ENC_R_B = GPIO_NUM_7;
-// constexpr gpio_num_t ENC_L_A = GPIO_NUM_35;
-// constexpr gpio_num_t ENC_L_B = GPIO_NUM_36;
-
 constexpr gpio_num_t ENC_R_CS = GPIO_NUM_6;
-constexpr gpio_num_t ENC_L_CS = GPIO_NUM_33;
-constexpr gpio_num_t ENC_CLK = GPIO_NUM_34;
+constexpr gpio_num_t ENC_L_CS = GPIO_NUM_37;
+constexpr gpio_num_t ENC_CLK = GPIO_NUM_7;
+constexpr gpio_num_t ENC_MISO = GPIO_NUM_8; // B
+constexpr gpio_num_t ENC_MOSI = GPIO_NUM_9; // A
 
-constexpr gpio_num_t ENC_MISO = GPIO_NUM_36; // B
-constexpr gpio_num_t ENC_MOSI = GPIO_NUM_35; // A
+constexpr gpio_num_t SUCTION_PWM = GPIO_NUM_35;
 
-constexpr gpio_num_t SUCTION_PWM = GPIO_NUM_5;
-
-#define SEN_R90 ADC2_CHANNEL_3
-#define SEN_R45 ADC2_CHANNEL_1
-// #define SEN_F ADC2_CHANNEL_4
-#define SEN_L45 ADC2_CHANNEL_6
+#define SEN_R90 ADC2_CHANNEL_2
+#define SEN_R45 ADC2_CHANNEL_4
+#define SEN_R45_2 ADC2_CHANNEL_5
+#define SEN_L45_2 ADC2_CHANNEL_6
+#define SEN_L45 ADC2_CHANNEL_7
 #define SEN_L90 ADC2_CHANNEL_8
 #define BATTERY ADC2_CHANNEL_9
 
@@ -183,5 +177,7 @@ static char line_buf[LINE_BUF_SIZE];
 // static const std::string format1("%d,%d,%d,%d,%d,%d,");
 // static const std::string format2("%d,%d,%d,%d,%d,%d,%d,");
 // static const std::string format3("%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d,%d\n");
+
+std::shared_ptr<sensing_result_entity_t> get_sensing_entity();
 
 #endif

@@ -1,6 +1,5 @@
 #include "driver/adc.h"
 #include "driver/gpio.h"
-#include "driver/i2c.h"
 #include "driver/ledc.h"
 #include "driver/mcpwm.h"
 #include "driver/pcnt.h"
@@ -82,20 +81,20 @@ void init_gpio() {
 
   io_conf.pin_bit_mask |= 1ULL << A_CW_CCW1;
   io_conf.pin_bit_mask |= 1ULL << B_CW_CCW1;
-  io_conf.pin_bit_mask |= 1ULL << A_CW_CCW2;
-  io_conf.pin_bit_mask |= 1ULL << B_CW_CCW2;
+  // io_conf.pin_bit_mask |= 1ULL << A_CW_CCW2;
+  // io_conf.pin_bit_mask |= 1ULL << B_CW_CCW2;
   io_conf.pin_bit_mask |= 1ULL << SUCTION_PWM;
 
   io_conf.pin_bit_mask |= 1ULL << A_PWM;
   io_conf.pin_bit_mask |= 1ULL << B_PWM;
 
-  io_conf.pin_bit_mask |= 1ULL << LED1;
-  io_conf.pin_bit_mask |= 1ULL << LED2;
-  io_conf.pin_bit_mask |= 1ULL << LED3;
-  io_conf.pin_bit_mask |= 1ULL << LED4;
-  io_conf.pin_bit_mask |= 1ULL << LED5;
+  // io_conf.pin_bit_mask |= 1ULL << LED1;
+  // io_conf.pin_bit_mask |= 1ULL << LED2;
+  // io_conf.pin_bit_mask |= 1ULL << LED3;
+  // io_conf.pin_bit_mask |= 1ULL << LED4;
+  // io_conf.pin_bit_mask |= 1ULL << LED5;
 
-  // io_conf.pin_bit_mask |= 1ULL << BUZZER;
+  io_conf.pin_bit_mask |= 1ULL << BUZZER;
 
   // io_conf.pin_bit_mask |= 1ULL << SUCTION_PWM;
 
@@ -153,39 +152,34 @@ std::shared_ptr<motion_tgt_val_t> tgt_val =
 std::shared_ptr<PlanningTask> pt = std::make_shared<PlanningTask>();
 std::shared_ptr<LoggingTask> lt = std::make_shared<LoggingTask>();
 MainTask mt;
-constexpr uint32_t CONFIG_I2C_MASTER_FREQUENCY = (200000);
-void init_i2c_master() {
-  i2c_port_t port = 0;
-  i2c_config_t config;
 
-  config.mode = I2C_MODE_MASTER;
-  config.sda_io_num = SDA_PIN;
-  config.scl_io_num = SCL_PIN;
-  config.sda_pullup_en = true;
-  config.scl_pullup_en = true;
-  config.clk_flags = 0;
-  config.master.clk_speed = CONFIG_I2C_MASTER_FREQUENCY;
-
-  i2c_param_config(port, &config);
-  i2c_driver_install(port, config.mode, 0, 0, 0);
+std::shared_ptr<sensing_result_entity_t> get_sensing_entity() {
+  return sensing_entity;
 }
 
-#define WRITE_BIT I2C_MASTER_WRITE /*!< I2C master write */
-#define ACK_CHECK_EN 0x1
-uint8_t SCCB_Write(uint8_t slv_addr, uint8_t reg, uint8_t data) {
-  i2c_port_t port = 0;
-  esp_err_t ret = ESP_FAIL;
-  i2c_cmd_handle_t cmd = i2c_cmd_link_create();
-  i2c_master_start(cmd);
-  // i2c_master_write_byte(cmd, (slv_addr << 1) | WRITE_BIT, ACK_CHECK_EN);
-  // i2c_master_write_byte(cmd, reg, ACK_CHECK_EN);
-  i2c_master_write_byte(cmd, slv_addr, ACK_CHECK_EN);
-  i2c_master_write_byte(cmd, data, ACK_CHECK_EN);
-  i2c_master_stop(cmd);
-  ret = i2c_master_cmd_begin(port, cmd, 1000 / portTICK_RATE_MS);
-  i2c_cmd_link_delete(cmd);
-  return ret == ESP_OK ? 0 : -1;
+extern "C" void app_main3() {
+  // init_gpio();
+  // init_uart();
+  // adc2_config_channel_atten(BATTERY, ADC_ATTEN_DB_11);
+
+  // const esp_timer_create_args_t timer_200ms_args = {
+  //     .callback = &timer_200ms_callback, .name = "timer_100ms"};
+
+  // const esp_timer_create_args_t timer_10ms_args = {
+  //     .callback = &timer_10ms_callback, .name = "timer_10ms"};
+
+  // ESP_ERROR_CHECK(esp_timer_create(&timer_200ms_args, &timer_1000us));
+  // ESP_ERROR_CHECK(esp_timer_create(&timer_10ms_args, &timer_100us));
+
+  // ESP_ERROR_CHECK(esp_timer_start_periodic(timer_1000us, 250)); // 1m second
+  // while (1) {
+  //   vTaskDelay(pdMS_TO_TICKS(1000));
+  // }
 }
+// ESP_ERROR_CHECK(esp_timer_start_periodic(adc_timer, 1000000)); // 1000m
+// second ESP_ERROR_CHECK(esp_timer_start_periodic(adc_timer, 100000)); //
+// 100m second ESP_ERROR_CHECK(esp_timer_start_periodic(adc_timer, 10000)); //
+// 10m second
 extern "C" void app_main() {
   // Adachi adachi;
 
@@ -242,70 +236,72 @@ extern "C" void app_main() {
   st.set_input_param_entity(param);
   st.create_task(0);
 
-  // pt->set_sensing_entity(sensing_entity);
-  // pt->set_input_param_entity(param);
-  // // pt->set_ego_entity(ego);
-  // pt->set_tgt_val(tgt_val);
-  // pt->set_queue_handler(xQueue);
-  // pt->create_task(0);
+  pt->set_sensing_entity(sensing_entity);
+  pt->set_input_param_entity(param);
+  pt->set_tgt_val(tgt_val);
+  pt->set_queue_handler(xQueue);
+  pt->create_task(0);
 
-  // lt->set_sensing_entity(sensing_entity);
-  // lt->set_input_param_entity(param);
-  // // lt->set_ego_entity(ego);
-  // lt->set_tgt_val(tgt_val);
-  // lt->create_task(1);
-  // pt->set_logging_task(lt);
+  lt->set_sensing_entity(sensing_entity);
+  lt->set_input_param_entity(param);
+  lt->set_tgt_val(tgt_val);
+  lt->create_task(1);
+  pt->set_logging_task(lt);
 
-  // mt.set_sensing_entity(sensing_entity);
-  // mt.set_input_param_entity(param);
-  // // mt.set_ego_entity(ego);
-  // mt.set_tgt_val(tgt_val);
-  // mt.set_planning_task(pt);
-  // mt.set_logging_task(lt);
-  // mt.set_queue_handler(xQueue);
-  // mt.create_task(1);
+  mt.set_sensing_entity(sensing_entity);
+  mt.set_input_param_entity(param);
+  mt.set_tgt_val(tgt_val);
+  mt.set_planning_task(pt);
+  mt.set_logging_task(lt);
+  mt.set_queue_handler(xQueue);
+  mt.create_task(1);
 
   // /* Set the GPIO as a push/pull output */
 
-  gpio_set_level(LED1, 0);
-  gpio_set_level(LED2, 0);
-  gpio_set_level(LED3, 0);
-  gpio_set_level(LED4, 0);
-  gpio_set_level(LED5, 0);
+  // gpio_set_level(LED1, 0);
+  // gpio_set_level(LED2, 0);
+  // gpio_set_level(LED3, 0);
+  // gpio_set_level(LED4, 0);
+  // gpio_set_level(LED5, 0);
   esp_task_wdt_reset();
   esp_task_wdt_add(xTaskGetIdleTaskHandleForCPU(0));
   esp_task_wdt_add(xTaskGetIdleTaskHandleForCPU(1));
 
-  init_i2c_master();
-  int i = 1;
-  uint8_t writeBuffer[2];
-  writeBuffer[0] = 0x00;
-  writeBuffer[1] = 0x00;
+  // init_i2c_master();
+  // uint8_t writeBuffer[2];
+  // writeBuffer[0] = 0x00;
+  // writeBuffer[1] = 0x00;
   while (1) {
-    printf("hello world\n");
-    vTaskDelay(100.0 / portTICK_RATE_MS);
+    vTaskDelay(5000.0 / portTICK_RATE_MS);
     // writeBuffer[0] = (i << 5) | 0x18;
-    writeBuffer[0] = (i << 5) | 0x1f;
+    // writeBuffer[0] = (i << 5) | 0x1f;
 
-    printf("%c[2J", ESC);   /* 画面消去 */
-    printf("%c[0;0H", ESC); /* 戦闘戻す*/
-    printf("%d, %d\n", st.sensing_result->led_sen.left90.raw,
-           st.sensing_result->led_sen.right90.raw);
-
+    // printf("%c[2J", ESC);   /* 画面消去 */
+    // printf("%c[0;0H", ESC); /* 戦闘戻す*/
+    // printf("%d, %d\n", st.sensing_result->led_sen.left90.raw,
+    //        st.sensing_result->led_sen.right90.raw);
+    // printf("%d %x\n", i, i << 5);
+    // printf("%d %x\n", i, (i << 5) | 0x1F);
     // i2c_master_write_to_device(0, 0x9A, writeBuffer, 2, 1 /
     // portTICK_RATE_MS); printf("%x, %x\n", (i << 5) | 0x18, (0x04 << 5) |
     // 0x18);
+    // printf("battery: %f\n", st.sensing_result->battery.data);
+    // printf("gyro: %d\n", st.sensing_result->gyro.raw);
     // SCCB_Write(0x9A, writeBuffer[0], writeBuffer[0]);
-    i++;
-    if (i == 6) {
-      i = 1;
-    }
-    // if (mt.ui->button_state()) {
-    //   printf("time_stamp: %d\n", tgt_val->nmr.timstamp);
-    //   printf("motion_type: %d\n", static_cast<int>(tgt_val->motion_type));
-    //   printf("fss.error: %d\n", tgt_val->fss.error);
-    //   printf("motor_en: %d\n", (pt->motor_en) ? 1 : 0);
-    //   printf("suction_en: %d\n", (pt->suction_en) ? 1 : 0);
+    // i++;
+    // if (i > 6) {
+    //   i = 1;
     // }
+    // i--;
+    // if (i < 1) {
+    //   i = 6;
+    // }
+    if (mt.ui->button_state()) {
+      printf("time_stamp: %d\n", tgt_val->nmr.timstamp);
+      printf("motion_type: %d\n", static_cast<int>(tgt_val->motion_type));
+      printf("fss.error: %d\n", tgt_val->fss.error);
+      printf("motor_en: %d\n", (pt->motor_en) ? 1 : 0);
+      printf("suction_en: %d\n", (pt->suction_en) ? 1 : 0);
+    }
   }
 }
