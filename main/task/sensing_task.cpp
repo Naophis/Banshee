@@ -71,37 +71,40 @@ void SensingTask::timer_10us_callback_main() {
   cnt_a++;
 }
 
+// 壁切れ時に必要ないセンシング処理をやめて、本来ほしいデータにまわす
+
 void SensingTask::timer_200us_callback_main() {
   const auto se = get_sensing_entity();
   switch (cnt_a) {
   case 0:
     adc2_get_raw(BATTERY, ADC_WIDTH_BIT_12, &se->battery.raw);
-    adc2_get_raw(SEN_L90, width, &se->led_sen_before.left90.raw);
-    adc2_get_raw(SEN_R45, width, &se->led_sen_before.right45.raw);
-    adc2_get_raw(SEN_R45_2, width, &se->led_sen_before.right45_2.raw);
-    adc2_get_raw(SEN_L45, width, &se->led_sen_before.left45.raw);
-    adc2_get_raw(SEN_L45_2, width, &se->led_sen_before.left45_2.raw);
     gyro_if.req_read2byte_itr(0x26);
     break;
   case 1:
+    adc2_get_raw(SEN_R90, width, &se->led_sen_before.left90.raw);
     gpio_set_level(LED_A0, false);
     gpio_set_level(LED_A1, false);
     gpio_set_level(LED_EN, true);
     gyro_if.req_read2byte_itr(0x26);
     break;
   case 2:
+    adc2_get_raw(SEN_L90, width, &se->led_sen_before.left90.raw);
     gpio_set_level(LED_A0, true);
     gpio_set_level(LED_A1, false);
     gpio_set_level(LED_EN, true);
     gyro_if.req_read2byte_itr(0x26);
     break;
   case 3:
+    adc2_get_raw(SEN_R45, width, &se->led_sen_before.right45.raw);
+    adc2_get_raw(SEN_R45_2, width, &se->led_sen_before.right45_2.raw);
     gpio_set_level(LED_A0, false);
     gpio_set_level(LED_A1, true);
     gpio_set_level(LED_EN, true);
     gyro_if.req_read2byte_itr(0x26);
     break;
   case 4:
+    adc2_get_raw(SEN_L45, width, &se->led_sen_before.left45.raw);
+    adc2_get_raw(SEN_L45_2, width, &se->led_sen_before.left45_2.raw);
     gpio_set_level(LED_A0, true);
     gpio_set_level(LED_A1, true);
     gpio_set_level(LED_EN, true);
@@ -181,7 +184,7 @@ void SensingTask::task() {
   adc2_config_channel_atten(SEN_L90, atten);
   adc2_config_channel_atten(BATTERY, atten);
 
-  esp_timer_start_periodic(timer_200us, 150);
+  esp_timer_start_periodic(timer_200us, 200);
 
   while (1) {
     // gyro_if.req_read2byte_itr(0x26);
