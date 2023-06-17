@@ -26,6 +26,7 @@
 
 #include "icm20689.hpp"
 #include "lsm6dsr.hpp"
+#include "esp_heap_caps.h"
 
 #define portTICK_RATE_MS portTICK_PERIOD_MS
 #define xTaskHandle TaskHandle_t
@@ -44,8 +45,8 @@ constexpr float cell_size = 90;
 // constexpr gpio_num_t LED_L45 = GPIO_NUM_18;
 // constexpr gpio_num_t LED_L90 = GPIO_NUM_21;
 
-constexpr gpio_num_t SDA_PIN = GPIO_NUM_36;
-constexpr gpio_num_t SCL_PIN = GPIO_NUM_37;
+constexpr gpio_num_t SDA_PIN = GPIO_NUM_14;
+constexpr gpio_num_t SCL_PIN = GPIO_NUM_21;
 
 // constexpr unsigned int LED_R90_BIT = 8;
 // constexpr unsigned int LED_R45_BIT = 9;

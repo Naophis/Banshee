@@ -61,6 +61,16 @@ void LoggingTask::task() {
   const TickType_t xDelay1 = 1.0 / portTICK_PERIOD_MS;
   BaseType_t queue_recieved;
   bool logging_active = false;
+  // 1,4MByteぐらいまで行ける
+  // for (int i = 0; i < 26000; i++) {
+  //   log_data_t2 *structPtr =
+  //       (log_data_t2 *)heap_caps_malloc(sizeof(log_data_t2),
+  //       MALLOC_CAP_SPIRAM);
+  //   auto ld = std::shared_ptr<log_data_t2>(structPtr, heap_caps_free);
+  //   log_vec.emplace_back(std::move(ld));
+  //   printf("%d %p %p %p\n", i, &ld, structPtr, &log_vec.at(i));
+  // }
+
   while (1) {
 
     if (!logging_active) {
@@ -74,7 +84,11 @@ void LoggingTask::task() {
     if (log_mode) {
       if (logging_active) {
         if (idx_slalom_log <= param->log_size) {
-          auto ld = std::make_shared<log_data_t2>();
+          // auto ld = std::make_shared<log_data_t2>();
+          log_data_t2 *structPtr = (log_data_t2 *)heap_caps_malloc(
+              sizeof(log_data_t2), MALLOC_CAP_SPIRAM);
+          auto ld = std::shared_ptr<log_data_t2>(structPtr, heap_caps_free);
+
           ld->img_v = floatToHalf(tgt_val->ego_in.v);
           ld->v_l = floatToHalf(sensing_result->ego.v_l);
           ld->v_c = floatToHalf(sensing_result->ego.v_c);
@@ -170,7 +184,9 @@ float LoggingTask::calc_sensor(float data, float a, float b, char motion_type) {
 }
 
 void LoggingTask::save(std::string file_name) {
+  vTaskDelay(250.0 / portTICK_PERIOD_MS);
   mount();
+  vTaskDelay(250.0 / portTICK_PERIOD_MS);
   printf("usefile: %s\n", slalom_log_file.c_str());
   f_slalom_log = fopen(slalom_log_file.c_str(), "wb");
   if (f_slalom_log == NULL)
@@ -185,7 +201,6 @@ void LoggingTask::save(std::string file_name) {
   int c = 0;
 
   for (const auto &ld : log_vec) {
-
     fprintf(f_slalom_log, f1,          //
             i++,                       //
             halfToFloat(ld->img_v),    //
@@ -291,7 +306,9 @@ void LoggingTask::save(std::string file_name) {
     fclose(f_slalom_log);
     printf("close\n");
   }
+  vTaskDelay(250.0 / portTICK_PERIOD_MS);
   umount();
+  vTaskDelay(250.0 / portTICK_PERIOD_MS);
 }
 
 void LoggingTask::save_sysid(std::string file_name) {

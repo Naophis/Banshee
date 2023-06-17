@@ -198,6 +198,32 @@ extern "C" void app_main() {
   //   }
   // }
 
+  // const int arraySize = 100;
+  // // esp_err_t ret = heap_caps_init();
+  // int *array =
+  //     (int *)heap_caps_malloc(arraySize * sizeof(int), MALLOC_CAP_SPIRAM);
+  // // 確保した配列を使用する
+
+  // if (array == NULL) {
+  //   while (true) {
+  //     vTaskDelay(5000.0 / portTICK_RATE_MS);
+  //   }
+  //   printf("Memory allocation failed!\n");
+  //   return;
+  // }
+
+  // for (int i = 0; i < arraySize; i++) {
+  //   array[i] = i;
+  // }
+  // std::vector<int> vec(array, array + arraySize);
+  // vec.push_back(42);
+  // for (const auto v : vec) {
+  //   printf("%d\n", v);
+  // }
+
+  // // 確保したメモリを解放する
+  // heap_caps_free(array);
+
   QueueHandle_t xQueue;
   xQueue = xQueueCreate(1, sizeof(motion_tgt_val_t *));
 
@@ -248,6 +274,15 @@ extern "C" void app_main() {
   lt->set_tgt_val(tgt_val);
   lt->create_task(1);
   pt->set_logging_task(lt);
+  // vTaskDelay(1000.0 / portTICK_RATE_MS);
+  // int i = 0;
+  // for (const auto &v : lt->log_vec) {
+  //   printf("%d, %p %p %p\n", i++, &v, &v->img_v, &v->v_l);
+  // }
+
+  // while (true) {
+  //   vTaskDelay(5000.0 / portTICK_RATE_MS);
+  // }
 
   mt->set_sensing_entity(sensing_entity);
   mt->set_input_param_entity(param);
@@ -269,9 +304,9 @@ extern "C" void app_main() {
   esp_task_wdt_add(xTaskGetIdleTaskHandleForCPU(1));
 
   // init_i2c_master();
-  // uint8_t writeBuffer[2];
-  // writeBuffer[0] = 0x00;
-  // writeBuffer[1] = 0x00;
+  uint8_t writeBuffer[2];
+  writeBuffer[0] = 0x00;
+  writeBuffer[1] = 0x00;
   while (1) {
     vTaskDelay(5000.0 / portTICK_RATE_MS);
     // writeBuffer[0] = (i << 5) | 0x18;
@@ -283,9 +318,8 @@ extern "C" void app_main() {
     //        st.sensing_result->led_sen.right90.raw);
     // printf("%d %x\n", i, i << 5);
     // printf("%d %x\n", i, (i << 5) | 0x1F);
-    // i2c_master_write_to_device(0, 0x9A, writeBuffer, 2, 1 /
-    // portTICK_RATE_MS); printf("%x, %x\n", (i << 5) | 0x18, (0x04 << 5) |
-    // 0x18);
+    // i2c_master_write_to_device(0, 0x9A, writeBuffer, 2, 1 / portTICK_RATE_MS);
+    // printf("%x, %x\n", (i << 5) | 0x18, (0x04 << 5) | 0x18);
     // printf("battery: %f\n", st.sensing_result->battery.data);
     // printf("gyro: %d\n", st.sensing_result->gyro.raw);
     // SCCB_Write(0x9A, writeBuffer[0], writeBuffer[0]);

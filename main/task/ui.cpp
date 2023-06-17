@@ -20,7 +20,7 @@ bool UserInterface::button_state_hold() {
     return false;
   }
 }
-void init_i2c_master() {
+void UserInterface::init_i2c_master() {
   i2c_port_t port = 0;
   i2c_config_t config;
 
@@ -36,7 +36,7 @@ void init_i2c_master() {
   i2c_driver_install(port, config.mode, 0, 0, 0);
 }
 
-uint8_t SCCB_Write(uint8_t slv_addr, uint8_t reg, uint8_t data) {
+uint8_t UserInterface::SCCB_Write(uint8_t slv_addr, uint8_t reg, uint8_t data) {
   i2c_port_t port = 0;
   esp_err_t ret = ESP_FAIL;
   i2c_cmd_handle_t cmd = i2c_cmd_link_create();
@@ -136,30 +136,20 @@ void UserInterface::hello_exia() {
   vTaskDelay(10.0 / portTICK_PERIOD_MS);
 }
 
-void UserInterface::LED_on_off(gpio_num_t gpio_num, int state) {
-  // gpio_set_level(gpio_num, state);
-  const int num = (int)gpio_num;
-  if (num < 32) {
-    if (state) {
-      GPIO.out_w1ts = BIT(num);
-    } else {
-      GPIO.out_w1tc = BIT(num);
-    }
-  } else {
-    if (state) {
-      GPIO.out1_w1ts.val = BIT(num - 32);
-    } else {
-      GPIO.out1_w1tc.val = BIT(num - 32);
-    }
-  }
+void UserInterface::LED_on_off(char idx, bool state) {
+  uint8_t blight = state ? 0x1F : 0x00;
+  writeBuffer[0] = (idx << 5) | blight;
+  writeBuffer[1] = 0x00;
+  SCCB_Write(0x9A, writeBuffer[0], writeBuffer[0]);
 }
 
-void UserInterface::LED_bit(int b0, int b1, int b2, int b3, int b4) {
-  // LED_on_off(LED1, (b0 == 1));
-  // LED_on_off(LED4, (b1 == 1));
-  // LED_on_off(LED2, (b2 == 1));
-  // LED_on_off(LED3, (b3 == 1));
-  // LED_on_off(LED5, (b4 == 1));
+void UserInterface::LED_bit(int b0, int b1, int b2, int b3, int b4, int b5) {
+  LED_on_off(1, (b5 == 1));
+  LED_on_off(2, (b4 == 1));
+  LED_on_off(3, (b3 == 1));
+  LED_on_off(4, (b2 == 1));
+  LED_on_off(5, (b1 == 1));
+  LED_on_off(6, (b0 == 1));
 }
 void UserInterface::LED_otherwise(int byte, int state) {}
 void UserInterface::LED(int byte, int state) {}
@@ -167,20 +157,22 @@ void UserInterface::LED_on(int byte) {}
 
 void UserInterface::LED_off(int byte) {}
 void UserInterface::LED_off_all() {
-  const int state = 0;
-  // LED_on_off(LED1, state);
-  // LED_on_off(LED2, state);
-  // LED_on_off(LED3, state);
-  // LED_on_off(LED4, state);
-  // LED_on_off(LED5, state);
+  const bool state = false;
+  LED_on_off(1, state);
+  LED_on_off(2, state);
+  LED_on_off(3, state);
+  LED_on_off(4, state);
+  LED_on_off(5, state);
+  LED_on_off(6, state);
 }
 void UserInterface::LED_on_all() {
-  const int state = 1;
-  // LED_on_off(LED1, state);
-  // LED_on_off(LED2, state);
-  // LED_on_off(LED3, state);
-  // LED_on_off(LED4, state);
-  // LED_on_off(LED5, state);
+  const bool state = true;
+  LED_on_off(1, state);
+  LED_on_off(2, state);
+  LED_on_off(3, state);
+  LED_on_off(4, state);
+  LED_on_off(5, state);
+  LED_on_off(6, state);
 }
 
 TurnDirection UserInterface::select_direction() {
@@ -190,12 +182,12 @@ TurnDirection UserInterface::select_direction() {
     if (sensing_result->ego.v_r > ENC_OPE_V_R_TH) {
       music_sync(MUSIC::G6_, 75);
       td = TurnDirection::Right;
-      LED_bit(1, 0, 0, 0, 0);
+      LED_bit(1, 0, 0, 0, 0, 0);
     }
     if (sensing_result->ego.v_l > ENC_OPE_V_R_TH) {
       music_sync(MUSIC::C6_, 75);
       td = TurnDirection::Left;
-      LED_bit(0, 0, 0, 0, 1);
+      LED_bit(0, 0, 0, 0, 0, 1);
     }
 
     if (td != TurnDirection::None) {
@@ -204,7 +196,7 @@ TurnDirection UserInterface::select_direction() {
         return td;
       }
     } else {
-      LED_bit((int)b, 0, 0, 0, (int)b);
+      LED_bit((int)b, 0, 0, 0, 0, (int)b);
       b = b ? false : true;
     }
     vTaskDelay(25.0 / portTICK_PERIOD_MS);

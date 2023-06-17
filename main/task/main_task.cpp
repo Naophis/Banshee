@@ -24,6 +24,7 @@ void MainTask::set_sensing_entity(
     std::shared_ptr<sensing_result_entity_t> &_sensing_result) {
   sensing_result = _sensing_result;
   ui->set_sensing_entity(_sensing_result);
+  ui->init_i2c_master();
   mp->set_sensing_entity(_sensing_result);
   search_ctrl->set_sensing_entity(_sensing_result);
 }
@@ -222,7 +223,7 @@ int MainTask::select_mode() {
       mode_num = (int)(MODE::SEARCH);
     }
     lbit.byte = mode_num + 1;
-    ui->LED_bit(lbit.b0, lbit.b1, lbit.b2, lbit.b3, lbit.b4);
+    ui->LED_bit(lbit.b0, lbit.b1, lbit.b2, lbit.b3, lbit.b4, lbit.b5);
     if (ui->button_state_hold()) {
       ui->coin(100);
       break;

@@ -33,7 +33,7 @@ public:
   void LED_on_all();
 
   void LED(int byte, int state);
-  void LED_bit(int b0, int b1, int b2, int b3, int b4);
+  void LED_bit(int b0, int b1, int b2, int b3, int b4, int b5);
   void LED_otherwise(int byte, int state);
 
   int encoder_operation();
@@ -55,9 +55,10 @@ public:
 private:
   std::shared_ptr<sensing_result_entity_t> sensing_result;
   std::shared_ptr<motion_tgt_val_t> tgt_val;
-
-  void LED_on_off(gpio_num_t gpio_num, int on_off);
+  void LED_on_off(char idx, bool on_off);
   uint8_t SCCB_Write(uint8_t slv_addr, uint8_t reg, uint8_t data);
+
+  uint8_t writeBuffer[2];
 };
 
 #endif

@@ -717,35 +717,34 @@ void PlanningTask::update_ego_motion() {
   sensing_result->ego.rpm.left =
       30.0 * sensing_result->ego.v_l / (m_PI * tire / 2);
 
-  if (GY_MODE) {
-    sensing_result->gyro.data = 0;
-    for (int i = 0; i < GY_DQ_SIZE; i++) {
-      sensing_result->gyro.data += sensing_result->gyro_list[i];
-    }
-    sensing_result->gyro.data /= GY_DQ_SIZE;
-  }
-
-  if (GY_MODE) {
-    if (tgt_val->motion_dir == MotionDirection::LEFT) {
-      sensing_result->ego.w_raw =
-          param_ro->gyro_param.gyro_w_gain_left *
-          (sensing_result->gyro.data - tgt_val->gyro_zero_p_offset);
-    } else {
-      sensing_result->ego.w_raw =
-          param_ro->gyro_param.gyro_w_gain_right *
-          (sensing_result->gyro.data - tgt_val->gyro_zero_p_offset);
-    }
+  // if (GY_MODE) {
+  //   sensing_result->gyro.data = 0;
+  //   for (int i = 0; i < GY_DQ_SIZE; i++) {
+  //     sensing_result->gyro.data += sensing_result->gyro_list[i];
+  //   }
+  //   sensing_result->gyro.data /= GY_DQ_SIZE;
+  // }
+  // if (GY_MODE) {
+  if (tgt_val->motion_dir == MotionDirection::LEFT) {
+    sensing_result->ego.w_raw =
+        param_ro->gyro_param.gyro_w_gain_left *
+        (sensing_result->gyro.data - tgt_val->gyro_zero_p_offset);
   } else {
-    if (tgt_val->motion_dir == MotionDirection::LEFT) {
-      sensing_result->ego.w_raw =
-          param_ro->gyro_param.gyro_w_gain_left *
-          (sensing_result->gyro.raw - tgt_val->gyro_zero_p_offset);
-    } else {
-      sensing_result->ego.w_raw =
-          param_ro->gyro_param.gyro_w_gain_right *
-          (sensing_result->gyro.raw - tgt_val->gyro_zero_p_offset);
-    }
+    sensing_result->ego.w_raw =
+        param_ro->gyro_param.gyro_w_gain_right *
+        (sensing_result->gyro.data - tgt_val->gyro_zero_p_offset);
   }
+  // } else {
+  //   if (tgt_val->motion_dir == MotionDirection::LEFT) {
+  //     sensing_result->ego.w_raw =
+  //         param_ro->gyro_param.gyro_w_gain_left *
+  //         (sensing_result->gyro.raw - tgt_val->gyro_zero_p_offset);
+  //   } else {
+  //     sensing_result->ego.w_raw =
+  //         param_ro->gyro_param.gyro_w_gain_right *
+  //         (sensing_result->gyro.raw - tgt_val->gyro_zero_p_offset);
+  //   }
+  // }
   sensing_result->ego.accel_x_raw =
       param_ro->accel_x_param.gain *
       (sensing_result->accel_x.raw - tgt_val->accel_x_zero_p_offset);
@@ -825,16 +824,17 @@ void PlanningTask::update_ego_motion() {
 void PlanningTask::set_next_duty(float duty_l, float duty_r,
                                  float duty_suction) {
   if (motor_en) {
-    // duty_l = duty_r = -25;
+    // duty_l = 0;
+    // duty_r = 25;
 
-    if (duty_r < 0) {
+    if (duty_r > 0) {
       // GPIO.out1_w1ts.val = BIT(A_CW_CCW2_BIT);
       GPIO.out1_w1ts.val = BIT(A_CW_CCW1_BIT);
     } else {
       GPIO.out1_w1tc.val = BIT(A_CW_CCW1_BIT);
       // GPIO.out1_w1tc.val = BIT(A_CW_CCW2_BIT);
     }
-    if (duty_l < 0) {
+    if (duty_l > 0) {
       GPIO.out1_w1ts.val = BIT(B_CW_CCW1_BIT);
       // GPIO.out1_w1tc.val = BIT(B_CW_CCW2_BIT);
     } else {

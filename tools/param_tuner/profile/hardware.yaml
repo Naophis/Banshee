@@ -142,12 +142,12 @@ offset_after_turn_dia_l: 20
 offset_after_turn_dia_r: 20
 
 #ログON_OFF
-logging_time: 4.0
+logging_time: 1.0
 search_log_enable: 0
 test_log_enable: 1
 fast_log_enable: 1
 sen_log_size: 100
-log_size: 1400
+log_size: 24000
 
 front_ctrl_error_th: 1
 front_diff_th: 9
