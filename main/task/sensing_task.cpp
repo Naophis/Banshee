@@ -4,6 +4,10 @@ SensingTask::SensingTask() {}
 
 SensingTask::~SensingTask() {}
 
+void SensingTask::timer_250us_callback(void *arg) {
+  SensingTask *instance = static_cast<SensingTask *>(arg);
+  instance->timer_250us_callback_main();
+}
 void SensingTask::timer_200us_callback(void *arg) {
   SensingTask *instance = static_cast<SensingTask *>(arg);
   instance->timer_200us_callback_main();
@@ -20,33 +24,33 @@ void SensingTask::timer_10us_callback_main() {
   case 0:
     adc2_get_raw(BATTERY, ADC_WIDTH_BIT_12, &se->battery.raw);
     se->battery.data = BATTERY_GAIN * 4.2 * sensing_result->battery.raw / 4096;
-    se->gyro_list[0] = gyro_if.read_2byte_itr();
+    // se->gyro_list[0] = gyro_if.read_2byte_itr();
     break;
   case 1:
     adc2_get_raw(SEN_R90, width, &se->led_sen_after.right90.raw);
-    se->gyro_list[1] = gyro_if.read_2byte_itr();
+    // se->gyro_list[1] = gyro_if.read_2byte_itr();
     break;
   case 2:
     adc2_get_raw(SEN_L90, width, &se->led_sen_after.left90.raw);
-    se->gyro_list[2] = gyro_if.read_2byte_itr();
+    // se->gyro_list[2] = gyro_if.read_2byte_itr();
 
-    enc = enc_if.read2byte(0x3F, 0xFF, false) & 0x3FFF;
-    se->encoder.left_old = se->encoder.left;
-    se->encoder.left = -enc;
+    // enc = enc_if.read2byte(0x3F, 0xFF, false) & 0x3FFF;
+    // se->encoder.left_old = se->encoder.left;
+    // se->encoder.left = -enc;
     break;
   case 3:
     adc2_get_raw(SEN_R45, width, &se->led_sen_after.right45.raw);
     adc2_get_raw(SEN_R45_2, width, &se->led_sen_after.right45_2.raw);
-    se->gyro_list[3] = gyro_if.read_2byte_itr();
+    // se->gyro_list[3] = gyro_if.read_2byte_itr();
 
-    enc = enc_if.read2byte(0x3F, 0xFF, true) & 0x3FFF;
-    se->encoder.right_old = se->encoder.right;
-    se->encoder.right = -enc;
+    // enc = enc_if.read2byte(0x3F, 0xFF, true) & 0x3FFF;
+    // se->encoder.right_old = se->encoder.right;
+    // se->encoder.right = -enc;
     break;
   case 4:
     adc2_get_raw(SEN_L45, width, &se->led_sen_after.left45.raw);
     adc2_get_raw(SEN_L45_2, width, &se->led_sen_after.left45_2.raw);
-    se->gyro_list[4] = gyro_if.read_2byte_itr();
+    // se->gyro_list[4] = gyro_if.read_2byte_itr();
     se->led_sen.right90.raw = std::max(
         se->led_sen_after.right90.raw - se->led_sen_before.right90.raw, 0);
     se->led_sen.right45.raw = std::max(
@@ -61,14 +65,14 @@ void SensingTask::timer_10us_callback_main() {
         se->led_sen_after.left90.raw - se->led_sen_before.left90.raw, 0);
     se->led_sen.front.raw =
         (se->led_sen.left90.raw + se->led_sen.right90.raw) / 2;
-    mt->notify();
-    mt->mp->notify();
+    // mt->notify();
+    // mt->mp->notify();
     cnt_a = -1;
     break;
   }
-  esp_timer_stop(timer_10us);
-  gpio_set_level(LED_EN, false);
+  set_gpio_state(LED_EN, false);
   cnt_a++;
+  // esp_timer_stop(timer_10us);
 }
 
 // 壁切れ時に必要ないセンシング処理をやめて、本来ほしいデータにまわす
@@ -78,41 +82,40 @@ void SensingTask::timer_200us_callback_main() {
   switch (cnt_a) {
   case 0:
     adc2_get_raw(BATTERY, ADC_WIDTH_BIT_12, &se->battery.raw);
-    gyro_if.req_read2byte_itr(0x26);
     break;
   case 1:
     adc2_get_raw(SEN_R90, width, &se->led_sen_before.left90.raw);
-    gpio_set_level(LED_A0, false);
-    gpio_set_level(LED_A1, false);
-    gpio_set_level(LED_EN, true);
-    gyro_if.req_read2byte_itr(0x26);
+    set_gpio_state(LED_A0, false);
+    set_gpio_state(LED_A1, false);
+    set_gpio_state(LED_EN, true);
     break;
   case 2:
     adc2_get_raw(SEN_L90, width, &se->led_sen_before.left90.raw);
-    gpio_set_level(LED_A0, true);
-    gpio_set_level(LED_A1, false);
-    gpio_set_level(LED_EN, true);
-    gyro_if.req_read2byte_itr(0x26);
+    set_gpio_state(LED_A0, true);
+    set_gpio_state(LED_A1, false);
+    set_gpio_state(LED_EN, true);
     break;
   case 3:
     adc2_get_raw(SEN_R45, width, &se->led_sen_before.right45.raw);
     adc2_get_raw(SEN_R45_2, width, &se->led_sen_before.right45_2.raw);
-    gpio_set_level(LED_A0, false);
-    gpio_set_level(LED_A1, true);
-    gpio_set_level(LED_EN, true);
-    gyro_if.req_read2byte_itr(0x26);
+    set_gpio_state(LED_A0, false);
+    set_gpio_state(LED_A1, true);
+    set_gpio_state(LED_EN, true);
     break;
   case 4:
     adc2_get_raw(SEN_L45, width, &se->led_sen_before.left45.raw);
     adc2_get_raw(SEN_L45_2, width, &se->led_sen_before.left45_2.raw);
-    gpio_set_level(LED_A0, true);
-    gpio_set_level(LED_A1, true);
-    gpio_set_level(LED_EN, true);
-    gyro_if.req_read2byte_itr(0x26);
+    set_gpio_state(LED_A0, true);
+    set_gpio_state(LED_A1, true);
+    set_gpio_state(LED_EN, true);
     break;
   }
   esp_timer_stop(timer_10us);
   esp_timer_start_once(timer_10us, 10); // 1ms/4
+}
+
+
+void SensingTask::timer_250us_callback_main() {
 }
 
 void SensingTask::create_task(const BaseType_t xCoreID) {
@@ -185,6 +188,7 @@ void SensingTask::task() {
   adc2_config_channel_atten(BATTERY, atten);
 
   esp_timer_start_periodic(timer_200us, 200);
+  // esp_timer_start_periodic(timer_250us, 250);
 
   while (1) {
     // gyro_if.req_read2byte_itr(0x26);
@@ -194,10 +198,23 @@ void SensingTask::task() {
     if (tgt_val->motion_type == MotionType::PIVOT ||
         tgt_val->motion_type == MotionType::SLALOM) {
       led_on = false;
-    }
+    };
 
+    int32_t enc = 0;
+    enc = enc_if.read2byte(0x3F, 0xFF, false) & 0x3FFF;
+    sensing_result->encoder.left_old = sensing_result->encoder.left;
+    sensing_result->encoder.left = -enc;
+
+    enc = enc_if.read2byte(0x3F, 0xFF, true) & 0x3FFF;
+    sensing_result->encoder.right_old = sensing_result->encoder.right;
+    sensing_result->encoder.right = -enc;
+
+    gyro_if.req_read2byte_itr(0x26);
+    sensing_result->gyro_list[4] = gyro_if.read_2byte_itr();
+    sensing_result->gyro.raw = sensing_result->gyro_list[4];
+    sensing_result->gyro.data = (float)(sensing_result->gyro_list[4]);
     // vTaskDelay(xDelay);
-    vTaskDelay(100 / portTICK_PERIOD_MS);
+    vTaskDelay(1.0 / portTICK_PERIOD_MS);
   }
 }
 

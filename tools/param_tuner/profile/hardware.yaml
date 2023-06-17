@@ -13,7 +13,7 @@ offset_start_dist: 21.0
 gear_a: 1
 gear_b: 1
 # max_duty: 99.9
-max_duty: 99.999
+max_duty: 99.0
 FF_front: 1
 FF_roll: 1
 FF_keV: 1
@@ -205,7 +205,7 @@ gyro_pid:
   # 通常 mode=0
   p: 0.275
   i: 0.0225
-  d: 0.275
+  d: 0.0
   mode: 0
   # p: 0.0
   # i: 0.0

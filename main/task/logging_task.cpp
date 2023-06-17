@@ -39,6 +39,7 @@ void LoggingTask::start_slalom_log() {
 
 void LoggingTask::stop_slalom_log() {
   active_slalom_log = false; //
+  logging_active = false;
 }
 
 void LoggingTask::change_sysid_mode(float d_l, float d_r, int t) {
@@ -60,7 +61,7 @@ void LoggingTask::task() {
   const TickType_t xDelay4 = 40.0 / portTICK_PERIOD_MS;
   const TickType_t xDelay1 = 1.0 / portTICK_PERIOD_MS;
   BaseType_t queue_recieved;
-  bool logging_active = false;
+  logging_active = false;
   // 1,4MByteぐらいまで行ける
   // for (int i = 0; i < 26000; i++) {
   //   log_data_t2 *structPtr =
@@ -184,6 +185,7 @@ float LoggingTask::calc_sensor(float data, float a, float b, char motion_type) {
 }
 
 void LoggingTask::save(std::string file_name) {
+  return;
   vTaskDelay(250.0 / portTICK_PERIOD_MS);
   mount();
   vTaskDelay(250.0 / portTICK_PERIOD_MS);
@@ -325,12 +327,43 @@ void LoggingTask::save_sysid(std::string file_name) {
   }
 }
 
+// void LoggingTask::dump_log(std::string file_name) {
+//   mount();
+//   const TickType_t xDelay2 = 100.0 / portTICK_PERIOD_MS;
+//   FILE *f = fopen(file_name.c_str(), "rb");
+//   if (f == NULL)
+//     return;
+//   char line_buf[LINE_BUF_SIZE];
+//   printf("start___\n"); // csvファイル作成トリガー
+//   vTaskDelay(xDelay2);
+//   printf("index,ideal_v,v_c,v_c2,v_l,v_r,accl,accl_x,ideal_w,w_lp,alpha,"
+//          "ideal_dist,"
+//          "dist,"
+//          "ideal_ang,ang,left90,left45,front,right45,right90,left90_d,left45_d,"
+//          "front_d,right45_d,right90_d,left90_far_d,front_far_d,right90_far_d,"
+//          "battery,duty_l,"
+//          "duty_r,motion_state,duty_sen,dist_mod90,"
+//          "sen_dist_l45,sen_dist_r45,timestamp\n");
+//   int c = 0;
+//   while (fgets(line_buf, sizeof(line_buf), f) != NULL) {
+//     printf("%s\n", line_buf);
+//     c++;
+//     if (c == 50) {
+//       c = 0;
+//       vTaskDelay(1.0 / portTICK_PERIOD_MS);
+//     }
+//   }
+//   printf("end___\n"); // csvファイル追記終了トリガー
+
+//   fclose(f);
+//   printf("memory: %d bytes\n", heap_caps_get_free_size(MALLOC_CAP_INTERNAL));
+//   log_vec.clear();
+//   umount();
+//   // std::vector<std::shared_ptr<log_data_t2>>().swap(log_vec);
+// }
+
 void LoggingTask::dump_log(std::string file_name) {
-  mount();
   const TickType_t xDelay2 = 100.0 / portTICK_PERIOD_MS;
-  FILE *f = fopen(file_name.c_str(), "rb");
-  if (f == NULL)
-    return;
   char line_buf[LINE_BUF_SIZE];
   printf("start___\n"); // csvファイル作成トリガー
   vTaskDelay(xDelay2);
@@ -343,8 +376,98 @@ void LoggingTask::dump_log(std::string file_name) {
          "duty_r,motion_state,duty_sen,dist_mod90,"
          "sen_dist_l45,sen_dist_r45,timestamp\n");
   int c = 0;
-  while (fgets(line_buf, sizeof(line_buf), f) != NULL) {
-    printf("%s\n", line_buf);
+  const char *f1 = format1.c_str();
+  const char *f2 = format2.c_str();
+  const char *f3 = format3.c_str();
+  const char *f4 = format4.c_str();
+
+  int i = 0;
+
+  for (const auto &ld : log_vec) {
+    printf(f1,                        //
+           i++,                       //
+           halfToFloat(ld->img_v),    //
+           halfToFloat(ld->v_c),      //
+           halfToFloat(ld->v_c2),     //
+           halfToFloat(ld->v_l),      //
+           halfToFloat(ld->v_r),      //
+           halfToFloat(ld->accl),     //
+           halfToFloat(ld->accl_x));  // 8
+    printf(f2,                        //
+           halfToFloat(ld->img_w),    //
+           halfToFloat(ld->w_lp),     //
+           halfToFloat(ld->alpha),    //
+           halfToFloat(ld->img_dist), //
+           halfToFloat(ld->dist),     //
+           halfToFloat(ld->img_ang),  //
+           halfToFloat(ld->ang));     // 7
+
+    auto l90 = calc_sensor(halfToFloat(ld->left90_lp), param->sensor_gain.l90.a,
+                           param->sensor_gain.l90.b, ld->motion_type);
+    auto l45 = calc_sensor(halfToFloat(ld->left45_lp), param->sensor_gain.l45.a,
+                           param->sensor_gain.l45.b, ld->motion_type);
+    auto r45 =
+        calc_sensor(halfToFloat(ld->right45_lp), param->sensor_gain.r45.a,
+                    param->sensor_gain.r45.b, ld->motion_type);
+    auto r90 =
+        calc_sensor(halfToFloat(ld->right90_lp), param->sensor_gain.r90.a,
+                    param->sensor_gain.r90.b, ld->motion_type);
+
+    auto l90_far =
+        calc_sensor(halfToFloat(ld->left90_lp), param->sensor_gain.l90_far.a,
+                    param->sensor_gain.l90_far.b, ld->motion_type);
+    auto r90_far =
+        calc_sensor(halfToFloat(ld->right90_lp), param->sensor_gain.r90_far.a,
+                    param->sensor_gain.r90_far.b, ld->motion_type);
+    float front = 0;
+    if (l90 > 0 && r90 > 0) {
+      front = (l90 + r90) / 2;
+    } else if (l90 == 0 && r90 > 0) {
+      front = r90;
+    } else if (l90 > 0 && r90 == 0) {
+      front = l90;
+    } else {
+      front = 0;
+    }
+
+    float front_far = 0;
+
+    if (l90_far > 0 && r90_far > 0) {
+      front_far = (l90_far + r90_far) / 2;
+    } else if (l90_far > 0 && r90_far == 0) {
+      front_far = l90_far;
+    } else if (l90_far == 0 && r90_far > 0) {
+      front_far = r90_far;
+    } else {
+      front_far = 0;
+    }
+
+    auto dist = halfToFloat(ld->img_dist);
+    float dist_mod = (int)(dist / 90);
+    float tmp_dist = dist - 90 * dist_mod;
+
+    printf(f3,                                                               //
+           halfToFloat(ld->left90_lp),                                       //
+           halfToFloat(ld->left45_lp),                                       //
+           ((halfToFloat(ld->left90_lp) + halfToFloat(ld->right90_lp)) / 2), //
+           halfToFloat(ld->right45_lp),                                      //
+           halfToFloat(ld->right90_lp),                                      //
+           l90, l45, front, r45, r90,                                        //
+           l90_far, front_far, r90_far,                                      //
+           halfToFloat(ld->battery_lp),                                      //
+           halfToFloat(ld->duty_l),                                          //
+           halfToFloat(ld->duty_r),                                          //
+           (ld->motion_type)); // 16
+
+    printf(f4,                                //
+           halfToFloat(ld->duty_sensor_ctrl), //
+           tmp_dist,                          //
+           halfToFloat(ld->sen_log_l45),      //
+           halfToFloat(ld->sen_log_r45),      //
+           ld->motion_timestamp);             // 4
+    if (i > 10 && ld->motion_timestamp == 0) {
+      break;
+    }
     c++;
     if (c == 50) {
       c = 0;
@@ -353,12 +476,12 @@ void LoggingTask::dump_log(std::string file_name) {
   }
   printf("end___\n"); // csvファイル追記終了トリガー
 
-  fclose(f);
   printf("memory: %d bytes\n", heap_caps_get_free_size(MALLOC_CAP_INTERNAL));
   log_vec.clear();
-  umount();
+  // umount();
   // std::vector<std::shared_ptr<log_data_t2>>().swap(log_vec);
 }
+
 void LoggingTask::dump_log_sysid(std::string file_name) {
 
   const TickType_t xDelay2 = 100.0 / portTICK_PERIOD_MS;

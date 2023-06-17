@@ -37,6 +37,7 @@ public:
 
   void timer_10us_callback_main();
   void timer_200us_callback_main();
+  void timer_250us_callback_main();
   void set_input_param_entity(std::shared_ptr<input_param_t> &_param);
 
   // ICM20689 gyro_if;
@@ -49,10 +50,28 @@ public:
 private:
   volatile int cnt_a = 0;
   esp_timer_handle_t timer_200us;
+  esp_timer_handle_t timer_250us;
   esp_timer_handle_t timer_10us;
 
   static void timer_10us_callback(void *arg);
   static void timer_200us_callback(void *arg);
+  static void timer_250us_callback(void *arg);
+  void set_gpio_state(gpio_num_t gpio_num, int state) {
+    const int num = (int)gpio_num;
+    if (num < 32) {
+      if (state) {
+        GPIO.out_w1ts = BIT(num);
+      } else {
+        GPIO.out_w1tc = BIT(num);
+      }
+    } else {
+      if (state) {
+        GPIO.out1_w1ts.val = BIT(num - 32);
+      } else {
+        GPIO.out1_w1tc.val = BIT(num - 32);
+      }
+    }
+  }
 
   float calc_sensor(float data, float a, float b);
   volatile int lec_cnt = 0;

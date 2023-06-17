@@ -4,6 +4,7 @@
 // constexpr int MOTOR_HZ = 250000;
 // constexpr int MOTOR_HZ = 125000;
 // constexpr int MOTOR_HZ = 100000;
+// constexpr int MOTOR_HZ = 75000 / 1;
 constexpr int MOTOR_HZ = 75000 / 1;
 constexpr int SUCTION_MOTOR_HZ = 10000;
 PlanningTask::PlanningTask() {}
@@ -23,6 +24,22 @@ void PlanningTask::motor_enable_main() {
   motor_en = true;
   mcpwm_start(MCPWM_UNIT_0, MCPWM_TIMER_0);
   mcpwm_start(MCPWM_UNIT_0, MCPWM_TIMER_1);
+}
+void PlanningTask::set_gpio_state(gpio_num_t gpio_num, int state) {
+  const int num = (int)gpio_num;
+  if (num < 32) {
+    if (state) {
+      GPIO.out_w1ts = BIT(num);
+    } else {
+      GPIO.out_w1tc = BIT(num);
+    }
+  } else {
+    if (state) {
+      GPIO.out1_w1ts.val = BIT(num - 32);
+    } else {
+      GPIO.out1_w1tc.val = BIT(num - 32);
+    }
+  }
 }
 
 float PlanningTask::interp1d(vector<float> &vx, vector<float> &vy, float x,
@@ -824,22 +841,26 @@ void PlanningTask::update_ego_motion() {
 void PlanningTask::set_next_duty(float duty_l, float duty_r,
                                  float duty_suction) {
   if (motor_en) {
-    // duty_l = 0;
-    // duty_r = 25;
+    // duty_l = 25;
+    // duty_r = -25;
 
     if (duty_r > 0) {
       // GPIO.out1_w1ts.val = BIT(A_CW_CCW2_BIT);
-      GPIO.out1_w1ts.val = BIT(A_CW_CCW1_BIT);
+      // GPIO.out1_w1ts.val = BIT(A_CW_CCW1_BIT);
+      set_gpio_state(A_CW_CCW1, true);
     } else {
-      GPIO.out1_w1tc.val = BIT(A_CW_CCW1_BIT);
+      // GPIO.out1_w1tc.val = BIT(A_CW_CCW1_BIT);
+      set_gpio_state(A_CW_CCW1, false);
       // GPIO.out1_w1tc.val = BIT(A_CW_CCW2_BIT);
     }
     if (duty_l > 0) {
-      GPIO.out1_w1ts.val = BIT(B_CW_CCW1_BIT);
+      // GPIO.out1_w1ts.val = BIT(B_CW_CCW1_BIT);
+      set_gpio_state(B_CW_CCW1, true);
       // GPIO.out1_w1tc.val = BIT(B_CW_CCW2_BIT);
     } else {
       // GPIO.out1_w1ts.val = BIT(B_CW_CCW2_BIT);
-      GPIO.out1_w1tc.val = BIT(B_CW_CCW1_BIT);
+      set_gpio_state(B_CW_CCW1, false);
+      // GPIO.out1_w1tc.val = BIT(B_CW_CCW1_BIT);
     }
     // GPIO.out1_w1ts.val = BIT(A_CW_CCW2_BIT);
     // GPIO.out1_w1ts.val = BIT(A_CW_CCW1_BIT);

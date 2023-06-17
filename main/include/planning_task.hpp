@@ -76,7 +76,9 @@ public:
   std::vector<float> axel_degenerate_y;
 
   pid_error_entity_t error_entity;
+
 private:
+  void set_gpio_state(gpio_num_t gpio_num, int state);
   float diff_old = 0;
   float diff = 0;
   void motor_enable_main();
