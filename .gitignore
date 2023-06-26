@@ -9,3 +9,4 @@ slprj/
 install/
 build/
 tools/rosws/log/
+managed_components/

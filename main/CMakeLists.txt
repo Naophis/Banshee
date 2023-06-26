@@ -40,3 +40,7 @@ set(COMPONENT_SRCS
     "gen_code_simple_pid/simple_pid_controller.cpp"
     )
 register_component()
+
+# idf_component_register(SRCS ${COMPONENT_SRCS}
+#                     INCLUDE_DIRS ${COMPONENT_ADD_INCLUDEDIRS}
+#                     REQUIRES eigen)
