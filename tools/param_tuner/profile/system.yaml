@@ -41,17 +41,17 @@ mode: 2 # 直進
 # mode: 21 # pivot turn n2
 
 test: # テスト走行時に使用するパラメータ群
-  v_max: 300
+  v_max: 1500
   end_v: 1
-  accl: 1250
-  decel: -1250
-  dist:  180 #直進全部
+  accl: 2000
+  decel: -1500
+  dist:  450 #直進全部
   # dist: 540 #直進全部　
   # dist: 180 # スラロームテスト
   dia: 0
   w_max: 10.5
   alpha: 75
-  ang: 360
+  ang: 720
   suction_active: 0
   suction_duty: 2.75
   # suction_duty_low: 2.75

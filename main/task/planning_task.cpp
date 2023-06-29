@@ -5,7 +5,7 @@
 // constexpr int MOTOR_HZ = 125000;
 // constexpr int MOTOR_HZ = 100000;
 // constexpr int MOTOR_HZ = 75000 / 1;
-constexpr int MOTOR_HZ = 75000 / 1;
+constexpr int MOTOR_HZ = 250000;
 constexpr int SUCTION_MOTOR_HZ = 10000;
 PlanningTask::PlanningTask() {}
 
@@ -218,13 +218,21 @@ void PlanningTask::task() {
   mcpwm_gpio_init(MCPWM_UNIT_0, MCPWM1A, B_PWM);
   mcpwm_gpio_init(MCPWM_UNIT_1, MCPWM2A, SUCTION_PWM);
 
+  mcpwm_group_set_resolution(MCPWM_UNIT_0, 160'000'000L);
+  mcpwm_group_set_resolution(MCPWM_UNIT_1, 160'000'000L);
+  // mcpwm_deadtime_disable(MCPWM_UNIT_0, MCPWM_TIMER_0);
+  // mcpwm_deadtime_disable(MCPWM_UNIT_0, MCPWM_TIMER_1);
+  mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A,
+                      MCPWM_DUTY_MODE_0);
+  mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_A,
+                      MCPWM_DUTY_MODE_0);
+
   memset(&motor_pwm_conf, 0, sizeof(motor_pwm_conf));
   motor_pwm_conf.frequency = MOTOR_HZ; // PWM周波数= 10kHz,
   motor_pwm_conf.cmpr_a = 0; // デューティサイクルの初期値（0%）
   motor_pwm_conf.cmpr_b = 0; // デューティサイクルの初期値（0%）
   motor_pwm_conf.counter_mode = MCPWM_UP_COUNTER;
   motor_pwm_conf.duty_mode = MCPWM_DUTY_MODE_0; // アクティブハイ
-  motor_pwm_conf.cmpr_a = 0; // デューティサイクルの初期値（0%）
   mcpwm_init(MCPWM_UNIT_0, MCPWM_TIMER_0, &motor_pwm_conf);
   mcpwm_init(MCPWM_UNIT_0, MCPWM_TIMER_1, &motor_pwm_conf);
 
@@ -841,8 +849,8 @@ void PlanningTask::update_ego_motion() {
 void PlanningTask::set_next_duty(float duty_l, float duty_r,
                                  float duty_suction) {
   if (motor_en) {
-    // duty_l = 25;
-    // duty_r = -25;
+    // duty_l = -10.9;
+    // duty_r = 10.9;
 
     if (duty_r > 0) {
       // GPIO.out1_w1ts.val = BIT(A_CW_CCW2_BIT);
@@ -873,12 +881,15 @@ void PlanningTask::set_next_duty(float duty_l, float duty_r,
     mcpwm_set_signal_low(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_B);
 
     mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A, tmp_duty_r);
+    mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_A, tmp_duty_l);
+
     mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A,
                         MCPWM_DUTY_MODE_0);
-
-    mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_A, tmp_duty_l);
     mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_A,
                         MCPWM_DUTY_MODE_0);
+
+    // mcpwm_set_signal_low(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B);
+    // mcpwm_set_signal_low(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_B);
   } else {
     // motor_disable(false);
     // mcpwm_start(MCPWM_UNIT_0, MCPWM_TIMER_0);
