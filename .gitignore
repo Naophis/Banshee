@@ -10,3 +10,6 @@ install/
 build/
 tools/rosws/log/
 managed_components/
+.idea/
+.env/
+*.mcap

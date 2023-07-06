@@ -24,9 +24,9 @@
 #include <unordered_map>
 #include <vector>
 
+#include "esp_heap_caps.h"
 #include "icm20689.hpp"
 #include "lsm6dsr.hpp"
-#include "esp_heap_caps.h"
 
 #define portTICK_RATE_MS portTICK_PERIOD_MS
 #define xTaskHandle TaskHandle_t
@@ -166,11 +166,12 @@ static const std::string maze_log_kata_file("/spiflash/maze_kata.log");
 static const std::string maze_log_return_file("/spiflash/maze_return.log");
 
 static const std::string
-    format1("%d,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,");
+    format1("%d,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%d,%d,%0.3f,%0.3f,");
 static const std::string format2("%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,");
-static const std::string format3("%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0."
-                                 "3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,"
-                                 "%0.3f,%d,");
+static const std::string
+    format3("%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0."
+            "3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,"
+            "%0.3f,%d,");
 static const std::string format4("%0.3f,%0.3f,%0.3f,%0.3f,%d\n");
 static const std::string
     formatsysid("%d,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f\n");

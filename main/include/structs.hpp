@@ -76,6 +76,8 @@ typedef struct {
 typedef struct {
   float v_r = 0;
   float v_l = 0;
+  float v_r_old = 0;
+  float v_l_old = 0;
   float v_c = 0;
   float filter_v = 0;
 
@@ -109,11 +111,19 @@ typedef struct {
   float left90_raw = 0;
   float left90_lp = 0;
 
+
+  float right45_2_raw = 0;
+  float right45_2_lp = 0;
+  float left45_2_raw = 0;
+  float left45_2_lp = 0;
+
   float front_lp_old = 0;
   float left45_lp_old = 0;
   float left90_lp_old = 0;
   float right45_lp_old = 0;
   float right90_lp_old = 0;
+  float left45_2_lp_old = 0;
+  float right45_2_lp_old = 0;
 
   volatile float front_dist = 0;
   volatile float left45_dist = 0;
@@ -730,6 +740,8 @@ typedef struct {
   real16_T v_c;
   real16_T v_c2;
   real16_T v_r;
+  int16_t v_r_enc;
+  int16_t v_l_enc;
   real16_T accl;
   real16_T accl_x;
   real16_T img_w;
@@ -750,6 +762,9 @@ typedef struct {
   real16_T right45_lp;
   real16_T right90_lp;
   real16_T battery_lp;
+
+  real16_T left45_2_lp;
+  real16_T right45_2_lp;
 
   char motion_type;
   int16_t motion_timestamp;

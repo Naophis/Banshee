@@ -710,8 +710,19 @@ void PlanningTask::calc_vel() {
     }
   }
 
+  sensing_result->ego.v_l_old = sensing_result->ego.v_l;
+  sensing_result->ego.v_r_old = sensing_result->ego.v_r;
+
   sensing_result->ego.v_l = -tire * enc_ang_l / dt / dynamics.gear_ratio / 2;
   sensing_result->ego.v_r = tire * enc_ang_r / dt / dynamics.gear_ratio / 2;
+
+  // if (ABS(sensing_result->ego.v_r - sensing_result->ego.v_r_old) > 1000) {
+  //   sensing_result->ego.v_r = sensing_result->ego.v_r_old;
+  // }
+  // if (ABS(sensing_result->ego.v_l - sensing_result->ego.v_l_old) > 1000) {
+  //   sensing_result->ego.v_l = sensing_result->ego.v_l_old;
+  // }
+
   sensing_result->ego.v_c =
       (sensing_result->ego.v_l + sensing_result->ego.v_r) / 2;
 }
@@ -727,10 +738,12 @@ void PlanningTask::update_ego_motion() {
   }
 
   // エンコーダ、ジャイロから速度、角速度、距離、角度更新
-  // sensing_result->ego.v_r = (float)(PI * tire * sensing_result->encoder.right
+  // sensing_result->ego.v_r = (float)(PI * tire *
+  // sensing_result->encoder.right
   // /
   //                                   4096.0 / dt / dynamics.gear_ratio);
-  // sensing_result->ego.v_l = (float)(PI * tire * sensing_result->encoder.left
+  // sensing_result->ego.v_l = (float)(PI * tire *
+  // sensing_result->encoder.left
   // /
   //                                   4096.0 / dt / dynamics.gear_ratio);
   calc_vel();
@@ -819,10 +832,14 @@ void PlanningTask::update_ego_motion() {
   sensing_result->ego.right45_lp_old = sensing_result->ego.right45_lp;
   sensing_result->ego.right90_lp_old = sensing_result->ego.right90_lp;
 
+  sensing_result->ego.right45_2_lp_old = sensing_result->ego.right45_2_lp;
+  sensing_result->ego.left45_2_lp_old = sensing_result->ego.left45_2_lp;
+
   sensing_result->ego.right90_raw = sensing_result->led_sen.right90.raw;
   sensing_result->ego.right90_lp =
       sensing_result->ego.right90_lp * (1 - param_ro->led_param.lp_delay) +
       sensing_result->ego.right90_raw * param_ro->led_param.lp_delay;
+
   sensing_result->ego.right45_raw = sensing_result->led_sen.right45.raw;
   sensing_result->ego.right45_lp =
       sensing_result->ego.right45_lp * (1 - param_ro->led_param.lp_delay) +
@@ -837,11 +854,21 @@ void PlanningTask::update_ego_motion() {
   sensing_result->ego.left45_lp =
       sensing_result->ego.left45_lp * (1 - param_ro->led_param.lp_delay) +
       sensing_result->ego.left45_raw * param_ro->led_param.lp_delay;
+
   sensing_result->ego.left90_raw = sensing_result->led_sen.left90.raw;
   sensing_result->ego.left90_lp =
       sensing_result->ego.left90_lp * (1 - param_ro->led_param.lp_delay) +
       sensing_result->ego.left90_raw * param_ro->led_param.lp_delay;
 
+  sensing_result->ego.right45_2_raw = sensing_result->led_sen.right45_2.raw;
+  sensing_result->ego.right45_2_lp =
+      sensing_result->ego.right45_2_lp * (1 - param_ro->led_param.lp_delay) +
+      sensing_result->ego.right45_2_raw * param_ro->led_param.lp_delay;
+
+  sensing_result->ego.left45_2_raw = sensing_result->led_sen.left45_2.raw;
+  sensing_result->ego.left45_2_lp =
+      sensing_result->ego.left45_2_lp * (1 - param_ro->led_param.lp_delay) +
+      sensing_result->ego.left45_2_raw * param_ro->led_param.lp_delay;
   // コピー
   tgt_val->ego_in.slip_point.w = sensing_result->ego.w_lp;
 }
@@ -861,7 +888,7 @@ void PlanningTask::set_next_duty(float duty_l, float duty_r,
       set_gpio_state(A_CW_CCW1, false);
       // GPIO.out1_w1tc.val = BIT(A_CW_CCW2_BIT);
     }
-    if (duty_l > 0) {
+    if (duty_l < 0) {
       // GPIO.out1_w1ts.val = BIT(B_CW_CCW1_BIT);
       set_gpio_state(B_CW_CCW1, true);
       // GPIO.out1_w1tc.val = BIT(B_CW_CCW2_BIT);
@@ -1053,7 +1080,8 @@ void PlanningTask::calc_tgt_duty() {
   if (param_ro->comp_param.enable == 0) {
     error_entity.v.error_p = tgt_val->ego_in.v - sensing_result->ego.v_c;
   } else {
-    // error_entity.v.error_p = tgt_val->ego_in.v - sensing_result->ego.main_v;
+    // error_entity.v.error_p = tgt_val->ego_in.v -
+    // sensing_result->ego.main_v;
     error_entity.v.error_p = tgt_val->ego_in.v - sensing_result->ego.filter_v;
   }
   error_entity.w.error_p = tgt_val->ego_in.w - sensing_result->ego.w_lp;
@@ -1234,12 +1262,12 @@ void PlanningTask::calc_tgt_duty() {
   // if (w_reset == 0 || tgt_val->motion_type == MotionType::FRONT_CTRL ||
   //     !motor_en) {
   //   gyro_pid.step(&error_entity.w.error_p, &param_ro->gyro_pid.p,
-  //                 &param_ro->gyro_pid.i, &param_ro->gyro_pid.d, &reset, &dt,
-  //                 &duty_roll);
+  //                 &param_ro->gyro_pid.i, &param_ro->gyro_pid.d, &reset,
+  //                 &dt, &duty_roll);
   // } else {
   //   gyro_pid.step(&error_entity.w.error_p, &param_ro->gyro_pid.p,
-  //                 &param_ro->gyro_pid.i, &param_ro->gyro_pid.d, &enable, &dt,
-  //                 &duty_roll);
+  //                 &param_ro->gyro_pid.i, &param_ro->gyro_pid.d, &enable,
+  //                 &dt, &duty_roll);
   // }
   if (tgt_val->motion_type == MotionType::SLALOM) {
     const float max_duty_roll = 8.5;
@@ -1309,11 +1337,13 @@ void PlanningTask::calc_tgt_duty() {
     }
   }
 
-  // tgt_duty.duty_r = (duty_c + duty_c2 + duty_roll + duty_roll2 + duty_rpm_r +
+  // tgt_duty.duty_r = (duty_c + duty_c2 + duty_roll + duty_roll2 + duty_rpm_r
+  // +
   //                    duty_ff_front + duty_ff_roll + duty_sen) /
   //                   sensing_result->ego.battery_lp * 100;
 
-  // tgt_duty.duty_l = (duty_c + duty_c2 - duty_roll - duty_roll2 + duty_rpm_l +
+  // tgt_duty.duty_l = (duty_c + duty_c2 - duty_roll - duty_roll2 + duty_rpm_l
+  // +
   //                    duty_ff_front - duty_ff_roll - duty_sen) /
   //                   sensing_result->ego.battery_lp * 100;
 
@@ -1405,11 +1435,10 @@ void PlanningTask::cp_tgt_val() {
 
   // if (tgt_val->motion_type == MotionType::SLALOM &&
   //     tgt_val->motion_mode != (int)(RUN_MODE2::SLALOM_RUN2)) {
-  //   const auto ax = Fx / param_ro->Mass + tgt_val->ego_in.w * slip_param.vy;
-  //   const auto ay = Fy / param_ro->Mass - tgt_val->ego_in.w * slip_param.vx;
-  //   const auto old_v = slip_param.v;
-  //   slip_param.vx += ax * dt;
-  //   slip_param.vy += ay * dt;
+  //   const auto ax = Fx / param_ro->Mass + tgt_val->ego_in.w *
+  //   slip_param.vy; const auto ay = Fy / param_ro->Mass - tgt_val->ego_in.w
+  //   * slip_param.vx; const auto old_v = slip_param.v; slip_param.vx += ax *
+  //   dt; slip_param.vy += ay * dt;
   //   // tgt_val->ego_in.v = mpc_next_ego.v;
   //   slip_param.v = std::sqrt(slip_param.vx * slip_param.vx +
   //                            slip_param.vy * slip_param.vy);

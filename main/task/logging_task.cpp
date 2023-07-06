@@ -95,7 +95,8 @@ void LoggingTask::task() {
           ld->v_c = floatToHalf(sensing_result->ego.v_c);
           ld->v_c2 = floatToHalf(sensing_result->ego.filter_v);
           ld->v_r = floatToHalf(sensing_result->ego.v_r);
-
+          ld->v_r_enc = (sensing_result->encoder.right);
+          ld->v_l_enc = (sensing_result->encoder.left);
           ld->accl = floatToHalf(tgt_val->ego_in.accl);
           ld->accl_x = floatToHalf(sensing_result->ego.accel_x_raw);
           // ld->accl_x = floatToHalf((float)tgt_val->ego_in.state);
@@ -119,6 +120,9 @@ void LoggingTask::task() {
           // ld->front_lp = floatToHalf(sensing_result->ego.front_lp);
           ld->right45_lp = floatToHalf(sensing_result->ego.right45_lp);
           ld->right90_lp = floatToHalf(sensing_result->ego.right90_lp);
+
+          ld->left45_2_lp = floatToHalf(sensing_result->ego.left45_2_lp);
+          ld->right45_2_lp = floatToHalf(sensing_result->ego.right45_2_lp);
 
           ld->battery_lp = floatToHalf(sensing_result->ego.battery_lp);
           ld->duty_l = floatToHalf(sensing_result->ego.duty.duty_l);
@@ -210,6 +214,8 @@ void LoggingTask::save(std::string file_name) {
             halfToFloat(ld->v_c2),     //
             halfToFloat(ld->v_l),      //
             halfToFloat(ld->v_r),      //
+            (ld->v_l_enc),             //
+            (ld->v_r_enc),             //
             halfToFloat(ld->accl),     //
             halfToFloat(ld->accl_x));  // 8
     fprintf(f_slalom_log, f2,          //
@@ -271,6 +277,8 @@ void LoggingTask::save(std::string file_name) {
             ((halfToFloat(ld->left90_lp) + halfToFloat(ld->right90_lp)) / 2), //
             halfToFloat(ld->right45_lp),                                      //
             halfToFloat(ld->right90_lp),                                      //
+            halfToFloat(ld->left45_2_lp),                                     //
+            halfToFloat(ld->right45_2_lp),                                    //
             l90, l45, front, r45, r90,                                        //
             l90_far, front_far, r90_far,                                      //
             halfToFloat(ld->battery_lp),                                      //
@@ -367,10 +375,10 @@ void LoggingTask::dump_log(std::string file_name) {
   char line_buf[LINE_BUF_SIZE];
   printf("start___\n"); // csvファイル作成トリガー
   vTaskDelay(xDelay2);
-  printf("index,ideal_v,v_c,v_c2,v_l,v_r,accl,accl_x,ideal_w,w_lp,alpha,"
-         "ideal_dist,"
-         "dist,"
-         "ideal_ang,ang,left90,left45,front,right45,right90,left90_d,left45_d,"
+  printf("index,ideal_v,v_c,v_c2,v_l,v_r,v_l_enc,v_r_enc,accl,accl_x,"
+         "ideal_w,w_lp,alpha,ideal_dist,dist,"
+         "ideal_ang,ang,left90,left45,front,right45,right90,left45_2,right45_2,"
+         "left90_d,left45_d,"
          "front_d,right45_d,right90_d,left90_far_d,front_far_d,right90_far_d,"
          "battery,duty_l,"
          "duty_r,motion_state,duty_sen,dist_mod90,"
@@ -391,6 +399,8 @@ void LoggingTask::dump_log(std::string file_name) {
            halfToFloat(ld->v_c2),     //
            halfToFloat(ld->v_l),      //
            halfToFloat(ld->v_r),      //
+           (ld->v_l_enc),             //
+           (ld->v_r_enc),             //
            halfToFloat(ld->accl),     //
            halfToFloat(ld->accl_x));  // 8
     printf(f2,                        //
@@ -452,6 +462,8 @@ void LoggingTask::dump_log(std::string file_name) {
            ((halfToFloat(ld->left90_lp) + halfToFloat(ld->right90_lp)) / 2), //
            halfToFloat(ld->right45_lp),                                      //
            halfToFloat(ld->right90_lp),                                      //
+           halfToFloat(ld->left45_2_lp),                                     //
+           halfToFloat(ld->right45_2_lp),                                    //
            l90, l45, front, r45, r90,                                        //
            l90_far, front_far, r90_far,                                      //
            halfToFloat(ld->battery_lp),                                      //

@@ -114,9 +114,7 @@ void SensingTask::timer_200us_callback_main() {
   esp_timer_start_once(timer_10us, 10); // 1ms/4
 }
 
-
-void SensingTask::timer_250us_callback_main() {
-}
+void SensingTask::timer_250us_callback_main() {}
 
 void SensingTask::create_task(const BaseType_t xCoreID) {
   xTaskCreatePinnedToCore(task_entry_point, "sensing_task", 8192, this, 2,
@@ -200,16 +198,15 @@ void SensingTask::task() {
       led_on = false;
     };
 
-    int32_t enc = 0;
-    enc = enc_if.read2byte(0x3F, 0xFF, false) & 0x3FFF;
-    sensing_result->encoder.left_old = sensing_result->encoder.left;
-    sensing_result->encoder.left = -enc;
-
-    enc = enc_if.read2byte(0x3F, 0xFF, true) & 0x3FFF;
-    sensing_result->encoder.right_old = sensing_result->encoder.right;
-    sensing_result->encoder.right = -enc;
-
     gyro_if.req_read2byte_itr(0x26);
+    int32_t enc_r = enc_if.read2byte(0x3F, 0xFF, true) & 0x3FFF;
+    sensing_result->encoder.right_old = sensing_result->encoder.right;
+    sensing_result->encoder.right = -enc_r;
+
+    int32_t enc_l = enc_if.read2byte(0x3F, 0xFF, false) & 0x3FFF;
+    sensing_result->encoder.left_old = sensing_result->encoder.left;
+    sensing_result->encoder.left = -enc_l;
+
     sensing_result->gyro_list[4] = gyro_if.read_2byte_itr();
     sensing_result->gyro.raw = sensing_result->gyro_list[4];
     sensing_result->gyro.data = (float)(sensing_result->gyro_list[4]);
