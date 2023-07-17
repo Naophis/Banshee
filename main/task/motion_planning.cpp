@@ -669,6 +669,7 @@ void MotionPlanning::reset_gyro_ref() {
   tgt_val->accel_y_zero_p_offset = accel_y_raw_data_sum / RESET_GYRO_LOOP_CNT;
 }
 void MotionPlanning::reset_gyro_ref_with_check() {
+  // return;
   ui->motion_check();
   reset_gyro_ref();
 }

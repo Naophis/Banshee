@@ -85,6 +85,8 @@ typedef struct {
 
   float w_raw = 0;
   float w_lp = 0;
+  float w_kf = 0;
+  float v_kf = 0;
   float accel_x_raw = 0;
 
   float v_ave = 0;

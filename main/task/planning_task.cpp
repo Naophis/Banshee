@@ -5,7 +5,7 @@
 // constexpr int MOTOR_HZ = 125000;
 // constexpr int MOTOR_HZ = 100000;
 // constexpr int MOTOR_HZ = 75000 / 1;
-constexpr int MOTOR_HZ = 250000;
+constexpr int MOTOR_HZ = 99990;
 constexpr int SUCTION_MOTOR_HZ = 10000;
 PlanningTask::PlanningTask() {}
 
@@ -253,6 +253,15 @@ void PlanningTask::task() {
   gyro_pid.initialize();
   ang_pid.initialize();
 
+  float initial_state = 0.0;      // 初期姿勢の推定値
+  float initial_covariance = 1.0; // 初期姿勢の誤差共分散行列
+  float process_noise = 0.05;     // プロセスノイズの共分散
+  float measurement_noise = 0.35; // 観測ノイズの共分散
+
+  kf_w.init(initial_state, initial_covariance, process_noise,
+            measurement_noise);
+  kf_v.init(initial_state, initial_covariance, process_noise,
+            measurement_noise);
   // dist_pid.initialize();
   // sen_pid.initialize();
   // sen_dia_pid.initialize();
@@ -817,6 +826,13 @@ void PlanningTask::update_ego_motion() {
       sensing_result->ego.w_lp * (1 - param_ro->gyro_param.lp_delay) +
       sensing_result->ego.w_raw * param_ro->gyro_param.lp_delay;
 
+  kf_w.predict(sensing_result->ego.w_raw);
+  kf_w.update(sensing_result->ego.w_raw);
+  sensing_result->ego.w_kf = kf_w.get_state();
+  kf_v.predict(sensing_result->ego.v_c);
+  kf_v.update(sensing_result->ego.v_c);
+  sensing_result->ego.v_kf = kf_v.get_state();
+
   sensing_result->ego.battery_raw = sensing_result->battery.data;
 
   sensing_result->ego.battery_lp =
@@ -876,8 +892,8 @@ void PlanningTask::update_ego_motion() {
 void PlanningTask::set_next_duty(float duty_l, float duty_r,
                                  float duty_suction) {
   if (motor_en) {
-    // duty_l = -10.9;
-    // duty_r = 10.9;
+    duty_l = -20.9;
+    duty_r = 20.9;
 
     if (duty_r > 0) {
       // GPIO.out1_w1ts.val = BIT(A_CW_CCW2_BIT);
@@ -1079,12 +1095,11 @@ void PlanningTask::calc_tgt_duty() {
 
   if (param_ro->comp_param.enable == 0) {
     error_entity.v.error_p = tgt_val->ego_in.v - sensing_result->ego.v_c;
+    error_entity.w.error_p = tgt_val->ego_in.w - sensing_result->ego.w_lp;
   } else {
-    // error_entity.v.error_p = tgt_val->ego_in.v -
-    // sensing_result->ego.main_v;
-    error_entity.v.error_p = tgt_val->ego_in.v - sensing_result->ego.filter_v;
+    error_entity.v.error_p = tgt_val->ego_in.v - sensing_result->ego.v_kf;
+    error_entity.w.error_p = tgt_val->ego_in.w - sensing_result->ego.w_kf;
   }
-  error_entity.w.error_p = tgt_val->ego_in.w - sensing_result->ego.w_lp;
 
   // tgt_val->global_pos.img_ang += mpc_next_ego.w;
   // tgt_val->global_pos.img_dist += mpc_next_ego.v;

@@ -46,7 +46,7 @@ constexpr float cell_size = 90;
 // constexpr gpio_num_t LED_L90 = GPIO_NUM_21;
 
 constexpr gpio_num_t SDA_PIN = GPIO_NUM_14;
-constexpr gpio_num_t SCL_PIN = GPIO_NUM_21;
+constexpr gpio_num_t SCL_PIN = GPIO_NUM_15;
 
 // constexpr unsigned int LED_R90_BIT = 8;
 // constexpr unsigned int LED_R45_BIT = 9;
@@ -99,10 +99,10 @@ constexpr gpio_num_t ENC_MOSI = GPIO_NUM_9; // A
 constexpr gpio_num_t SUCTION_PWM = GPIO_NUM_35;
 
 #define SEN_R90 ADC2_CHANNEL_2
-#define SEN_R45 ADC2_CHANNEL_4
-#define SEN_R45_2 ADC2_CHANNEL_5
-#define SEN_L45_2 ADC2_CHANNEL_6
-#define SEN_L45 ADC2_CHANNEL_7
+#define SEN_R45 ADC2_CHANNEL_5
+// #define SEN_R45_2 ADC2_CHANNEL_5
+// #define SEN_L45_2 ADC2_CHANNEL_6
+#define SEN_L45 ADC2_CHANNEL_6
 #define SEN_L90 ADC2_CHANNEL_8
 #define BATTERY ADC2_CHANNEL_9
 

@@ -1145,6 +1145,26 @@ void MainTask::task() {
       pt->suction_enable(sys.test.suction_duty, sys.test.suction_duty_low);
       vTaskDelay(1000.0 * 10 / portTICK_PERIOD_MS);
       pt->suction_disable();
+    } else if (sys.user_mode == 12) {
+      printf("hold\n");
+      mp->reset_gyro_ref_with_check();
+      // pt->suction_enable(sys.test.suction_duty, sys.test.suction_duty_low);
+      lt->start_slalom_log();
+      vTaskDelay(1000.0 * 10 / portTICK_PERIOD_MS);
+      lt->stop_slalom_log();
+      lt->save(slalom_log_file);
+      ui->coin(120);
+      while (1) {
+        if (ui->button_state_hold())
+          break;
+        vTaskDelay(10.0 / portTICK_RATE_MS);
+      }
+      lt->dump_log(slalom_log_file);
+      while (1) {
+        if (ui->button_state_hold())
+          break;
+        vTaskDelay(10.0 / portTICK_RATE_MS);
+      }
     } else if (sys.user_mode == 13) {
       printf("keep_pivot\n");
       keep_pivot();

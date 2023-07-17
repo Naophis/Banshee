@@ -19,6 +19,8 @@
 #include "gen_code_simple_pid/simple_pid_controller.h"
 #include <cmath>
 
+#include "include/kalman_filter.hpp"
+
 class PlanningTask {
 public:
   PlanningTask();
@@ -76,6 +78,9 @@ public:
   std::vector<float> axel_degenerate_y;
 
   pid_error_entity_t error_entity;
+
+  KalmanFilter kf_w;
+  KalmanFilter kf_v;
 
 private:
   void set_gpio_state(gpio_num_t gpio_num, int state);

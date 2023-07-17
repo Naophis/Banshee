@@ -40,7 +40,7 @@ void SensingTask::timer_10us_callback_main() {
     break;
   case 3:
     adc2_get_raw(SEN_R45, width, &se->led_sen_after.right45.raw);
-    adc2_get_raw(SEN_R45_2, width, &se->led_sen_after.right45_2.raw);
+    // adc2_get_raw(SEN_R45_2, width, &se->led_sen_after.right45_2.raw);
     // se->gyro_list[3] = gyro_if.read_2byte_itr();
 
     // enc = enc_if.read2byte(0x3F, 0xFF, true) & 0x3FFF;
@@ -49,7 +49,7 @@ void SensingTask::timer_10us_callback_main() {
     break;
   case 4:
     adc2_get_raw(SEN_L45, width, &se->led_sen_after.left45.raw);
-    adc2_get_raw(SEN_L45_2, width, &se->led_sen_after.left45_2.raw);
+    // adc2_get_raw(SEN_L45_2, width, &se->led_sen_after.left45_2.raw);
     // se->gyro_list[4] = gyro_if.read_2byte_itr();
     se->led_sen.right90.raw = std::max(
         se->led_sen_after.right90.raw - se->led_sen_before.right90.raw, 0);
@@ -97,14 +97,14 @@ void SensingTask::timer_200us_callback_main() {
     break;
   case 3:
     adc2_get_raw(SEN_R45, width, &se->led_sen_before.right45.raw);
-    adc2_get_raw(SEN_R45_2, width, &se->led_sen_before.right45_2.raw);
+    // adc2_get_raw(SEN_R45_2, width, &se->led_sen_before.right45_2.raw);
     set_gpio_state(LED_A0, false);
     set_gpio_state(LED_A1, true);
     set_gpio_state(LED_EN, true);
     break;
   case 4:
     adc2_get_raw(SEN_L45, width, &se->led_sen_before.left45.raw);
-    adc2_get_raw(SEN_L45_2, width, &se->led_sen_before.left45_2.raw);
+    // adc2_get_raw(SEN_L45_2, width, &se->led_sen_before.left45_2.raw);
     set_gpio_state(LED_A0, true);
     set_gpio_state(LED_A1, true);
     set_gpio_state(LED_EN, true);
@@ -179,9 +179,9 @@ void SensingTask::task() {
   // sensing init
   adc2_config_channel_atten(SEN_R90, atten);
   adc2_config_channel_atten(SEN_R45, atten);
-  adc2_config_channel_atten(SEN_R45_2, atten);
+  // adc2_config_channel_atten(SEN_R45_2, atten);
   adc2_config_channel_atten(SEN_L45, atten);
-  adc2_config_channel_atten(SEN_L45_2, atten);
+  // adc2_config_channel_atten(SEN_L45_2, atten);
   adc2_config_channel_atten(SEN_L90, atten);
   adc2_config_channel_atten(BATTERY, atten);
 

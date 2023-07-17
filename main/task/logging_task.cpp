@@ -92,13 +92,14 @@ void LoggingTask::task() {
 
           ld->img_v = floatToHalf(tgt_val->ego_in.v);
           ld->v_l = floatToHalf(sensing_result->ego.v_l);
+          // ld->v_l = floatToHalf(sensing_result->ego.v_kf);
           ld->v_c = floatToHalf(sensing_result->ego.v_c);
-          ld->v_c2 = floatToHalf(sensing_result->ego.filter_v);
+          ld->v_c2 = floatToHalf(sensing_result->ego.v_kf);
           ld->v_r = floatToHalf(sensing_result->ego.v_r);
           ld->v_r_enc = (sensing_result->encoder.right);
           ld->v_l_enc = (sensing_result->encoder.left);
           ld->accl = floatToHalf(tgt_val->ego_in.accl);
-          ld->accl_x = floatToHalf(sensing_result->ego.accel_x_raw);
+          ld->accl_x = floatToHalf(sensing_result->ego.w_kf);
           // ld->accl_x = floatToHalf((float)tgt_val->ego_in.state);
           // ld->accl = floatToHalf(tgt_val->v_error);
           // ld->accl_x = floatToHalf(tgt_val->w_error);

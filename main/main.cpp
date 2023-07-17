@@ -185,7 +185,6 @@ extern "C" void app_main3() {
 // 100m second ESP_ERROR_CHECK(esp_timer_start_periodic(adc_timer, 10000)); //
 // 10m second
 
-
 // static void multiply2Matrices()
 // {
 //     Eigen::MatrixXf M(2, 2);
@@ -204,15 +203,16 @@ extern "C" void app_main3() {
 // {
 //     Eigen::MatrixXf C;
 //     C.setRandom(27, 18);
-//     Eigen::JacobiSVD<Eigen::MatrixXf> svd(C, Eigen::ComputeThinU | Eigen::ComputeThinV);
-//     Eigen::MatrixXf Cp = svd.matrixU() * svd.singularValues().asDiagonal() * svd.matrixV().transpose();
+//     Eigen::JacobiSVD<Eigen::MatrixXf> svd(C, Eigen::ComputeThinU |
+//     Eigen::ComputeThinV); Eigen::MatrixXf Cp = svd.matrixU() *
+//     svd.singularValues().asDiagonal() * svd.matrixV().transpose();
 //     Eigen::MatrixXf diff = Cp - C;
 //     std::cout << "SDV matrix U: " << std::endl << svd.matrixU() << std::endl;
-//     std::cout << "SDV singularValues: " << std::endl << svd.singularValues().transpose() << std::endl;
-//     std::cout << "SDV matrix V: " << std::endl << svd.matrixV() << std::endl;
-//     std::cout << "diff:\n" << diff.array().abs().sum() << "\n";
+//     std::cout << "SDV singularValues: " << std::endl <<
+//     svd.singularValues().transpose() << std::endl; std::cout << "SDV matrix
+//     V: " << std::endl << svd.matrixV() << std::endl; std::cout << "diff:\n"
+//     << diff.array().abs().sum() << "\n";
 // }
-
 
 // extern "C" void app_main() {
 //     std::cout << "Eigen example." << std::endl;
@@ -283,6 +283,17 @@ extern "C" void app_main() {
   //   return;
   // } else {
   //   printf("storage0: mount OK\n");
+  // }
+  // gpio_set_level(A_CW_CCW1, 1);
+  // gpio_set_level(B_CW_CCW1, 1);
+  // while (true) {
+
+  //   gpio_set_level(A_PWM, 1);
+  //   gpio_set_level(B_PWM, 1);
+  //   vTaskDelay(500.0 / portTICK_RATE_MS);
+  //   gpio_set_level(A_PWM, 0);
+  //   gpio_set_level(B_PWM, 0);
+  //   vTaskDelay(500.0 / portTICK_RATE_MS);
   // }
 
   gpio_set_level(SUCTION_PWM, 0);
@@ -359,9 +370,9 @@ extern "C" void app_main() {
     //        st.sensing_result->led_sen.right90.raw);
     // printf("%d %x\n", i, i << 5);
     // printf("%d %x\n", i, (i << 5) | 0x1F);
-    // i2c_master_write_to_device(0, 0x9A, writeBuffer, 2, 1 / portTICK_RATE_MS);
-    // printf("%x, %x\n", (i << 5) | 0x18, (0x04 << 5) | 0x18);
-    // printf("battery: %f\n", st.sensing_result->battery.data);
+    // i2c_master_write_to_device(0, 0x9A, writeBuffer, 2, 1 /
+    // portTICK_RATE_MS); printf("%x, %x\n", (i << 5) | 0x18, (0x04 << 5) |
+    // 0x18); printf("battery: %f\n", st.sensing_result->battery.data);
     // printf("gyro: %d\n", st.sensing_result->gyro.raw);
     // SCCB_Write(0x9A, writeBuffer[0], writeBuffer[0]);
     // i++;
