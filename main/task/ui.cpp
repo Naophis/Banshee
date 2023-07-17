@@ -21,7 +21,7 @@ bool UserInterface::button_state_hold() {
   }
 }
 void UserInterface::init_i2c_master() {
-  i2c_port_t port = 0;
+  i2c_port_t port = I2C_NUM_0;
   i2c_config_t config;
 
   config.mode = I2C_MODE_MASTER;
@@ -37,7 +37,7 @@ void UserInterface::init_i2c_master() {
 }
 
 uint8_t UserInterface::SCCB_Write(uint8_t slv_addr, uint8_t reg, uint8_t data) {
-  i2c_port_t port = 0;
+  i2c_port_t port = I2C_NUM_0;
   esp_err_t ret = ESP_FAIL;
   i2c_cmd_handle_t cmd = i2c_cmd_link_create();
   i2c_master_start(cmd);

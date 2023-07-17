@@ -102,15 +102,7 @@ void AS5147P::setup() {
 int AS5147P::read_gyro_z() { return read2byte(0x47); }
 int AS5147P::read_accel_x() { return read2byte(0x3B); }
 int AS5147P::read_accel_y() { return read2byte(0x3D); }
-void AS5147P::req_read1byte_itr(const uint8_t address) {
-  memset(&itr_t, 0, sizeof(itr_t)); // Zero out the transaction
-  itr_t.flags = SPI_TRANS_USE_RXDATA;
-  itr_t.length = 16; // SPI_ADDRESS(8bit) + SPI_DATA(8bit)
-  uint16_t tx_data = (address | READ_FLAG2) << 8;
-  tx_data = SPI_SWAP_DATA_TX(tx_data, 16);
-  itr_t.tx_buffer = &tx_data;
-  // spi_device_queue_trans(spi, &itr_t, 1 / portTICK_RATE_MS); // Transmit!
-}
+void AS5147P::req_read1byte_itr(const uint8_t address) {}
 uint8_t AS5147P::read_1byte_itr() {
   // spi_device_get_trans_result(spi_r, &r_trans, 1 / portTICK_RATE_MS);
   return (uint8_t)(((unsigned short)(r_trans->rx_data[1] & 0xff)));
