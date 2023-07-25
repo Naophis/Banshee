@@ -113,7 +113,6 @@ typedef struct {
   float left90_raw = 0;
   float left90_lp = 0;
 
-
   float right45_2_raw = 0;
   float right45_2_lp = 0;
   float left45_2_raw = 0;
@@ -190,6 +189,7 @@ typedef struct {
   ego_entity_t ego;
   sen_logs_t sen;
   sen_dist_log_t sen_dist_log;
+  int32_t calc_time;
 } sensing_result_entity_t;
 
 typedef struct {
@@ -529,6 +529,7 @@ typedef struct {
 typedef struct {
   t_tgt tgt_in;
   t_ego ego_in;
+  int64_t calc_time;
   global_ego_pos_t global_pos;
   int32_t motion_mode;
   MotionType motion_type;
@@ -776,6 +777,8 @@ typedef struct {
   real16_T duty_sensor_ctrl;
   real16_T sen_log_l45;
   real16_T sen_log_r45;
+  int32_t sen_calc_time;
+  int32_t pln_calc_time;
 } log_data_t2;
 
 typedef struct {

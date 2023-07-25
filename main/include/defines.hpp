@@ -102,7 +102,7 @@ constexpr gpio_num_t SUCTION_PWM = GPIO_NUM_35;
 #define SEN_R45 ADC2_CHANNEL_5
 // #define SEN_R45_2 ADC2_CHANNEL_5
 // #define SEN_L45_2 ADC2_CHANNEL_6
-#define SEN_L45 ADC2_CHANNEL_6
+#define SEN_L45 ADC2_CHANNEL_7
 #define SEN_L90 ADC2_CHANNEL_8
 #define BATTERY ADC2_CHANNEL_9
 
@@ -172,7 +172,7 @@ static const std::string
     format3("%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0."
             "3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,"
             "%0.3f,%d,");
-static const std::string format4("%0.3f,%0.3f,%0.3f,%0.3f,%d\n");
+static const std::string format4("%0.3f,%0.3f,%0.3f,%0.3f,%d,%d,%d\n");
 static const std::string
     formatsysid("%d,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f\n");
 static char line_buf[LINE_BUF_SIZE];

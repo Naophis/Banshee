@@ -186,7 +186,7 @@ void MainTask::dump1() {
       tgt_val->ego_in.ang = tgt_val->ego_in.dist = 0;
     }
 
-    // vTaskDelay(xDelay100);
+    vTaskDelay(xDelay100);
   }
 }
 
@@ -1884,6 +1884,11 @@ void MainTask::test_search_sla() {
   sla_p = param_set.map[TurnType::Normal];
   str_p = param_set.str_map[StraightType::Search];
 
+  printf("str: \n");
+  printf("- v_max: %f\n", str_p.v_max);
+  printf("- accl: %f\n", str_p.accl);
+  printf("- decel: %f\n", str_p.decel);
+
   rorl = ui->select_direction();
   backup_r = param->sen_ref_p.normal.exist.right45;
   backup_l = param->sen_ref_p.normal.exist.left45;
@@ -1924,8 +1929,8 @@ void MainTask::test_search_sla() {
 
   nm.v_max = str_p.v_max;
   nm.v_end = sla_p.v;
-  nm.accl = sys.test.accl;
-  nm.decel = sys.test.decel;
+  nm.accl = str_p.accl;
+  nm.decel = str_p.decel;
   nm.is_turn = false;
 
   mp->slalom(sla_p, rorl, nm);

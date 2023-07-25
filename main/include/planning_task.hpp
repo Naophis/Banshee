@@ -4,6 +4,7 @@
 #include "defines.hpp"
 #include "driver/ledc.h"
 #include "driver/mcpwm.h"
+#include "esp_timer.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/queue.h"
 #include "freertos/task.h"

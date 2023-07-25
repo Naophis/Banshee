@@ -5,8 +5,8 @@
 // constexpr int MOTOR_HZ = 125000;
 // constexpr int MOTOR_HZ = 100000;
 // constexpr int MOTOR_HZ = 75000 / 1;
-constexpr int MOTOR_HZ = 99990;
-constexpr int SUCTION_MOTOR_HZ = 10000;
+constexpr int MOTOR_HZ = 25000;
+constexpr int SUCTION_MOTOR_HZ = 100000;
 PlanningTask::PlanningTask() {}
 
 PlanningTask::~PlanningTask() {}
@@ -193,6 +193,8 @@ void PlanningTask::calc_filter() {
   }
 }
 void PlanningTask::task() {
+  int64_t start;
+  int64_t end;
   const TickType_t xDelay = 1 / portTICK_PERIOD_MS;
   BaseType_t queue_recieved;
   init_gpio();
@@ -272,6 +274,7 @@ void PlanningTask::task() {
   accl_x_q.clear();
 
   while (1) {
+    start = esp_timer_get_time();
     if (xQueueReceive(motor_qh_enable, &motor_enable_send_msg, 0) == pdTRUE) {
       if (motor_req_timestamp != motor_enable_send_msg.timestamp) {
         if (motor_enable_send_msg.enable) {
@@ -370,6 +373,9 @@ void PlanningTask::task() {
     // if (lt->active_slalom_log) {
     //   lt->exec_log();
     // }
+
+    end = esp_timer_get_time();
+    tgt_val->calc_time = end - start;
     vTaskDelay(xDelay);
   }
 }
@@ -828,6 +834,10 @@ void PlanningTask::update_ego_motion() {
 
   kf_w.predict(sensing_result->ego.w_raw);
   kf_w.update(sensing_result->ego.w_raw);
+
+  // kf_w.predict(sensing_result->ego.w_raw);
+  // kf_w.update(sensing_result->ego.);
+
   sensing_result->ego.w_kf = kf_w.get_state();
   kf_v.predict(sensing_result->ego.v_c);
   kf_v.update(sensing_result->ego.v_c);
@@ -892,31 +902,19 @@ void PlanningTask::update_ego_motion() {
 void PlanningTask::set_next_duty(float duty_l, float duty_r,
                                  float duty_suction) {
   if (motor_en) {
-    duty_l = -20.9;
-    duty_r = 20.9;
+    // duty_l = 30.9;
+    // duty_r = 30.9;
 
     if (duty_r > 0) {
-      // GPIO.out1_w1ts.val = BIT(A_CW_CCW2_BIT);
-      // GPIO.out1_w1ts.val = BIT(A_CW_CCW1_BIT);
       set_gpio_state(A_CW_CCW1, true);
     } else {
-      // GPIO.out1_w1tc.val = BIT(A_CW_CCW1_BIT);
       set_gpio_state(A_CW_CCW1, false);
-      // GPIO.out1_w1tc.val = BIT(A_CW_CCW2_BIT);
     }
     if (duty_l < 0) {
-      // GPIO.out1_w1ts.val = BIT(B_CW_CCW1_BIT);
       set_gpio_state(B_CW_CCW1, true);
-      // GPIO.out1_w1tc.val = BIT(B_CW_CCW2_BIT);
     } else {
-      // GPIO.out1_w1ts.val = BIT(B_CW_CCW2_BIT);
       set_gpio_state(B_CW_CCW1, false);
-      // GPIO.out1_w1tc.val = BIT(B_CW_CCW1_BIT);
     }
-    // GPIO.out1_w1ts.val = BIT(A_CW_CCW2_BIT);
-    // GPIO.out1_w1ts.val = BIT(A_CW_CCW1_BIT);
-    // GPIO.out1_w1ts.val = BIT(B_CW_CCW1_BIT);
-    // GPIO.out1_w1ts.val = BIT(B_CW_CCW2_BIT);
     float tmp_duty_r = duty_r > 0 ? duty_r : -duty_r;
     float tmp_duty_l = duty_l > 0 ? duty_l : -duty_l;
 
@@ -1364,13 +1362,21 @@ void PlanningTask::calc_tgt_duty() {
 
   // printf("%0.3f, %0.3f, %0.3f, %0.3f,%0.3f,%0.3f \n", duty_c, duty_c2,
   //        duty_roll, duty_roll2, mpc_next_ego.ff_duty_r, duty_sen);
-  tgt_duty.duty_r = (duty_c + duty_c2 + duty_roll + duty_roll2 +
-                     mpc_next_ego.ff_duty_r + duty_sen) /
-                    sensing_result->ego.battery_lp * 100;
 
-  tgt_duty.duty_l = (duty_c + duty_c2 - duty_roll - duty_roll2 +
-                     mpc_next_ego.ff_duty_l - duty_sen) /
-                    sensing_result->ego.battery_lp * 100;
+  auto ff_duty_r = mpc_next_ego.ff_duty_r;
+  auto ff_duty_l = mpc_next_ego.ff_duty_l;
+
+  if (param_ro->FF_keV == 0) {
+    ff_duty_l = ff_duty_r = 0;
+  }
+
+  tgt_duty.duty_r =
+      (duty_c + duty_c2 + duty_roll + duty_roll2 + ff_duty_r + duty_sen) /
+      sensing_result->ego.battery_lp * 100;
+
+  tgt_duty.duty_l =
+      (duty_c + duty_c2 - duty_roll - duty_roll2 + ff_duty_l - duty_sen) /
+      sensing_result->ego.battery_lp * 100;
 
   if (tgt_val->motion_type == MotionType::FRONT_CTRL) {
     const auto max_duty = param_ro->sen_ref_p.search_exist.offset_l;
@@ -1586,6 +1592,10 @@ void PlanningTask::cp_request() {
 
   tgt_val->motion_dir = receive_req->nmr.motion_dir;
   tgt_val->dia_mode = receive_req->nmr.dia_mode;
+
+  tgt_val->tgt_in.accl_param.limit = 2500;
+  tgt_val->tgt_in.accl_param.n = 4;
+
   tgt_val->tgt_in.slip_gain_K1 = param_ro->slip_param_K;
   tgt_val->tgt_in.slip_gain_K2 = param_ro->slip_param_k2;
   if (receive_req->nmr.motion_type == MotionType::SLALOM) {
