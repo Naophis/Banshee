@@ -529,7 +529,8 @@ typedef struct {
 typedef struct {
   t_tgt tgt_in;
   t_ego ego_in;
-  int64_t calc_time;
+  int32_t calc_time;
+  int32_t calc_time2;
   global_ego_pos_t global_pos;
   int32_t motion_mode;
   MotionType motion_type;
@@ -777,8 +778,9 @@ typedef struct {
   real16_T duty_sensor_ctrl;
   real16_T sen_log_l45;
   real16_T sen_log_r45;
-  int32_t sen_calc_time;
-  int32_t pln_calc_time;
+  int16_t sen_calc_time;
+  int16_t pln_calc_time;
+  int16_t pln_calc_time2;
 } log_data_t2;
 
 typedef struct {

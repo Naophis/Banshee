@@ -226,17 +226,10 @@ extern "C" void app_main() {
 
   init_gpio();
   init_uart();
+  // adc2_config_channel_atten(BATTERY, ADC_ATTEN_DB_11);
+
   // if (true) {
-  //   enc_if.init();
-  //   enc_if.setup();
-  //   while (1) {
-  //     auto enc_l3 = enc_if.read2byte(0x3F, 0xFF, false) & 0x3FFF;
-  //     auto enc_r3 = enc_if.read2byte(0x3F, 0xFF, true) & 0x3FFF;
-  //     cout << "3_" << 360 * enc_l3 / 16384.0 << "\t" << 360 * enc_r3 /
-  //     16384.0
-  //          << endl;
-  //     vTaskDelay(100.0 / portTICK_RATE_MS);
-  //   }
+  //   vTaskDelay(100.0 / portTICK_RATE_MS);
   // }
 
   // const int arraySize = 100;

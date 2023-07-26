@@ -195,6 +195,8 @@ void PlanningTask::calc_filter() {
 void PlanningTask::task() {
   int64_t start;
   int64_t end;
+  int64_t start2;
+  int64_t end2;
   const TickType_t xDelay = 1 / portTICK_PERIOD_MS;
   BaseType_t queue_recieved;
   init_gpio();
@@ -275,6 +277,7 @@ void PlanningTask::task() {
 
   while (1) {
     start = esp_timer_get_time();
+    start2 = esp_timer_get_time();
     if (xQueueReceive(motor_qh_enable, &motor_enable_send_msg, 0) == pdTRUE) {
       if (motor_req_timestamp != motor_enable_send_msg.timestamp) {
         if (motor_enable_send_msg.enable) {
@@ -335,6 +338,7 @@ void PlanningTask::task() {
       diff = diff_old = 0;
       tgt_val->tgt_in.axel_degenerate_gain = axel_degenerate_gain;
     }
+    end2 = esp_timer_get_time();
     mpc_tgt_calc.step(&tgt_val->tgt_in, &tgt_val->ego_in, tgt_val->motion_mode,
                       mpc_step, &mpc_next_ego, &dynamics);
     if (tgt_val->motion_type == MotionType::STRAIGHT ||
@@ -376,6 +380,9 @@ void PlanningTask::task() {
 
     end = esp_timer_get_time();
     tgt_val->calc_time = end - start;
+    tgt_val->calc_time2 = end2 - start2;
+
+    printf("pln: %d, %d\n", (int16_t)(end - start), (int16_t)(end2 - start2));
     vTaskDelay(xDelay);
   }
 }

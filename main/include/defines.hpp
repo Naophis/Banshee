@@ -172,7 +172,7 @@ static const std::string
     format3("%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0."
             "3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,"
             "%0.3f,%d,");
-static const std::string format4("%0.3f,%0.3f,%0.3f,%0.3f,%d,%d,%d\n");
+static const std::string format4("%0.3f,%0.3f,%0.3f,%0.3f,%d,%d,%d,%d\n");
 static const std::string
     formatsysid("%d,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f\n");
 static char line_buf[LINE_BUF_SIZE];

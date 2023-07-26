@@ -30,13 +30,13 @@ debug: 0 #
 # mode: 1 # 最短スローム
 # mode: 2 # 直進
 # mode: 3 # 超信地
-mode: 5 # 探索スラローム
+# mode: 5 # 探索スラローム
 # mode: 7 # front ctrl
 # mode: 9 # wall off
 # mode: 11 # vacume/suction test
 # mode: 12 # silent_keep
 # mode: 13 # keep_pos
-# mode: 14 # sensing
+mode: 14 # sensing
 # mode: 15 # sensor calib
 # mode: 20 # pivot turn n
 # mode: 21 # pivot turn n2

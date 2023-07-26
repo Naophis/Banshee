@@ -139,6 +139,7 @@ void LoggingTask::task() {
           ld->motion_timestamp = tgt_val->nmr.timstamp;
           ld->sen_calc_time = sensing_result->calc_time;
           ld->pln_calc_time = tgt_val->calc_time;
+          ld->pln_calc_time2 = tgt_val->calc_time2;
           
           if (heap_caps_get_free_size(MALLOC_CAP_INTERNAL) > 10000) {
             log_vec.emplace_back(std::move(ld));
@@ -385,7 +386,7 @@ void LoggingTask::dump_log(std::string file_name) {
          "front_d,right45_d,right90_d,left90_far_d,front_far_d,right90_far_d,"
          "battery,duty_l,"
          "duty_r,motion_state,duty_sen,dist_mod90,"
-         "sen_dist_l45,sen_dist_r45,timestamp,sen_calc_time,pln_calc_time\n");
+         "sen_dist_l45,sen_dist_r45,timestamp,sen_calc_time,pln_calc_time,pln_calc_time2\n");
   int c = 0;
   const char *f1 = format1.c_str();
   const char *f2 = format2.c_str();
@@ -481,7 +482,8 @@ void LoggingTask::dump_log(std::string file_name) {
            halfToFloat(ld->sen_log_r45),      //
            ld->motion_timestamp,              //
            ld->sen_calc_time,                 //
-           ld->pln_calc_time);                // 4
+           ld->pln_calc_time,                 //
+           ld->pln_calc_time2);                // 4
 
     if (i > 10 && ld->motion_timestamp == 0) {
       break;
