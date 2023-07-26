@@ -277,7 +277,6 @@ void PlanningTask::task() {
 
   while (1) {
     start = esp_timer_get_time();
-    start2 = esp_timer_get_time();
     if (xQueueReceive(motor_qh_enable, &motor_enable_send_msg, 0) == pdTRUE) {
       if (motor_req_timestamp != motor_enable_send_msg.timestamp) {
         if (motor_enable_send_msg.enable) {
@@ -338,9 +337,10 @@ void PlanningTask::task() {
       diff = diff_old = 0;
       tgt_val->tgt_in.axel_degenerate_gain = axel_degenerate_gain;
     }
-    end2 = esp_timer_get_time();
+    start2 = esp_timer_get_time();
     mpc_tgt_calc.step(&tgt_val->tgt_in, &tgt_val->ego_in, tgt_val->motion_mode,
                       mpc_step, &mpc_next_ego, &dynamics);
+    end2 = esp_timer_get_time();
     if (tgt_val->motion_type == MotionType::STRAIGHT ||
         tgt_val->motion_type == MotionType::SLA_FRONT_STR ||
         tgt_val->motion_type == MotionType::SLA_BACK_STR) {
@@ -382,7 +382,7 @@ void PlanningTask::task() {
     tgt_val->calc_time = end - start;
     tgt_val->calc_time2 = end2 - start2;
 
-    printf("pln: %d, %d\n", (int16_t)(end - start), (int16_t)(end2 - start2));
+    // printf("pln: %d, %d\n", (int16_t)(end - start), (int16_t)(end2 - start2));
     vTaskDelay(xDelay);
   }
 }
@@ -770,7 +770,7 @@ void PlanningTask::update_ego_motion() {
   //                                   4096.0 / dt / dynamics.gear_ratio);
   calc_vel();
 
-  calc_filter();
+  // calc_filter();
 
   sensing_result->ego.rpm.right =
       30.0 * sensing_result->ego.v_r / (m_PI * tire / 2);
@@ -839,16 +839,16 @@ void PlanningTask::update_ego_motion() {
       sensing_result->ego.w_lp * (1 - param_ro->gyro_param.lp_delay) +
       sensing_result->ego.w_raw * param_ro->gyro_param.lp_delay;
 
-  kf_w.predict(sensing_result->ego.w_raw);
-  kf_w.update(sensing_result->ego.w_raw);
+  // kf_w.predict(sensing_result->ego.w_raw);
+  // kf_w.update(sensing_result->ego.w_raw);
 
   // kf_w.predict(sensing_result->ego.w_raw);
   // kf_w.update(sensing_result->ego.);
 
-  sensing_result->ego.w_kf = kf_w.get_state();
-  kf_v.predict(sensing_result->ego.v_c);
-  kf_v.update(sensing_result->ego.v_c);
-  sensing_result->ego.v_kf = kf_v.get_state();
+  // sensing_result->ego.w_kf = kf_w.get_state();
+  // kf_v.predict(sensing_result->ego.v_c);
+  // kf_v.update(sensing_result->ego.v_c);
+  // sensing_result->ego.v_kf = kf_v.get_state();
 
   sensing_result->ego.battery_raw = sensing_result->battery.data;
 
