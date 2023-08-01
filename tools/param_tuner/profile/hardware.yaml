@@ -63,7 +63,7 @@ orval_offset_enable: 1
 dia45_offset_enable: 1
 
 # front_dist_offset2: 137.0
-led_light_delay_cnt: 1200
+led_light_delay_cnt: 1500
 
 front_dist_offset_pivot_th: 78
 front_dist_offset_pivot: 90
@@ -237,10 +237,10 @@ str_agl_pid:
   b: 0
   c: 0
 sensor_pid:
-  # p: 0.095 #search_mode
-  # b: 0.175 #!searchm_mode
-  p: 0.00 #search_mode
-  b: 0.0 #!searchm_mode
+  p: 0.095 #search_mode
+  b: 0.175 #!searchm_mode
+  # p: 0.00 #search_mode
+  # b: 0.0 #!searchm_mode
 
   # p: 0.5 #search_mode
   # b: 0.1 #!searchm_mode

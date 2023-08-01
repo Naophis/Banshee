@@ -28,9 +28,9 @@ give_up_time: 30
 debug: 0 #
 # mode: 0 # メイン
 # mode: 1 # 最短スローム
-# mode: 2 # 直進
+mode: 2 # 直進
 # mode: 3 # 超信地
-mode: 5 # 探索スラローム
+# mode: 5 # 探索スラローム
 # mode: 7 # front ctrl
 # mode: 9 # wall off
 # mode: 11 # vacume/suction test
@@ -42,11 +42,11 @@ mode: 5 # 探索スラローム
 # mode: 21 # pivot turn n2
 
 test: # テスト走行時に使用するパラメータ群
-  v_max: 2500
+  v_max: 500
   end_v: 1
   accl: 2500
   decel: -2500
-  dist:  180 #直進全部
+  dist:  270 #直進全部
   # dist: 540 #直進全部　
   # dist: 180 # スラロームテスト
   dia: 0
