@@ -6,8 +6,8 @@ normal:
     kireme_r: 1.750
     kireme_l: 1.750
   exist:
-    right45: 460.5
-    left45: 4.5
+    right45: 46.5
+    left45: 46.5
     # right45: 48
     # left45: 48
     # front: 65 #80
@@ -63,13 +63,13 @@ search:
     kireme_l: 1.0 #切れ目しきい値 L
 
     offset_r: 25 #前壁制御　左右値差　しきい値
-    offset_l: 35 #前壁制御　duty max値
+    offset_l: 10 #前壁制御　duty max値
 
     front_ctrl_th: 56
     # 前壁補正
-    front_ctrl: 45.50
+    front_ctrl: 48.0
     # kireme_r: 0.95 #前壁補正：角度
-    kireme_r: -0.5  #前壁補正：角度
+    kireme_r: -2.5  #前壁補正：角度
 gain:
   F: [0.7, 1] # 探索時の壁制御上限
   # F: [70, 1] # 探索時の壁制御上限
