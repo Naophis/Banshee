@@ -33,22 +33,45 @@
   * mode:13, 2
 * 角速度制御
   * mode:13, 3
-* 
+* LEDセンサー制御
+  * mode:2 (斜めは後で)
 
-## 本調整
+## 単体機能調整
 * LEDセンサーと壁との距離オフセット調整
-  * mode:2
-* 探索時壁切れ考慮位置調整
-  * mode:2(片側の壁制御を切りながら)
-* 前壁制御調整
-  * mode:7
+  * mode:2 
 * タイヤ径調整
   * mode:2
   * できるだけ長い距離でテスト
+* 前壁制御調整: search.exist
+  * mode:7
+  * 反応距離閾値：`front_ctrl_th`
+  * ref距離：`front_ctrl`
+  * 角度オフセット: `kireme_r` 負の値で左にオフセットする
+  * 前壁制御DutyMAX値： `offset_l`
+  * [終了条件]前壁と偏差許容値: `kireme_l`
+  * [終了条件]前壁との傾き許容偏差: `offset_r`
+* 探索時壁切れ考慮位置調整
+  * mode:2 (片側の壁制御を切りながら)
+  * `clear_dist_ragne_from`
+  * `clear_dist_ragne_to`
+* 探索前壁調整：
+  * mode:5
+  * `front_dist_offset`
 * 角速度ゲイン調整
   * mode:3
 * FF調整
   * mode:2, 3
 * 壁切れ調整
   * 
-* 
+* 探索スラローム
+  * 左右壁オフセットref: `sla_wall_ref_l`/`sla_wall_ref_r`
+
+  * 探索前壁位置調整: 
+
+## テスト
+
+
+
+### 探索テスト
+
+### 

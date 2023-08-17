@@ -301,7 +301,7 @@ void SensingTask::task() {
       set_gpio_state(LED_A1, false);
 
       lec_cnt = 0;
-      for (int i = 0; i < param->led_light_delay_cnt; i++) {
+      for (int i = 0; i < param->led_light_delay_cnt2; i++) {
         lec_cnt++;
       }
       adc_oneshot_read(adc2_handle, SEN_L90, &se->led_sen_after.left90.raw);
@@ -310,7 +310,7 @@ void SensingTask::task() {
       set_gpio_state(LED_A0, false);
       set_gpio_state(LED_A1, true);
       lec_cnt = 0;
-      for (int i = 0; i < param->led_light_delay_cnt; i++) {
+      for (int i = 0; i < param->led_light_delay_cnt2; i++) {
         lec_cnt++;
       }
       adc_oneshot_read(adc2_handle, SEN_R45, &se->led_sen_after.right45.raw);
@@ -319,7 +319,7 @@ void SensingTask::task() {
       set_gpio_state(LED_A0, true);
       set_gpio_state(LED_A1, true);
       lec_cnt = 0;
-      for (int i = 0; i < param->led_light_delay_cnt; i++) {
+      for (int i = 0; i < param->led_light_delay_cnt2; i++) {
         lec_cnt++;
       }
       adc_oneshot_read(adc2_handle, SEN_L45, &se->led_sen_after.left45.raw);

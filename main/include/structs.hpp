@@ -350,6 +350,7 @@ typedef struct {
   pid_param_t dist_pid;
   pid_param_t gyro_pid;
   pid_param_t str_ang_pid;
+  pid_param_t str_ang_dia_pid;
   pid_param_t angle_pid;
   pid_param_t sensor_pid;
   pid_param_t sensor_pid_dia;
@@ -394,6 +395,7 @@ typedef struct {
   float front_dist_offset_pivot = 0;
   int sen_log_size = 100;
   int led_light_delay_cnt = 1000;
+  int led_light_delay_cnt2 = 1000;
   bool set_param = false;
   float logging_time = 4.0;
   float offset_after_turn_l2 = 0.0;
@@ -597,6 +599,7 @@ typedef struct {
   int suction_active = 0;
   float suction_duty = 0;
   float suction_duty_low = 0;
+  float suction_gain = 0;
   float sla_dist = 0;
   int file_idx = 0;
   int sla_type = 0;

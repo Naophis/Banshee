@@ -279,14 +279,32 @@ extern "C" void app_main() {
   // }
   // gpio_set_level(A_CW_CCW1, 1);
   // gpio_set_level(B_CW_CCW1, 1);
-  // while (true) {
+  gpio_set_level(SUCTION_PWM, 0);
+  int c = 0;
+  // mcpwm_gpio_init(MCPWM_UNIT_1, MCPWM2A, SUCTION_PWM);
+  // mcpwm_config_t suction_pwm_conf;
+  // memset(&suction_pwm_conf, 0, sizeof(suction_pwm_conf));
+  // suction_pwm_conf.frequency = 200000; // PWM周波数= 10kHz,
+  // suction_pwm_conf.cmpr_a = 0; // デューティサイクルの初期値（0%）
+  // suction_pwm_conf.cmpr_b = 0; // デューティサイクルの初期値（0%）
+  // suction_pwm_conf.counter_mode = MCPWM_UP_COUNTER;
+  // suction_pwm_conf.duty_mode = MCPWM_DUTY_MODE_0; // アクティブハイ
+  // suction_pwm_conf.cmpr_a = 0; // デューティサイクルの初期値（0%）
+  // mcpwm_init(MCPWM_UNIT_1, MCPWM_TIMER_2, &suction_pwm_conf);
 
-  //   gpio_set_level(A_PWM, 1);
-  //   gpio_set_level(B_PWM, 1);
-  //   vTaskDelay(500.0 / portTICK_RATE_MS);
-  //   gpio_set_level(A_PWM, 0);
-  //   gpio_set_level(B_PWM, 0);
-  //   vTaskDelay(500.0 / portTICK_RATE_MS);
+  // while (true) {
+  //   printf("hello, world %d\n", c++);
+
+  //   mcpwm_set_signal_low(MCPWM_UNIT_1, MCPWM_TIMER_2, MCPWM_OPR_B);
+  //   float duty = 40.0 * c / 1000;
+  //   if (duty > 40) {
+  //     duty = 40;
+  //   }
+  //   mcpwm_set_duty(MCPWM_UNIT_1, MCPWM_TIMER_2, MCPWM_OPR_A, duty);
+  //   mcpwm_set_duty_type(MCPWM_UNIT_1, MCPWM_TIMER_2, MCPWM_OPR_A,
+  //                       MCPWM_DUTY_MODE_0);
+
+  //   vTaskDelay(10.0 / portTICK_RATE_MS);
   // }
 
   gpio_set_level(SUCTION_PWM, 0);

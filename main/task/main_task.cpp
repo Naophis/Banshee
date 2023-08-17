@@ -120,18 +120,18 @@ void MainTask::dump1() {
         sensing_result->led_sen.right45_2.raw,
         sensing_result->led_sen.right45.raw,
         sensing_result->led_sen.right90.raw);
-    // printf("sensor_before: %4d, %4d, %4d, %4d, %4d\n",
-    //        sensing_result->led_sen_before.left90.raw,
-    //        sensing_result->led_sen_before.left45.raw,
-    //        sensing_result->led_sen_before.front.raw,
-    //        sensing_result->led_sen_before.right45.raw,
-    //        sensing_result->led_sen_before.right90.raw);
-    // printf("sensor_after: %4d, %4d, %4d, %4d, %4d\n",
-    //        sensing_result->led_sen_after.left90.raw,
-    //        sensing_result->led_sen_after.left45.raw,
-    //        sensing_result->led_sen_after.front.raw,
-    //        sensing_result->led_sen_after.right45.raw,
-    //        sensing_result->led_sen_after.right90.raw);
+    printf("sensor_before: %4d, %4d, %4d, %4d, %4d\n",
+           sensing_result->led_sen_before.left90.raw,
+           sensing_result->led_sen_before.left45.raw,
+           sensing_result->led_sen_before.front.raw,
+           sensing_result->led_sen_before.right45.raw,
+           sensing_result->led_sen_before.right90.raw);
+    printf("sensor_after: %4d, %4d, %4d, %4d, %4d\n",
+           sensing_result->led_sen_after.left90.raw,
+           sensing_result->led_sen_after.left45.raw,
+           sensing_result->led_sen_after.front.raw,
+           sensing_result->led_sen_after.right45.raw,
+           sensing_result->led_sen_after.right90.raw);
     printf("sensor_dist(near): %3.2f, %3.2f, %3.2f, %3.2f, %3.2f\n",
            sensing_result->ego.left90_dist,  //
            sensing_result->ego.left45_dist,  //
@@ -321,7 +321,7 @@ void MainTask::load_hw_param() {
   // printf("%s\n", str.c_str());
 
   cJSON *root = cJSON_CreateObject(), *motor_pid, *motor_pid2, *gyro_pid,
-        *str_agl_pid, *gyro_param, *kalman_config, *battery_param, *led_param,
+        *str_agl_pid, *str_agl_dia_pid, *gyro_param, *kalman_config, *battery_param, *led_param,
         *angle_pid, *dist_pid, *sen_pid, *sen_pid_dia, *accel_x, *comp_v_param,
         *axel_degenerate_x, *axel_degenerate_y;
   root = cJSON_Parse(str.c_str());
@@ -355,6 +355,8 @@ void MainTask::load_hw_param() {
       getItem(root, "clear_dist_ragne_to")->valuedouble;
   param->led_light_delay_cnt =
       getItem(root, "led_light_delay_cnt")->valuedouble;
+  param->led_light_delay_cnt2 =
+      getItem(root, "led_light_delay_cnt2")->valuedouble;
   param->front_diff_th = getItem(root, "front_diff_th")->valuedouble;
 
   axel_degenerate_x = getItem(root, "axel_degenerate_x");
@@ -507,6 +509,14 @@ void MainTask::load_hw_param() {
   param->str_ang_pid.b = getItem(str_agl_pid, "b")->valuedouble;
   param->str_ang_pid.c = getItem(str_agl_pid, "c")->valuedouble;
   param->str_ang_pid.mode = getItem(str_agl_pid, "mode")->valueint;
+
+  str_agl_pid = getItem(root, "str_agl_dia_pid");
+  param->str_ang_dia_pid.p = getItem(str_agl_pid, "p")->valuedouble;
+  param->str_ang_dia_pid.i = getItem(str_agl_pid, "i")->valuedouble;
+  param->str_ang_dia_pid.d = getItem(str_agl_pid, "d")->valuedouble;
+  param->str_ang_dia_pid.b = getItem(str_agl_pid, "b")->valuedouble;
+  param->str_ang_dia_pid.c = getItem(str_agl_pid, "c")->valuedouble;
+  param->str_ang_dia_pid.mode = getItem(str_agl_pid, "mode")->valueint;
 
   motor_pid2 = getItem(root, "motor_pid2");
   param->motor_pid2.p = getItem(motor_pid2, "p")->valuedouble;
@@ -824,7 +834,9 @@ void MainTask::load_sys_param() {
   sys.test.suction_active = getItem(test, "suction_active")->valueint;
   sys.test.suction_duty = getItem(test, "suction_duty")->valuedouble;
   sys.test.suction_duty_low = getItem(test, "suction_duty_low")->valuedouble;
-
+  sys.test.suction_gain = getItem(test, "suction_gain")->valuedouble;
+  pt->suction_gain = sys.test.suction_gain;
+  
   sys.test.file_idx = getItem(test, "file_idx")->valueint;
   printf("sys.test.file_idx = %d\n", sys.test.file_idx);
   file_idx = sys.test.file_idx;

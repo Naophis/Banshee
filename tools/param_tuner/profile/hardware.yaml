@@ -5,7 +5,7 @@ dt: 0.001
 # tire: 13.367
 # tire: 15.15
 # tire: 13.23
-tire: 13.5725
+tire: 13.6250
 # tire: 13.095
 # tire: 13.135
 offset_start_dist: 21.0
@@ -23,8 +23,8 @@ FF_keV: 1
 
 # Ke: 0.00125
 # Km: 0.0005
-Ke: 0.00185 # 大：逆起電力大
-Km: 0.0125 # 大：縦系の出力小
+Ke: 0.00125 # 大：逆起電力大
+Km: 0.0185 # 大：縦系の出力小
 # Ke: 0.00085 # 大：逆起電力大
 # Km: 0.0075 # 大：縦系の出力小
 # Ke: 0.00105 # 大：逆起電力大
@@ -47,12 +47,12 @@ clear_angle: 5
 clear_dist_order: 80
 
 # 探索スラローム
-front_dist_offset: 92.50 # 探索時の前壁補正
+front_dist_offset: 90.0 # 探索時の前壁補正
 # スラロームオフセット距離壁補正リファレンス値
 # sla_wall_ref_l: 44.0
 # sla_wall_ref_r: 49.5
-sla_wall_ref_l: 44.50
-sla_wall_ref_r: 46.50
+sla_wall_ref_l: 45.0
+sla_wall_ref_r: 45.0
 sla_max_offset_dist: 6
 normal_sla_offset: 6
 
@@ -63,7 +63,8 @@ orval_offset_enable: 1
 dia45_offset_enable: 1
 
 # front_dist_offset2: 137.0
-led_light_delay_cnt: 1500
+led_light_delay_cnt: 750
+led_light_delay_cnt2: 750
 
 front_dist_offset_pivot_th: 78
 front_dist_offset_pivot: 90
@@ -77,8 +78,8 @@ front_dist_offset_dia_left45: 50
 seach_timer: 450
 seach_timer_slowdown: 450
 
-clear_dist_ragne_from: 30
-clear_dist_ragne_to: 60
+clear_dist_ragne_from: 25
+clear_dist_ragne_to: 45
 
 wall_off_hold_dist: 30
 
@@ -171,8 +172,8 @@ axel_degenerate_y: [1, 1, 1, 1, 1, 1, 1]
 motor_pid:
   # p: 0.00575
   # i: 1.725
-  p: 0.00275
-  i: 0.85
+  p: 0.00225
+  i: 0.55
   d: 0.0
   b: 0
   c: 0
@@ -189,9 +190,9 @@ motor_pid2:
   c: 0
   mode: 1
 dist_pid:
-  p: 0.75
+  p: 0.80
   i: 0.0015
-  d: 0.175
+  d: -0.001
   b: 0
   c: 0
   mode: 1
@@ -221,13 +222,23 @@ gyro_pid:
   b: 0.0225
   c: 0.275
 angle_pid:
-  p: 0.45
+  p: 0.35
   i: 0.0
   d: 0.0
   mode: 1
   b: 0
   c: 0
 str_agl_pid:
+  # p: 0.095
+  # d: 1.25
+  p: 0.095
+  b: 0.175 #!searchm_mode
+  d: 0.0125
+  i: 0.0
+  mode: 1
+  # b: 0
+  c: 0
+str_agl_dia_pid:
   # p: 0.095
   # d: 1.25
   p: 20.75

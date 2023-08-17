@@ -83,10 +83,13 @@ public:
   KalmanFilter kf_w;
   KalmanFilter kf_v;
 
+  float suction_gain = 200;
+
 private:
   void set_gpio_state(gpio_num_t gpio_num, int state);
   float diff_old = 0;
   float diff = 0;
+  float gain_cnt = 0;
   void motor_enable_main();
   void motor_disable_main();
 
