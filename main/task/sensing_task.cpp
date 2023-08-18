@@ -16,8 +16,8 @@ void SensingTask::timer_10us_callback(void *arg) {
   SensingTask *instance = static_cast<SensingTask *>(arg);
   instance->timer_10us_callback_main();
 }
-std::vector<int> x = {2290, 2350, 2430, 2475, 2540, 2610, 2640, 2675};
-std::vector<float> y = {7.4, 7.6, 7.8, 8.0, 8.2, 8.4, 8.5, 8.6};
+std::vector<int> x = {2150, 2210, 2375, 2335, 2305, 2455, 2515, 2555, 2580};
+std::vector<float> y = {7.2, 7.4, 7.6, 7.8, 8.0, 8.2, 8.4, 8.5, 8.6};
 
 float linearInterpolation(const std::vector<int> &x,
                           const std::vector<float> &y, int x1) {
@@ -317,8 +317,8 @@ void SensingTask::task() {
 
     end = esp_timer_get_time();
     se->calc_time = end - start;
-    // printf("sen: %d, %d\n", (int16_t)(end - start), (int16_t)(end2 - start2));
-    // vTaskDelay(xDelay);
+    // printf("sen: %d, %d\n", (int16_t)(end - start), (int16_t)(end2 -
+    // start2)); vTaskDelay(xDelay);
     vTaskDelay(1.0 / portTICK_PERIOD_MS);
   }
 }

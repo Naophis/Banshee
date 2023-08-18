@@ -400,13 +400,13 @@ float PlanningTask::calc_sensor_pid() {
 
   if (search_mode) {
     duty = param_ro->str_ang_pid.p * error_entity.sen.error_p -
-           param_ro->str_ang_pid.d * sensing_result->ego.w_lp +
+           param_ro->str_ang_pid.d * sensing_result->ego.w_kf +
            (error_entity.sen_log.gain_z - error_entity.sen_log.gain_zz) * dt;
     error_entity.sen_log.gain_zz = error_entity.sen_log.gain_z;
     error_entity.sen_log.gain_z = duty;
   } else {
     duty = param_ro->str_ang_pid.b * error_entity.sen.error_p -
-           param_ro->str_ang_pid.d * sensing_result->ego.w_lp +
+           param_ro->str_ang_pid.d * sensing_result->ego.w_kf +
            (error_entity.sen_log.gain_z - error_entity.sen_log.gain_zz) * dt;
     error_entity.sen_log.gain_zz = error_entity.sen_log.gain_z;
     error_entity.sen_log.gain_z = duty;

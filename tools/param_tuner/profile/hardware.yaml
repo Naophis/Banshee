@@ -13,7 +13,7 @@ offset_start_dist: 21.0
 gear_a: 1
 gear_b: 1
 # max_duty: 99.9
-max_duty: 30.950
+max_duty: 99.950
 FF_front: 1
 FF_roll: 1
 FF_keV: 1
@@ -51,7 +51,7 @@ front_dist_offset: 90.0 # 探索時の前壁補正
 # スラロームオフセット距離壁補正リファレンス値
 # sla_wall_ref_l: 44.0
 # sla_wall_ref_r: 49.5
-sla_wall_ref_l: 45.0
+sla_wall_ref_l: 44.50
 sla_wall_ref_r: 45.0
 sla_max_offset_dist: 6
 normal_sla_offset: 6
@@ -78,8 +78,8 @@ front_dist_offset_dia_left45: 50
 seach_timer: 450
 seach_timer_slowdown: 450
 
-clear_dist_ragne_from: 25
-clear_dist_ragne_to: 45
+clear_dist_ragne_from: 23
+clear_dist_ragne_to: 50
 
 wall_off_hold_dist: 30
 
@@ -232,8 +232,8 @@ str_agl_pid:
   # p: 0.095
   # d: 1.25
   p: 0.095
-  b: 0.175 #!searchm_mode
-  d: 0.0125
+  b: 0.125 #!searchm_mode
+  d: 0.01
   i: 0.0
   mode: 1
   # b: 0
