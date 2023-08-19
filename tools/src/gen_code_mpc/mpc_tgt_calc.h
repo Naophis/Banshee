@@ -76,6 +76,8 @@ class mpc_tgt_calcModelClass final
     int32_T Constant3_Value_i;
     int32_T Constant1_Value_a0;
     int32_T Constant2_Value_h;
+    int32_T DataStoreMemory_InitialValue;
+    int32_T DataStoreMemory1_InitialValue;
     real32_T Constant4_Value;
     real32_T Constant6_Value;
     real32_T Constant_Value_ne;
@@ -146,8 +148,6 @@ class mpc_tgt_calcModelClass final
     real32_T Gain6_Gain_f;
     real32_T Gain1_Gain_i5;
     real32_T Gain3_Gain_k;
-    real32_T DataStoreMemory_InitialValue;
-    real32_T DataStoreMemory1_InitialValue;
     uint8_T ManualSwitch_CurrentSetting;
     uint8_T ManualSwitch_CurrentSetting_c;
     uint8_T ManualSwitch_CurrentSetting_i;

@@ -199,13 +199,13 @@ void mpc_tgt_calcModelClass::step(const t_tgt *arg_tgt, const t_ego *arg_ego,
   rtb_Abs7 = rtb_Switch5 * static_cast<real32_T>(arg_time_step) *
     mpc_tgt_calc_P.dt;
   if (arg_mode == 1) {
-    rtb_Switch1_n_idx_1 = static_cast<real32_T>(arg_time_step) +
-      static_cast<real32_T>(arg_ego->sla_param.counter);
-    if (rtb_Switch1_n_idx_1 > arg_ego->sla_param.limit_time_count) {
+    int32_T rtb_Merge1_p;
+    rtb_Merge1_p = arg_time_step + arg_ego->sla_param.counter;
+    if (rtb_Merge1_p > arg_ego->sla_param.limit_time_count) {
       mpc_tgt_calc_IfActionSubsystem(&rtb_Divide_o,
         &mpc_tgt_calc_P.IfActionSubsystem_g);
     } else {
-      rtb_Divide_o = rtb_Switch1_n_idx_1 * mpc_tgt_calc_P.dt /
+      rtb_Divide_o = static_cast<real32_T>(rtb_Merge1_p) * mpc_tgt_calc_P.dt /
         arg_ego->sla_param.base_time - mpc_tgt_calc_P.Constant_Value_ne;
       rtb_Power_f = rt_powf_snf(rtb_Divide_o, arg_ego->sla_param.pow_n -
         mpc_tgt_calc_P.Constant1_Value_mn);
@@ -225,7 +225,7 @@ void mpc_tgt_calcModelClass::step(const t_tgt *arg_tgt, const t_ego *arg_ego,
       rtb_Divide_o *= arg_ego->sla_param.base_alpha;
     }
 
-    if (arg_tgt->time_step2 + static_cast<real32_T>(arg_ego->sla_param.counter) >
+    if (arg_tgt->time_step2 + arg_ego->sla_param.counter >
         arg_ego->sla_param.limit_time_count) {
       mpc_tgt_calc_IfActionSubsystem(&rtb_Power_f,
         &mpc_tgt_calc_P.IfActionSubsystem2);
@@ -236,15 +236,12 @@ void mpc_tgt_calcModelClass::step(const t_tgt *arg_tgt, const t_ego *arg_ego,
       rtb_BusAssignment1_n.w = static_cast<real32_T>
         (mpc_tgt_calc_P.Constant1_Value);
     } else {
-      rtb_BusAssignment1_n.w = mpc_tgt_calc_P.dt * rtb_Divide_o *
-        static_cast<real32_T>(arg_time_step) + arg_ego->w;
+      rtb_BusAssignment1_n.w = mpc_tgt_calc_P.dt * rtb_Divide_o * static_cast<
+        real32_T>(arg_time_step) + arg_ego->w;
     }
 
     rtb_BusAssignment1_n.alpha = rtb_Divide_o;
-    rtb_Switch1_n_idx_1 = std::fmod(rtb_Switch1_n_idx_1, 4.2949673E+9F);
-    rtb_BusAssignment1_n.sla_param.counter = rtb_Switch1_n_idx_1 < 0.0F ? -
-      static_cast<int32_T>(static_cast<uint32_T>(-rtb_Switch1_n_idx_1)) :
-      static_cast<int32_T>(static_cast<uint32_T>(rtb_Switch1_n_idx_1));
+    rtb_BusAssignment1_n.sla_param.counter = rtb_Merge1_p;
   } else if (arg_mode == 2) {
     t_ego rtb_BusAssignment_m;
     int32_T rtb_Merge1_p;
