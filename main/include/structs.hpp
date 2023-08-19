@@ -531,8 +531,8 @@ typedef struct {
 typedef struct {
   t_tgt tgt_in;
   t_ego ego_in;
-  int32_t calc_time;
-  int32_t calc_time2;
+  int16_t calc_time;
+  int16_t calc_time2;
   global_ego_pos_t global_pos;
   int32_t motion_mode;
   MotionType motion_type;

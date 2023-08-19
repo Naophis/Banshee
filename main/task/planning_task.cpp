@@ -168,6 +168,7 @@ void PlanningTask::inactive_logging() { log_active = false; }
 void PlanningTask::buzzer(ledc_channel_config_t &buzzer_ch,
                           ledc_timer_config_t &buzzer_timer) {
   int duty = 0;
+  bool buzzer = false;
   if (buzzer_timestamp != tgt_val->buzzer.timstamp) {
     buzzer_time_cnt = 0;
     buzzer_timestamp = tgt_val->buzzer.timstamp;
@@ -178,9 +179,16 @@ void PlanningTask::buzzer(ledc_channel_config_t &buzzer_ch,
   if (buzzer_time_cnt < tgt_val->buzzer.time) {
     duty = 50;
     buzzer_time_cnt++;
+    buzzer = true;
+  } else if (buzzer_time_cnt == tgt_val->buzzer.time) {
+    duty = 0;
+    buzzer_time_cnt++;
+    buzzer = true;
   }
-  ledc_set_duty(buzzer_ch.speed_mode, buzzer_ch.channel, duty);
-  ledc_update_duty(buzzer_ch.speed_mode, buzzer_ch.channel);
+  if (buzzer) {
+    ledc_set_duty(buzzer_ch.speed_mode, buzzer_ch.channel, duty);
+    ledc_update_duty(buzzer_ch.speed_mode, buzzer_ch.channel);
+  }
 }
 void PlanningTask::calc_filter() {
   const auto alpha = param_ro->comp_param.accl_x_hp_gain;
@@ -195,8 +203,12 @@ void PlanningTask::calc_filter() {
 void PlanningTask::task() {
   int64_t start;
   int64_t end;
-  int64_t start2;
-  int64_t end2;
+  int64_t start_calc_mpc;
+  int64_t end_calc_mpc;
+  // int64_t start2;
+  // int64_t end2;
+  // int64_t start2;
+  // int64_t end2;
   const TickType_t xDelay = 1.0 / portTICK_PERIOD_MS;
   BaseType_t queue_recieved;
   init_gpio();
@@ -300,8 +312,11 @@ void PlanningTask::task() {
     }
     queue_recieved = xQueueReceive(*qh, &receive_req, 0);
     // 自己位置更新
-    update_ego_motion();
-    calc_sensor_dist_all();
+
+    int64_t start_duty_cal = esp_timer_get_time();
+    update_ego_motion(); // 30 usec
+    int64_t end_duty_cal = esp_timer_get_time();
+    calc_sensor_dist_all(); //15 ~ 20 usec
 
     mpc_step = 1;
     tgt_val->tgt_in.time_step2 = param_ro->sakiyomi_time;
@@ -337,10 +352,12 @@ void PlanningTask::task() {
       diff = diff_old = 0;
       tgt_val->tgt_in.axel_degenerate_gain = axel_degenerate_gain;
     }
-    start2 = esp_timer_get_time();
+
+    start_calc_mpc = esp_timer_get_time();
     mpc_tgt_calc.step(&tgt_val->tgt_in, &tgt_val->ego_in, tgt_val->motion_mode,
                       mpc_step, &mpc_next_ego, &dynamics);
-    end2 = esp_timer_get_time();
+    end_calc_mpc = esp_timer_get_time();
+
     if (tgt_val->motion_type == MotionType::STRAIGHT ||
         tgt_val->motion_type == MotionType::SLA_FRONT_STR ||
         tgt_val->motion_type == MotionType::SLA_BACK_STR) {
@@ -353,12 +370,12 @@ void PlanningTask::task() {
     }
 
     // 算出結果をコピー
-    cp_tgt_val();
+    cp_tgt_val(); //1~2usec
 
     // Duty計算
-    calc_tgt_duty();
+    calc_tgt_duty(); // 15 ~ 20 usec
 
-    check_fail_safe();
+    check_fail_safe(); //7 ~ 9 usec
 
     // システム同定用
     if (tgt_val->motion_type == MotionType::SYS_ID_PARA ||
@@ -369,18 +386,16 @@ void PlanningTask::task() {
           tgt_val->nmr.sys_id.right_v / sensing_result->ego.battery_lp * 100;
     }
 
+    // 22 ~ 25 usec
     set_next_duty(tgt_duty.duty_l, tgt_duty.duty_r, tgt_duty.duty_suction);
 
     buzzer(buzzer_ch, buzzer_timer);
     global_msec_timer++;
 
-    // if (lt->active_slalom_log) {
-    //   lt->exec_log();
-    // }
-
     end = esp_timer_get_time();
     tgt_val->calc_time = end - start;
-    tgt_val->calc_time2 = end2 - start2;
+    // tgt_val->calc_time2 = end_calc_mpc - start_calc_mpc;
+    tgt_val->calc_time2 = end_duty_cal - start_duty_cal;
 
     // printf("pln: %d, %d\n", (int16_t)(end - start), (int16_t)(end2 -
     // start2));
@@ -870,8 +885,8 @@ void PlanningTask::update_ego_motion() {
   sensing_result->ego.right45_lp_old = sensing_result->ego.right45_lp;
   sensing_result->ego.right90_lp_old = sensing_result->ego.right90_lp;
 
-  sensing_result->ego.right45_2_lp_old = sensing_result->ego.right45_2_lp;
-  sensing_result->ego.left45_2_lp_old = sensing_result->ego.left45_2_lp;
+  // sensing_result->ego.right45_2_lp_old = sensing_result->ego.right45_2_lp;
+  // sensing_result->ego.left45_2_lp_old = sensing_result->ego.left45_2_lp;
 
   sensing_result->ego.right90_raw = sensing_result->led_sen.right90.raw;
   sensing_result->ego.right90_lp =
@@ -898,15 +913,15 @@ void PlanningTask::update_ego_motion() {
       sensing_result->ego.left90_lp * (1 - param_ro->led_param.lp_delay) +
       sensing_result->ego.left90_raw * param_ro->led_param.lp_delay;
 
-  sensing_result->ego.right45_2_raw = sensing_result->led_sen.right45_2.raw;
-  sensing_result->ego.right45_2_lp =
-      sensing_result->ego.right45_2_lp * (1 - param_ro->led_param.lp_delay) +
-      sensing_result->ego.right45_2_raw * param_ro->led_param.lp_delay;
+  // sensing_result->ego.right45_2_raw = sensing_result->led_sen.right45_2.raw;
+  // sensing_result->ego.right45_2_lp =
+  //     sensing_result->ego.right45_2_lp * (1 - param_ro->led_param.lp_delay) +
+  //     sensing_result->ego.right45_2_raw * param_ro->led_param.lp_delay;
 
-  sensing_result->ego.left45_2_raw = sensing_result->led_sen.left45_2.raw;
-  sensing_result->ego.left45_2_lp =
-      sensing_result->ego.left45_2_lp * (1 - param_ro->led_param.lp_delay) +
-      sensing_result->ego.left45_2_raw * param_ro->led_param.lp_delay;
+  // sensing_result->ego.left45_2_raw = sensing_result->led_sen.left45_2.raw;
+  // sensing_result->ego.left45_2_lp =
+  //     sensing_result->ego.left45_2_lp * (1 - param_ro->led_param.lp_delay) +
+  //     sensing_result->ego.left45_2_raw * param_ro->led_param.lp_delay;
   // コピー
   tgt_val->ego_in.slip_point.w = sensing_result->ego.w_lp;
 }
@@ -1542,9 +1557,9 @@ void PlanningTask::check_fail_safe() {
   if (ABS(error_entity.w.error_i) > param_ro->fail_check.w) {
     tgt_val->fss.error = 1;
   }
-  if (!std::isfinite(tgt_duty.duty_l) || !std::isfinite(tgt_duty.duty_r)) {
-    tgt_val->fss.error = 1;
-  }
+  // if (!std::isfinite(tgt_duty.duty_l) || !std::isfinite(tgt_duty.duty_r)) {
+  //   tgt_val->fss.error = 1;
+  // }
 }
 
 void PlanningTask::cp_request() {

@@ -94,23 +94,23 @@ wall_off_exist_wall_th_r: 55
 wall_off_hold_exist_dist_l: 72
 wall_off_hold_exist_dist_r: 72
 # 壁切れ Out
-wall_off_hold_noexist_th_l: 75
-wall_off_hold_noexist_th_r: 75
+wall_off_hold_noexist_th_l: 65
+wall_off_hold_noexist_th_r: 65
 # 壁切れ Out(最初からあるとき)
 wall_off_hold_noexist_th_l2: 65
 wall_off_hold_noexist_th_r2: 65
 # 壁切れ オフセット距離
 # wall_off_hold_dist_str_l: -4.0
 # wall_off_hold_dist_str_r: -5.5
-wall_off_hold_dist_str_l: -5.5
+wall_off_hold_dist_str_l: -7.5
 wall_off_hold_dist_str_r: -7.5
-wall_off_hold_dist_str_l_exist: -4.5
+wall_off_hold_dist_str_l_exist: -7.5
 wall_off_hold_dist_str_r_exist: -6.25
 # wall_off_hold_dist_str_r_exist: -1.25
 # wall_off_hold_dist_str_r_exist: 0.5
 # wall_off_hold_dist_str_r_exist: 3.50
 # 壁切れ：前壁補正
-front_dist_offset2: 133.0
+front_dist_offset2: 137.0
 # 壁切れ：前壁補正
 front_dist_offset3: 135
 
@@ -233,7 +233,7 @@ str_agl_pid:
   # d: 1.25
   p: 0.095
   b: 0.125 #!searchm_mode
-  d: 0.01
+  d: 0.005
   i: 0.0
   mode: 1
   # b: 0

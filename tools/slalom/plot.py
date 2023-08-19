@@ -25,7 +25,6 @@ class Plot:
         n = 2
         tgt_ang = 90
         slip_gain = 250
-        start_pos = {"x": 0, "y": 0}
         end_pos = {"x": 90, "y": 90}
         start_ang = 0
         tgt_ang1 = tgt_ang2 = tgt_ang3 = 0
