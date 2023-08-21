@@ -27,9 +27,7 @@ class Plot:
         slip_gain = 250
         end_pos = {"x": 90, "y": 90}
         start_ang = 0
-        
-        start_offset = 6
-        end_offset = 6
+
 
         tgt_ang1 = tgt_ang2 = tgt_ang3 = 0
         if type == "normal":
@@ -38,8 +36,6 @@ class Plot:
             tgt_ang = 90
             end_pos = {"x": 45, "y": 45}
             start_ang = 0
-            start_offset = 0
-            end_offset = 0
         elif type == "large":
             rad = 60
             n = 4
@@ -93,7 +89,7 @@ class Plot:
                 start_ang = 0
 
         elif type == "dia135":
-            rad = 45
+            rad = 48
             n = 4
             tgt_ang = 135
             end_pos = {"x": 45, "y": 90}
@@ -130,7 +126,10 @@ class Plot:
         # sla.calc_offset_front()
         start_pos_x = [0, 0]
         start_pos_y = [0, 0]
-        res1 = sla.calc_offset_dist(start_pos_x, start_pos_y, type, 0, 0)
+        offset = {}
+        offset["prev"] = 10
+        offset["after"] = 0
+        res1 = sla.calc_offset_dist(start_pos_x, start_pos_y, type, offset)
         range = [-1000, 1000]
 
         wall_color = "red"
@@ -177,22 +176,18 @@ class Plot:
         trj.plot(res1["after_path_x2"], res1["after_path_y2"], ls="-", color="coral", lw=trj_width, alpha=trj_alpha)
         plW = plt.subplot2grid((plot_row, plot_col), (4, 1), rowspan=1)
         plW.plot(res["w"])
-        
+
         start_pos_x = [0, 0]
         start_pos_y = [0, 0]
         # start_pos_y = [-10, -10]
         res = sla.calc_slip(start_ang)
 
-        prev_offset = start_offset
-        after_offset = 0
-        res2 = sla.calc_offset_dist(start_pos_x, start_pos_y, type, prev_offset, after_offset)
+        res2 = sla.calc_offset_dist(start_pos_x, start_pos_y, type, offset)
 
-        trj.plot(res2["prev_path_x"], res2["prev_path_y"],
-                 ls="--", color="cyan", lw=1, alpha=trj_alpha)
+        trj.plot(res2["prev_path_x"], res2["prev_path_y"], ls="--", color="cyan", lw=1, alpha=trj_alpha)
         trj.plot(res["x"] + res2["turn_offset_x"], res["y"] + res2["turn_offset_y"], color="blue", lw=1,
                  alpha=trj_alpha, ls="--")
-        trj.plot(res2["after_path_x2"], res2["after_path_y2"],
-                 ls="--", color="cyan", lw=1, alpha=trj_alpha)
+        trj.plot(res2["after_path_x2"], res2["after_path_y2"], ls="--", color="cyan", lw=1, alpha=trj_alpha)
 
         # plV = plt.subplot2grid((plot_row, plot_col), (1, 0), rowspan=plot_col)
         plV = plt.subplot2grid((plot_row, plot_col), (0, 1), rowspan=1)

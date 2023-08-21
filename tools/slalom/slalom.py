@@ -349,7 +349,7 @@ class Slalom:
             return 0
         return res
 
-    def calc_offset_dist(self, start_pos_x, start_pos_y, type, prev_offset, after_offset):
+    def calc_offset_dist(self, start_pos_x, start_pos_y, type, offset):
         a = math.sin(self.ang)
         b = math.cos(self.ang)
         if self.ang == 0:
@@ -370,62 +370,70 @@ class Slalom:
         after_path_y = [0, 0]
 
         if self.type == "normal":
+            end_offset = (self.end_pos["y"] - end_y)
+            start_offset = (self.end_pos["x"] - end_x)
             prev_path_x = [0, start_offset]
             prev_path_y = [0, 0]
             after_path_x = [end_x, end_x + end_offset * b]
             after_path_y = [end_y, end_y + end_offset * a]
         elif self.type == "large":
-            prev_path_x = [0, start_offset]
+            end_offset = (self.end_pos["y"] - end_y)
+            start_offset = (self.end_pos["x"] - end_x + offset["prev"])
+            prev_path_x = [-offset["prev"], start_offset - offset["prev"]]
             prev_path_y = [0, 0]
             after_path_x = [end_x, end_x + end_offset * b]
             after_path_y = [end_y, end_y + end_offset * a]
         elif self.type == "orval":
             pass
-
         elif self.type == "dia45":
-            prev_path_x = [0, start_offset]
+            end_offset = (self.end_pos["y"] - end_y) / a
+            start_offset = (self.end_pos["x"] - end_x + offset["prev"]) - end_offset * b
+            prev_path_x = [-offset["prev"], start_offset - offset["prev"]]
             prev_path_y = [0, 0]
             after_path_x = [end_x, end_x + end_offset * b]
             after_path_y = [end_y, end_y + end_offset * a]
-
         elif self.type == "dia135":
-            prev_path_x = [0, start_offset]
+            end_offset = (self.end_pos["y"] - end_y) / a
+            start_offset = (self.end_pos["x"] - end_x + offset["prev"]) - end_offset * b
+            prev_path_x = [-offset["prev"], start_offset - offset["prev"]]
             prev_path_y = [0, 0]
             after_path_x = [end_x, end_x + end_offset * b]
             after_path_y = [end_y, end_y + end_offset * a]
 
         elif self.type == "dia45_2":
 
-            start_offset = (self.half_cell_size - end_x) \
-                           / math.sin(math.pi / 4)
-            end_offset = self.cell_size - end_y - \
-                         start_offset * math.sin(math.pi / 4)
+            start_offset = (self.half_cell_size - end_x) / a + offset["prev"]
+            end_offset = (self.cell_size - end_y) - (start_offset - offset["prev"]) * a
 
-            prev_path_x = [0, start_offset * b]
-            prev_path_y = [0, start_offset * a]
+            prev_path_x = [-offset["prev"] * a, (start_offset - offset["prev"]) * b]
+            prev_path_y = [-offset["prev"] * a, (start_offset - offset["prev"]) * a]
             after_path_x = [end_x, end_x]
             after_path_y = [end_y, end_y + end_offset]
 
             pass
 
         elif self.type == "dia135_2":
-            start_offset = (self.cell_size - end_y) / b
-            end_offset = math.fabs(self.half_cell_size + end_x + abs(start_offset * a))
-            prev_path_x = [0, abs(start_offset * a)]
-            prev_path_y = [0, abs(start_offset * b)]
+
+            start_offset = (self.cell_size - end_y) / b + offset["prev"]
+            end_offset = math.fabs(self.half_cell_size + end_x + abs((start_offset - offset["prev"]) * a))
+
+            prev_path_x = [-offset["prev"] * a, abs((start_offset - offset["prev"]) * a)]
+            prev_path_y = [-offset["prev"] * a, abs((start_offset - offset["prev"]) * b)]
             after_path_x = [end_x, end_x - end_offset]
             after_path_y = [end_y, end_y]
 
             pass
         elif self.type == "dia90":
             self.half_cell_size = 0
-            end_offset = (self.cell_size / math.sqrt(2) - end_y) / a
-            start_offset = (self.cell_size / math.sqrt(2) - end_x) - end_offset * b
+            end_offset = (self.cell_size / math.sqrt(2) - end_y)
+            start_offset = (self.cell_size / math.sqrt(2) - end_x) + offset["prev"]
 
-            prev_path_x = [0, start_offset]
+            prev_path_x = [-offset["prev"], start_offset - offset["prev"]]
             prev_path_y = [0, 0]
             after_path_x = [end_x, end_x + end_offset * b]
             after_path_y = [end_y, end_y + end_offset * a]
+
+            # prev_path_x = [-offset["prev"], start_offset - offset["prev"]]
 
         after_path_x2 = [after_path_x[0] + prev_path_x[1], after_path_x[1] + prev_path_x[1]]
         after_path_y2 = [after_path_y[0] + prev_path_y[1], after_path_y[1] + prev_path_y[1]]
