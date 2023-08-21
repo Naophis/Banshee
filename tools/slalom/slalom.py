@@ -355,7 +355,6 @@ class Slalom:
         if self.ang == 0:
             a = 1
             b = 0
-        # offset = 6
         end_x = self.res["x"][-1]
         end_y = self.res["y"][-1]
 
@@ -364,9 +363,10 @@ class Slalom:
             self.end_pos["x"] - end_x) - self.end_offset * b
 
         if self.type == "normal":
-            self.start_offset_list = [[0, self.start_offset + 0], [0, 0]]
-            self.end_offset_list = [[end_x + self.start_offset + 0,
-                                     end_x + self.start_offset + 0],
+            self.start_offset_list = [
+                [self.half_cell_size, self.start_offset + self.half_cell_size], [0, 0]]
+            self.end_offset_list = [[end_x + self.start_offset + self.half_cell_size,
+                                     end_x + self.start_offset + self.half_cell_size],
                                     [end_y, end_y + self.end_offset]]
         elif self.type == "large":
             self.start_offset_list = [[0, self.start_offset], [0, 0]]
@@ -385,6 +385,17 @@ class Slalom:
                                      end_x + self.start_offset + self.end_offset / math.sqrt(2)],
                                     [end_y + start_pos_y[0],
                                      end_y + self.end_offset / math.sqrt(2) + start_pos_y[0]]]
+            # end_y_diff = self.end_pos["y"] - end_y
+            # end_x_diff = end_y_diff
+            # start_x_diff = self.end_pos["x"] - (end_x_diff + end_x)
+            # start_pos_y = [0, 0]
+            # self.start_offset_list = [[0, start_x_diff], start_pos_y]
+            # self.end_offset_list = [[end_x + start_x_diff,
+            #                          end_x + start_x_diff + end_x_diff],
+            #                         [end_y,
+            #                          end_y + end_y_diff]]
+            # self.start_offset = self.start_offset_list[0][1]
+            # self.end_offset = end_y_diff * math.sqrt(2)
         elif self.type == "dia135":
             self.start_offset_list = [[0, self.start_offset], start_pos_y]
             self.end_offset_list = [[end_x + self.start_offset,

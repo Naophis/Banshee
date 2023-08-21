@@ -63,6 +63,7 @@ class Plot:
                 end_pos = {"x": 0, "y": 180}
                 start_ang = 0
         elif type == "dia45":
+            end_pos = {"x": 90, "y": 45}
             if mode > 0:
                 rad = 72
                 # rad = 80
@@ -81,7 +82,6 @@ class Plot:
                     n = 0
 
                 tgt_ang = 45
-                end_pos = {"x": 90, "y": 45}
                 start_ang = 0
             else:
                 rad = 54
@@ -90,7 +90,6 @@ class Plot:
                 tgt_ang2 = 45.0 * 2 / 3
                 tgt_ang3 = 45.0
                 tgt_ang = 45
-                end_pos = {"x": 90, "y": 45}
                 start_ang = 0
 
         elif type == "dia135":
