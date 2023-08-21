@@ -87,13 +87,13 @@ class Slalom:
         tmp_y = 0
         for i in range(1, int(self.limit_time_count + 1)):
             tmp_alpha = self.base_alpha * \
-                self.calc_neipire(dt * i, self.base_time, self.pow_n)
+                        self.calc_neipire(dt * i, self.base_time, self.pow_n)
             tmp_w = tmp_w + tmp_alpha * dt
             tmp_theta = tmp_theta + tmp_w * dt
             tmp_x = tmp_x + self.v * \
-                math.cos(self.start_theta + tmp_theta) * dt
+                    math.cos(self.start_theta + tmp_theta) * dt
             tmp_y = tmp_y + self.v * \
-                math.sin(self.start_theta + tmp_theta) * dt
+                    math.sin(self.start_theta + tmp_theta) * dt
             res["x"] = np.append(res["x"], tmp_x)
             res["y"] = np.append(res["y"], tmp_y)
             res["alpha"] = np.append(res["alpha"], tmp_alpha)
@@ -130,7 +130,7 @@ class Slalom:
         old_beta = 0
         for i in range(1, int(self.limit_time_count + 1)):
             tmp_alpha = self.base_alpha * \
-                self.calc_neipire(dt * i, self.base_time, self.pow_n)
+                        self.calc_neipire(dt * i, self.base_time, self.pow_n)
             old_w = tmp_w
 
             tmp_w = tmp_w + tmp_alpha * dt
@@ -155,9 +155,9 @@ class Slalom:
             tmp_v = np.sqrt(vx ** 2 + vy ** 2)
 
             tmp_x = tmp_x + tmp_v * 1000 * \
-                np.cos(self.start_theta + tmp_theta) * dt
+                    np.cos(self.start_theta + tmp_theta) * dt
             tmp_y = tmp_y + tmp_v * 1000 * \
-                np.sin(self.start_theta + tmp_theta) * dt
+                    np.sin(self.start_theta + tmp_theta) * dt
 
             # tmp_x = tmp_x + vx * 1000 * dt
             # tmp_y = tmp_y + vy * 1000 * dt
@@ -208,9 +208,9 @@ class Slalom:
             tmp_theta = tmp_theta + tmp_w * dt
 
             tmp_x = tmp_x + self.v * \
-                math.cos(self.start_theta + tmp_theta) * dt
+                    math.cos(self.start_theta + tmp_theta) * dt
             tmp_y = tmp_y + self.v * \
-                math.sin(self.start_theta + tmp_theta) * dt
+                    math.sin(self.start_theta + tmp_theta) * dt
 
             if state == 0:
                 if tmp_theta > (self.ang / 3):
@@ -296,9 +296,9 @@ class Slalom:
             tmp_v = np.sqrt(vx ** 2 + vy ** 2)
 
             tmp_x = tmp_x + tmp_v * 1000 * \
-                np.cos(self.start_theta + tmp_theta) * dt
+                    np.cos(self.start_theta + tmp_theta) * dt
             tmp_y = tmp_y + tmp_v * 1000 * \
-                np.sin(self.start_theta + tmp_theta) * dt
+                    np.sin(self.start_theta + tmp_theta) * dt
 
             # tmp_x = tmp_x + vx * 1000 * dt
             # tmp_y = tmp_y + vy * 1000 * dt
@@ -344,7 +344,7 @@ class Slalom:
         P = math.pow((t - z), N - z)
         Q = P * (t - z)
         res = -N * P / ((Q - z) * (Q - z)) * \
-            math.pow(math.exp(1), z + z / (Q - z)) / s
+              math.pow(math.exp(1), z + z / (Q - z)) / s
         if t == 0:
             return 0
         return res
@@ -359,79 +359,93 @@ class Slalom:
         end_y = self.res["y"][-1]
 
         self.end_offset = (self.end_pos["y"] - end_y - start_pos_y[0]) / a
-        self.start_offset = (
-            self.end_pos["x"] - end_x) - self.end_offset * b
+        self.start_offset = (self.end_pos["x"] - end_x) - self.end_offset * b
+        # start_offset=0
+        # end_offset=0
+        end_offset = (self.end_pos["y"] - end_y) / a
+        start_offset = (self.end_pos["x"] - end_x) - end_offset * b
+        prev_path_x = [0, 0]
+        prev_path_y = [0, 0]
+        after_path_x = [0, 0]
+        after_path_y = [0, 0]
 
         if self.type == "normal":
-            self.start_offset_list = [
-                [self.half_cell_size, self.start_offset + self.half_cell_size], [0, 0]]
-            self.end_offset_list = [[end_x + self.start_offset + self.half_cell_size,
-                                     end_x + self.start_offset + self.half_cell_size],
-                                    [end_y, end_y + self.end_offset]]
+            prev_path_x = [0, start_offset]
+            prev_path_y = [0, 0]
+            after_path_x = [end_x, end_x + end_offset * b]
+            after_path_y = [end_y, end_y + end_offset * a]
         elif self.type == "large":
-            self.start_offset_list = [[0, self.start_offset], [0, 0]]
-            self.end_offset_list = [[end_x + self.start_offset, end_x + self.start_offset],
-                                    [end_y, end_y + self.end_offset]]
-
+            prev_path_x = [0, start_offset]
+            prev_path_y = [0, 0]
+            after_path_x = [end_x, end_x + end_offset * b]
+            after_path_y = [end_y, end_y + end_offset * a]
         elif self.type == "orval":
-            self.start_offset_list = [[0, 0], [0, 0]]
-            self.end_offset_list = [[0, 0], [0, 0]]
+            pass
 
         elif self.type == "dia45":
-            self.start_offset_list = [[0, self.start_offset], start_pos_y]
-            self.end_offset_list = [[end_x + self.start_offset, end_x + self.start_offset + self.end_offset / math.sqrt(2)],
-                                    [end_y + start_pos_y[0], end_y + self.end_offset / math.sqrt(2) + start_pos_y[0]]]
-        elif self.type == "dia135":
-            self.start_offset_list = [[0, self.start_offset], start_pos_y]
-            self.end_offset_list = [[end_x + self.start_offset,
-                                     end_x + self.start_offset - self.end_offset / math.sqrt(2)],
-                                    [end_y + start_pos_y[0],
-                                     end_y + self.end_offset / math.sqrt(2) + start_pos_y[0]]]
-        elif self.type == "dia45_2":
-            self.start_offset = (self.half_cell_size - end_x) \
-                / math.sin(math.pi / 4)
-            self.end_offset = self.cell_size - end_y - \
-                self.start_offset * math.sin(math.pi / 4)
+            prev_path_x = [0, start_offset]
+            prev_path_y = [0, 0]
+            after_path_x = [end_x, end_x + end_offset * b]
+            after_path_y = [end_y, end_y + end_offset * a]
 
-            self.start_offset_list = [
-                [self.half_cell_size, self.start_offset *
-                 math.sin(math.pi / 4) + self.half_cell_size],
-                [0, self.start_offset * math.sin(math.pi / 4)]]
-            self.end_offset_list = [
-                [end_x + self.start_offset * math.sin(math.pi / 4) + self.half_cell_size,
-                 end_x + self.start_offset * math.sin(math.pi / 4) + self.half_cell_size],
-                [end_y + self.start_offset * math.sin(math.pi / 4),
-                 end_y + self.start_offset * math.sin(math.pi / 4) + self.end_offset]]
+        elif self.type == "dia135":
+            prev_path_x = [0, start_offset]
+            prev_path_y = [0, 0]
+            after_path_x = [end_x, end_x + end_offset * b]
+            after_path_y = [end_y, end_y + end_offset * a]
+
+        elif self.type == "dia45_2":
+
+            start_offset = (self.half_cell_size - end_x) \
+                           / math.sin(math.pi / 4)
+            end_offset = self.cell_size - end_y - \
+                         start_offset * math.sin(math.pi / 4)
+
+            prev_path_x = [0, start_offset * b]
+            prev_path_y = [0, start_offset * a]
+            after_path_x = [end_x, end_x]
+            after_path_y = [end_y, end_y + end_offset]
+
+            pass
 
         elif self.type == "dia135_2":
-            self.start_offset = (
-                self.cell_size - end_y) / math.sin(math.pi / 4)
-            self.end_offset = math.fabs(
-                -self.half_cell_size - end_x - self.start_offset * math.sin(math.pi / 4))
+            start_offset = (self.cell_size - end_y) / b
+            end_offset = math.fabs(self.half_cell_size + end_x + abs(start_offset * a))
+            prev_path_x = [0, abs(start_offset * a)]
+            prev_path_y = [0, abs(start_offset * b)]
+            after_path_x = [end_x, end_x - end_offset]
+            after_path_y = [end_y, end_y]
 
-            self.start_offset_list = [
-                [self.half_cell_size, self.start_offset *
-                    math.sin(math.pi / 4) + self.half_cell_size],
-                [0, self.start_offset * math.sin(math.pi / 4)]]
-            self.end_offset_list = [
-                [end_x + self.start_offset * math.sin(math.pi / 4) + self.half_cell_size,
-                 end_x + self.start_offset * math.sin(math.pi / 4) - self.end_offset + self.half_cell_size],
-                [end_y + self.start_offset * math.sin(math.pi / 4),
-                 end_y + self.start_offset * math.sin(math.pi / 4)]]
-
+            pass
         elif self.type == "dia90":
             self.half_cell_size = 0
-            self.end_offset = (
-                self.cell_size / math.sqrt(2) - end_y) / a
-            self.start_offset = (
-                self.cell_size / math.sqrt(2) - end_x) - self.end_offset * b
+            end_offset = (self.cell_size / math.sqrt(2) - end_y) / a
+            start_offset = (self.cell_size / math.sqrt(2) - end_x) - end_offset * b
 
-            self.start_offset_list = [
-                [self.half_cell_size, self.start_offset + self.half_cell_size], [0, 0]]
-            self.end_offset_list = [[end_x + self.start_offset + self.half_cell_size,
-                                     end_x + self.start_offset + self.half_cell_size],
-                                    [end_y, end_y + self.end_offset]]
+            prev_path_x = [0, start_offset]
+            prev_path_y = [0, 0]
+            after_path_x = [end_x, end_x + end_offset * b]
+            after_path_y = [end_y, end_y + end_offset * a]
 
-        self.turn_offset["x"] = self.start_offset_list[0][1]
-        self.turn_offset["y"] = self.start_offset_list[1][1]
-        # print(self.start_offset, self.end_offset)
+        after_path_x2 = [after_path_x[0] + prev_path_x[1], after_path_x[1] + prev_path_x[1]]
+        after_path_y2 = [after_path_y[0] + prev_path_y[1], after_path_y[1] + prev_path_y[1]]
+        res = {}
+
+        res["turn_offset_x"] = prev_path_x[1]  # ターンの原点x
+        res["turn_offset_y"] = prev_path_y[1]  # ターンの原点y
+
+        res["prev_path_x"] = prev_path_x  # [x0, x1]
+        res["prev_path_y"] = prev_path_y  # [y0, y1]
+        res["after_path_x"] = after_path_x
+        res["after_path_y"] = after_path_y
+        res["after_path_x2"] = after_path_x2
+        res["after_path_y2"] = after_path_y2
+        res["prev_dist"] = self.calc_dist(prev_path_x, prev_path_y)
+        res["after_dist"] = self.calc_dist(after_path_x, after_path_y)
+        return res
+
+    def calc_dist(self, list_x, list_y):
+        d2 = (list_x[1] - list_x[0]) ** 2 + (list_y[1] - list_y[0]) ** 2
+        if d2 > 0:
+            return math.sqrt(d2)
+        return 0
