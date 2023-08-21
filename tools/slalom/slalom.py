@@ -402,11 +402,11 @@ class Slalom:
 
         elif self.type == "dia45_2":
 
-            start_offset = (self.half_cell_size - end_x) / a + offset["prev"]
-            end_offset = (self.cell_size - end_y) - (start_offset - offset["prev"]) * a
+            start_offset = (self.half_cell_size - end_x) / a + offset["prev_dia"]
+            end_offset = (self.cell_size - end_y) - (start_offset - offset["prev_dia"]) * a
 
-            prev_path_x = [-offset["prev"] * a, (start_offset - offset["prev"]) * b]
-            prev_path_y = [-offset["prev"] * a, (start_offset - offset["prev"]) * a]
+            prev_path_x = [-offset["prev_dia"] * a, (start_offset - offset["prev_dia"]) * b]
+            prev_path_y = [-offset["prev_dia"] * a, (start_offset - offset["prev_dia"]) * a]
             after_path_x = [end_x, end_x]
             after_path_y = [end_y, end_y + end_offset]
 
@@ -417,8 +417,8 @@ class Slalom:
             start_offset = (self.cell_size - end_y) / b + offset["prev"]
             end_offset = math.fabs(self.half_cell_size + end_x + abs((start_offset - offset["prev"]) * a))
 
-            prev_path_x = [-offset["prev"] * a, abs((start_offset - offset["prev"]) * a)]
-            prev_path_y = [-offset["prev"] * a, abs((start_offset - offset["prev"]) * b)]
+            prev_path_x = [-offset["prev_dia"] * a, abs((start_offset - offset["prev_dia"]) * a)]
+            prev_path_y = [-offset["prev_dia"] * a, abs((start_offset - offset["prev_dia"]) * b)]
             after_path_x = [end_x, end_x - end_offset]
             after_path_y = [end_y, end_y]
 
@@ -426,9 +426,9 @@ class Slalom:
         elif self.type == "dia90":
             self.half_cell_size = 0
             end_offset = (self.cell_size / math.sqrt(2) - end_y)
-            start_offset = (self.cell_size / math.sqrt(2) - end_x) + offset["prev"]
+            start_offset = (self.cell_size / math.sqrt(2) - end_x) + offset["prev_dia"]
 
-            prev_path_x = [-offset["prev"], start_offset - offset["prev"]]
+            prev_path_x = [-offset["prev_dia"], start_offset - offset["prev_dia"]]
             prev_path_y = [0, 0]
             after_path_x = [end_x, end_x + end_offset * b]
             after_path_y = [end_y, end_y + end_offset * a]

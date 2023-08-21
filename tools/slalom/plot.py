@@ -11,7 +11,7 @@ plot_col = 2
 
 
 class Plot:
-    def exe(self, type, tgt_v, show, mode=0, K=1, list_K_y=[]):
+    def exe(self, type, tgt_v, show, mode=0, K=1, list_K_y=[], offset={}):
 
         # fig = plt.figure(figsize=(5, 5), dpi=500)
         fig = plt.figure(dpi=200, tight_layout=True)
@@ -27,7 +27,6 @@ class Plot:
         slip_gain = 250
         end_pos = {"x": 90, "y": 90}
         start_ang = 0
-
 
         tgt_ang1 = tgt_ang2 = tgt_ang3 = 0
         if type == "normal":
@@ -126,9 +125,9 @@ class Plot:
         # sla.calc_offset_front()
         start_pos_x = [0, 0]
         start_pos_y = [0, 0]
-        offset = {}
-        offset["prev"] = 10
-        offset["after"] = 0
+        # offset = {}
+        # offset["prev"] = 10
+        # offset["after"] = 0
         res1 = sla.calc_offset_dist(start_pos_x, start_pos_y, type, offset)
         range = [-1000, 1000]
 

@@ -27,6 +27,7 @@ class Slalom2(Slalom):
         self.ang1 = ang1 * math.pi / 180
         self.ang2 = ang2 * math.pi / 180
         self.ang3 = ang3 * math.pi / 180
+        self.ang = self.ang3
         self.base_ang = ang3
         self.end_pos = end_pos
         self.type = type
@@ -36,7 +37,6 @@ class Slalom2(Slalom):
         self.K = K
         self.list_K_y = list_K_y
         self.pow_n = n
-
 
     def calc(self, start_ang):
         res = {}
@@ -187,39 +187,3 @@ class Slalom2(Slalom):
         self.res = res
 
         return res
-
-    def calcnormal(self, start_ang):
-        return 0
-
-    def calc_slip_normalturn(self, start_ang):
-        return 0
-
-    def calc_offset_dist(self, start_pos_x, start_pos_y, type, prev_offset, after_offset):
-        if self.type != "dia45":
-            super().calc_offset_dist(self, start_pos_x, start_pos_y, type, prev_offset, after_offset)
-            return
-
-        a = math.sin(self.ang)
-        b = math.cos(self.ang)
-        if self.ang == 0:
-            a = 1
-            b = 0
-
-        if self.type == "dia45":
-            end_y_diff = self.end_pos["y"] - self.res["y"][-1]
-            end_x_diff = end_y_diff
-            start_x_diff = self.end_pos["x"] - (end_x_diff + self.res["x"][-1])
-            start_pos_y = [0, 0]
-            self.start_offset_list = [[0, start_x_diff], start_pos_y]
-            self.end_offset_list = [[self.res["x"][-1] + start_x_diff,
-                                     self.res["x"][-1] + start_x_diff + end_x_diff],
-                                    [self.res["y"][-1],
-                                     self.res["y"][-1] + end_y_diff]]
-            # print(self.end_offset_list)
-            self.start_offset = self.start_offset_list[0][1]
-            self.end_offset = end_y_diff * math.sqrt(2)
-            # print(self.start_offset, self.end_offset)
-
-        self.turn_offset["x"] = self.start_offset_list[0][1]
-        self.turn_offset["y"] = self.start_offset_list[1][1]
-        # print(self.start_offset, self.end_offset)
