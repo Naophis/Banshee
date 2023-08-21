@@ -356,85 +356,85 @@ class Slalom:
             a = 1
             b = 0
         # offset = 6
-        self.end_offset = (self.end_pos["y"] -
-                           self.res["y"][-1] - start_pos_y[0]) / a
+        end_x = self.res["x"][-1]
+        end_y = self.res["y"][-1]
+
+        self.end_offset = (self.end_pos["y"] - end_y - start_pos_y[0]) / a
         self.start_offset = (
-            self.end_pos["x"] - self.res["x"][-1]) - self.end_offset * b
+            self.end_pos["x"] - end_x) - self.end_offset * b
 
         if self.type == "normal":
-            self.start_offset_list = [
-                [0, self.start_offset + 0], [0, 0]]
-            self.end_offset_list = [[self.res["x"][-1] + self.start_offset + 0,
-                                     self.res["x"][-1] + self.start_offset + 0],
-                                    [self.res["y"][-1], self.res["y"][-1] + self.end_offset]]
+            self.start_offset_list = [[0, self.start_offset + 0], [0, 0]]
+            self.end_offset_list = [[end_x + self.start_offset + 0,
+                                     end_x + self.start_offset + 0],
+                                    [end_y, end_y + self.end_offset]]
         elif self.type == "large":
-            self.start_offset_list = [
-                [0, self.start_offset], [0, 0]]
+            self.start_offset_list = [[0, self.start_offset], [0, 0]]
             self.end_offset_list = [
-                [self.res["x"][-1] + self.start_offset,
-                    self.res["x"][-1] + self.start_offset],
-                [self.res["y"][-1], self.res["y"][-1] + self.end_offset]]
+                [end_x + self.start_offset,
+                    end_x + self.start_offset],
+                [end_y, end_y + self.end_offset]]
 
         elif self.type == "orval":
             self.start_offset_list = [[0, 0], [0, 0]]
             self.end_offset_list = [[0, 0], [0, 0]]
+
         elif self.type == "dia45":
-            self.start_offset_list = [
-                [0, self.start_offset], start_pos_y]
-            self.end_offset_list = [[self.res["x"][-1] + self.start_offset,
-                                     self.res["x"][-1] + self.start_offset + self.end_offset / math.sqrt(2)],
-                                    [self.res["y"][-1] + start_pos_y[0],
-                                     self.res["y"][-1] + self.end_offset / math.sqrt(2) + start_pos_y[0]]]
+            self.start_offset_list = [[0, self.start_offset], start_pos_y]
+            self.end_offset_list = [[end_x + self.start_offset,
+                                     end_x + self.start_offset + self.end_offset / math.sqrt(2)],
+                                    [end_y + start_pos_y[0],
+                                     end_y + self.end_offset / math.sqrt(2) + start_pos_y[0]]]
         elif self.type == "dia135":
-            self.start_offset_list = [
-                [0, self.start_offset], start_pos_y]
-            self.end_offset_list = [[self.res["x"][-1] + self.start_offset,
-                                     self.res["x"][-1] + self.start_offset - self.end_offset / math.sqrt(2)],
-                                    [self.res["y"][-1] + start_pos_y[0],
-                                     self.res["y"][-1] + self.end_offset / math.sqrt(2) + start_pos_y[0]]]
+            self.start_offset_list = [[0, self.start_offset], start_pos_y]
+            self.end_offset_list = [[end_x + self.start_offset,
+                                     end_x + self.start_offset - self.end_offset / math.sqrt(2)],
+                                    [end_y + start_pos_y[0],
+                                     end_y + self.end_offset / math.sqrt(2) + start_pos_y[0]]]
         elif self.type == "dia45_2":
             self.start_offset = (self.half_cell_size -
-                                 self.res["x"][-1]) / math.sin(math.pi / 4)
+                                 end_x) / math.sin(math.pi / 4)
             self.end_offset = self.cell_size - \
-                self.res["y"][-1] - self.start_offset * math.sin(math.pi / 4)
+                end_y - self.start_offset * math.sin(math.pi / 4)
 
             self.start_offset_list = [
                 [self.half_cell_size, self.start_offset *
                  math.sin(math.pi / 4) + self.half_cell_size],
                 [0, self.start_offset * math.sin(math.pi / 4)]]
             self.end_offset_list = [
-                [self.res["x"][-1] + self.start_offset * math.sin(math.pi / 4) + self.half_cell_size,
-                 self.res["x"][-1] + self.start_offset * math.sin(math.pi / 4) + self.half_cell_size],
-                [self.res["y"][-1] + self.start_offset * math.sin(math.pi / 4),
-                 self.res["y"][-1] + self.start_offset * math.sin(math.pi / 4) + self.end_offset]]
+                [end_x + self.start_offset * math.sin(math.pi / 4) + self.half_cell_size,
+                 end_x + self.start_offset * math.sin(math.pi / 4) + self.half_cell_size],
+                [end_y + self.start_offset * math.sin(math.pi / 4),
+                 end_y + self.start_offset * math.sin(math.pi / 4) + self.end_offset]]
+
         elif self.type == "dia135_2":
             self.start_offset = (
-                self.cell_size - self.res["y"][-1]) / math.sin(math.pi / 4)
+                self.cell_size - end_y) / math.sin(math.pi / 4)
             self.end_offset = math.fabs(
-                -self.half_cell_size - self.res["x"][-1] - self.start_offset * math.sin(math.pi / 4))
+                -self.half_cell_size - end_x - self.start_offset * math.sin(math.pi / 4))
 
             self.start_offset_list = [
                 [self.half_cell_size, self.start_offset *
-                 math.sin(math.pi / 4) + self.half_cell_size],
+                    math.sin(math.pi / 4) + self.half_cell_size],
                 [0, self.start_offset * math.sin(math.pi / 4)]]
             self.end_offset_list = [
-                [self.res["x"][-1] + self.start_offset * math.sin(math.pi / 4) + self.half_cell_size,
-                 self.res["x"][-1] + self.start_offset * math.sin(math.pi / 4) - self.end_offset + self.half_cell_size],
-                [self.res["y"][-1] + self.start_offset * math.sin(math.pi / 4),
-                 self.res["y"][-1] + self.start_offset * math.sin(math.pi / 4)]]
+                [end_x + self.start_offset * math.sin(math.pi / 4) + self.half_cell_size,
+                 end_x + self.start_offset * math.sin(math.pi / 4) - self.end_offset + self.half_cell_size],
+                [end_y + self.start_offset * math.sin(math.pi / 4),
+                 end_y + self.start_offset * math.sin(math.pi / 4)]]
 
         elif self.type == "dia90":
             self.half_cell_size = 0
             self.end_offset = (
-                self.cell_size / math.sqrt(2) - self.res["y"][-1]) / a
+                self.cell_size / math.sqrt(2) - end_y) / a
             self.start_offset = (
-                self.cell_size / math.sqrt(2) - self.res["x"][-1]) - self.end_offset * b
+                self.cell_size / math.sqrt(2) - end_x) - self.end_offset * b
 
             self.start_offset_list = [
                 [self.half_cell_size, self.start_offset + self.half_cell_size], [0, 0]]
-            self.end_offset_list = [[self.res["x"][-1] + self.start_offset + self.half_cell_size,
-                                     self.res["x"][-1] + self.start_offset + self.half_cell_size],
-                                    [self.res["y"][-1], self.res["y"][-1] + self.end_offset]]
+            self.end_offset_list = [[end_x + self.start_offset + self.half_cell_size,
+                                     end_x + self.start_offset + self.half_cell_size],
+                                    [end_y, end_y + self.end_offset]]
 
         self.turn_offset["x"] = self.start_offset_list[0][1]
         self.turn_offset["y"] = self.start_offset_list[1][1]
