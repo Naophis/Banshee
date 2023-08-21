@@ -387,7 +387,7 @@ class Slalom2:
             return 0
         return res
 
-    def calc_offset_dist(self, start_pos_x, start_pos_y, type):
+    def calc_offset_dist(self, start_pos_x, start_pos_y, type, prev_offset, after_offset):
         a = math.sin(self.ang)
         b = math.cos(self.ang)
         if self.ang == 0:

@@ -27,6 +27,10 @@ class Plot:
         slip_gain = 250
         end_pos = {"x": 90, "y": 90}
         start_ang = 0
+        
+        start_offset = 6
+        end_offset = 6
+        
         tgt_ang1 = tgt_ang2 = tgt_ang3 = 0
         if type == "normal":
             rad = 24
@@ -34,6 +38,8 @@ class Plot:
             tgt_ang = 90
             end_pos = {"x": 45, "y": 45}
             start_ang = 0
+            start_offset = 0
+            end_offset = 0
         elif type == "large":
             rad = 60
             n = 4
@@ -113,17 +119,19 @@ class Plot:
             start_ang = 0
         res = {}
         if mode > 0:
-            sla = Slalom2(v, rad, n, tgt_ang1, tgt_ang2, tgt_ang3, end_pos, slip_gain, type, K, list_K_y)
+            sla = Slalom2(v, rad, n, tgt_ang1, tgt_ang2, tgt_ang3,
+                          end_pos, slip_gain, type, K, list_K_y)
             res = sla.calc(start_ang)
         else:
-            sla = Slalom(v, rad, n, tgt_ang, end_pos, slip_gain, type, K, list_K_y)
+            sla = Slalom(v, rad, n, tgt_ang, end_pos,
+                         slip_gain, type, K, list_K_y)
             sla.calc_base_time()
             res = sla.calc(start_ang)
 
         # sla.calc_offset_front()
         start_pos_x = [0, 0]
         start_pos_y = [0, 0]
-        sla.calc_offset_dist(start_pos_x, start_pos_y, type)
+        sla.calc_offset_dist(start_pos_x, start_pos_y, type, 0, 0)
         range = [-1000, 1000]
 
         wall_color = "red"
@@ -172,12 +180,16 @@ class Plot:
                  ls="-", color="coral", lw=trj_width, alpha=trj_alpha)
         plW = plt.subplot2grid((plot_row, plot_col), (4, 1), rowspan=1)
         plW.plot(res["w"])
-        first = [sla.start_offset, sla.end_offset]
+        
         start_pos_x = [0, 0]
         start_pos_y = [0, 0]
         # start_pos_y = [-10, -10]
         res = sla.calc_slip(start_ang)
-        sla.calc_offset_dist(start_pos_x, start_pos_y, type)
+
+        prev_offset = start_offset
+        after_offset = 0
+        sla.calc_offset_dist(start_pos_x, start_pos_y,
+                             type, prev_offset, after_offset)
 
         trj.plot(sla.start_offset_list[0], sla.start_offset_list[1],
                  ls="--", color="cyan", lw=1, alpha=trj_alpha)

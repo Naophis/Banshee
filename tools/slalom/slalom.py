@@ -349,17 +349,17 @@ class Slalom:
             return 0
         return res
 
-    def calc_offset_dist(self, start_pos_x, start_pos_y, type):
+    def calc_offset_dist(self, start_pos_x, start_pos_y, type, prev_offset, after_offset):
         a = math.sin(self.ang)
         b = math.cos(self.ang)
         if self.ang == 0:
             a = 1
             b = 0
-        offset = -15
+        # offset = 6
         self.end_offset = (self.end_pos["y"] -
                            self.res["y"][-1] - start_pos_y[0]) / a
-        self.start_offset = (offset +
-                             self.end_pos["x"] - self.res["x"][-1]) - self.end_offset * b
+        self.start_offset = (
+            self.end_pos["x"] - self.res["x"][-1]) - self.end_offset * b
 
         if self.type == "normal":
             self.start_offset_list = [
