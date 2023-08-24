@@ -5,7 +5,8 @@
 // constexpr int MOTOR_HZ = 125000;
 // constexpr int MOTOR_HZ = 100000;
 // constexpr int MOTOR_HZ = 75000 / 1;
-constexpr int MOTOR_HZ = 25000;
+// constexpr int MOTOR_HZ = 25000;
+constexpr int MOTOR_HZ = 50000;
 constexpr int SUCTION_MOTOR_HZ = 10000;
 PlanningTask::PlanningTask() {}
 
@@ -316,7 +317,7 @@ void PlanningTask::task() {
     int64_t start_duty_cal = esp_timer_get_time();
     update_ego_motion(); // 30 usec
     int64_t end_duty_cal = esp_timer_get_time();
-    calc_sensor_dist_all(); //15 ~ 20 usec
+    calc_sensor_dist_all(); // 15 ~ 20 usec
 
     mpc_step = 1;
     tgt_val->tgt_in.time_step2 = param_ro->sakiyomi_time;
@@ -370,12 +371,12 @@ void PlanningTask::task() {
     }
 
     // 算出結果をコピー
-    cp_tgt_val(); //1~2usec
+    cp_tgt_val(); // 1~2usec
 
     // Duty計算
     calc_tgt_duty(); // 15 ~ 20 usec
 
-    check_fail_safe(); //7 ~ 9 usec
+    check_fail_safe(); // 7 ~ 9 usec
 
     // システム同定用
     if (tgt_val->motion_type == MotionType::SYS_ID_PARA ||
@@ -862,13 +863,18 @@ void PlanningTask::update_ego_motion() {
   // kf_w.predict(sensing_result->ego.w_raw);
   // kf_w.update(sensing_result->ego.w_raw);
 
-  kf_w.predict(tgt_val->ego_in.alpha);
-  kf_w.update(sensing_result->ego.w_lp);
-  sensing_result->ego.w_kf = kf_w.get_state();
-
-  kf_v.predict(tgt_val->ego_in.accl);
-  kf_v.update(sensing_result->ego.v_c);
-  sensing_result->ego.v_kf = kf_v.get_state();
+  if (std::isfinite(tgt_val->ego_in.alpha) &&
+      std::isfinite(sensing_result->ego.w_lp)) {
+    kf_w.predict(tgt_val->ego_in.alpha);
+    kf_w.update(sensing_result->ego.w_lp);
+    sensing_result->ego.w_kf = kf_w.get_state();
+  }
+  if (std::isfinite(tgt_val->ego_in.accl) &&
+      std::isfinite(sensing_result->ego.v_c)) {
+    kf_v.predict(tgt_val->ego_in.accl);
+    kf_v.update(sensing_result->ego.v_c);
+    sensing_result->ego.v_kf = kf_v.get_state();
+  }
 
   sensing_result->ego.battery_raw = sensing_result->battery.data;
 

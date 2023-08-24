@@ -377,8 +377,9 @@ class Slalom:
             after_path_x = [end_x, end_x + end_offset * b]
             after_path_y = [end_y, end_y + end_offset * a]
         elif self.type == "large":
-            end_offset = (self.end_pos["y"] - end_y)
+            end_offset = (self.end_pos["y"] - end_y - offset["after"])
             start_offset = (self.end_pos["x"] - end_x + offset["prev"])
+
             prev_path_x = [-offset["prev"], start_offset - offset["prev"]]
             prev_path_y = [0, 0]
             after_path_x = [end_x, end_x + end_offset * b]

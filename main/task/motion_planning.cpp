@@ -841,7 +841,7 @@ void MotionPlanning::exec_path_running(param_set_t &p_set) {
       }
       if (turn_type == TurnType::Finish) {
         ps.dist -= 45;
-        ps.v_end = 1500;
+        ps.v_end = p_set.map[TurnType::Large].v;
       }
       ps.motion_type = MotionType::STRAIGHT;
       ps.sct = !dia ? SensorCtrlType::Straight : SensorCtrlType::Dia;

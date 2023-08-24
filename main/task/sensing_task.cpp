@@ -287,7 +287,13 @@ void SensingTask::task() {
     end2 = esp_timer_get_time();
     set_gpio_state(LED_EN, false);
 
-    se->battery.data = linearInterpolation(x, y, se->battery.raw);
+    // se->battery.data = linearInterpolation(x, y, se->battery.raw);
+    // se->battery.data = linearInterpolation(x, y, se->battery.raw);
+
+
+    se->battery.data =
+        BATTERY_GAIN * 4 * sensing_result->battery.raw / 4096;
+
     se->led_sen.right90.raw = std::max(
         se->led_sen_after.right90.raw - se->led_sen_before.right90.raw, 0);
     se->led_sen.right45.raw = std::max(
