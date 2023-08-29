@@ -15,7 +15,7 @@ dt = 0.001;
 test_mode = 0; % straight
 
 test_mode = 1; % slalom
-% test_mode = 2; % pivot
+ test_mode = 2; % pivot
 %  test_mode = 3; % back_straight
 % test_mode = 4; % slalom2
 % test_mode = 5; % back
@@ -46,7 +46,7 @@ k1 = 0.5;
 k2 = 135;
 
 mass = single(0.015);
-lm=single(0.0000065);
+lm=single(0.000065);
 ke=single(0.00125);
 km=single(0.0005);
 resist=single(1.7);
