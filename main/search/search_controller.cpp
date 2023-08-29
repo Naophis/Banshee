@@ -211,7 +211,8 @@ MotionResult SearchController::pivot(param_set_t &p_set, float diff) {
   if (back_enable) {
     tmp_dist = 23;
   }
-  bool front_ctrl = (sensing_result->ego.front_dist < 60);
+  bool front_ctrl =
+      (sensing_result->ego.front_dist < param->front_dist_offset_pivot_th);
   pt->motor_disable();
   mp->reset_tgt_data();
   mp->reset_ego_data();
@@ -486,7 +487,7 @@ SearchResult SearchController::exec(param_set_t &p_set, SearchMode sm) {
   p.v_max = p.v_end = p_set.str_map[StraightType::Search].v_max;
   p.accl = p_set.str_map[StraightType::Search].accl;
   p.decel = p_set.str_map[StraightType::Search].decel;
-  p.dist = 45 + param->offset_start_dist;
+  p.dist = 45 + param->offset_start_dist_search;
   p.sct = SensorCtrlType::Straight;
   p.motion_type = MotionType::STRAIGHT;
   // p.wall_off_req = WallOffReq::SEARCH;
@@ -540,7 +541,7 @@ SearchResult SearchController::exec(param_set_t &p_set, SearchMode sm) {
     //   next_motion = adachi->exec(false, true);
     // } else {
     // }
-      next_motion = adachi->exec(false, false);
+    next_motion = adachi->exec(false, false);
 
     const float after = mp->tgt_val->global_pos.dist;
     adachi->diff = std::abs(after - before);

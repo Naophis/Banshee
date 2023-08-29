@@ -88,8 +88,8 @@ void UserInterface::motion_check() {
     if (button_state_hold()) {
       break;
     }
-    if (sensing_result->ego.left90_mid_dist < 60 &&
-        sensing_result->ego.right90_mid_dist < 60 &&
+    if (sensing_result->ego.left90_mid_dist < 90 &&
+        sensing_result->ego.right90_mid_dist < 90 &&
         sensing_result->ego.left90_mid_dist > 10 &&
         sensing_result->ego.right90_mid_dist > 10) {
       LED_off_all();

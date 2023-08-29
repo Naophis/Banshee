@@ -343,6 +343,7 @@ void MainTask::load_hw_param() {
   param->slip_param_k2 = getItem(root, "slip_param_k2")->valuedouble;
   param->sen_log_size = getItem(root, "sen_log_size")->valueint;
   param->offset_start_dist = getItem(root, "offset_start_dist")->valuedouble;
+  param->offset_start_dist_search = getItem(root, "offset_start_dist_search")->valuedouble;
   param->sakiyomi_time = getItem(root, "sakiyomi_time")->valuedouble;
   param->clear_angle = getItem(root, "clear_angle")->valuedouble;
   param->clear_dist_order = getItem(root, "clear_dist_order")->valuedouble;
@@ -1932,7 +1933,7 @@ void MainTask::test_search_sla() {
 
   ps.v_max = str_p.v_max;
   ps.v_end = str_p.v_max;
-  ps.dist = 45 + param->offset_start_dist;
+  ps.dist = 45 + param->offset_start_dist_search;
   ps.accl = str_p.accl;
   ps.decel = str_p.decel;
   ps.sct = SensorCtrlType::Straight;

@@ -6,8 +6,8 @@
 // constexpr int MOTOR_HZ = 100000;
 // constexpr int MOTOR_HZ = 75000 / 1;
 // constexpr int MOTOR_HZ = 25000;
-constexpr int MOTOR_HZ = 50000;
-constexpr int SUCTION_MOTOR_HZ = 10000;
+constexpr int MOTOR_HZ = 75000;
+constexpr int SUCTION_MOTOR_HZ = 50000;
 PlanningTask::PlanningTask() {}
 
 PlanningTask::~PlanningTask() {}
@@ -235,8 +235,8 @@ void PlanningTask::task() {
   mcpwm_gpio_init(MCPWM_UNIT_0, MCPWM1A, B_PWM);
   mcpwm_gpio_init(MCPWM_UNIT_1, MCPWM2A, SUCTION_PWM);
 
-  mcpwm_group_set_resolution(MCPWM_UNIT_0, 160'000'000L);
-  mcpwm_group_set_resolution(MCPWM_UNIT_1, 160'000'000L);
+  // mcpwm_group_set_resolution(MCPWM_UNIT_0, 160'000'000L);
+  // mcpwm_group_set_resolution(MCPWM_UNIT_1, 160'000'000L);
   // mcpwm_deadtime_disable(MCPWM_UNIT_0, MCPWM_TIMER_0);
   // mcpwm_deadtime_disable(MCPWM_UNIT_0, MCPWM_TIMER_1);
   mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A,
@@ -270,15 +270,18 @@ void PlanningTask::task() {
   gyro_pid.initialize();
   ang_pid.initialize();
 
-  float initial_state = 0.0;      // 初期姿勢の推定値
-  float initial_covariance = 1.0; // 初期姿勢の誤差共分散行列
-  float process_noise = 0.05;     // プロセスノイズの共分散
-  float measurement_noise = 0.35; // 観測ノイズの共分散
+  float initial_state = 0.0;        // 初期姿勢の推定値
+  float initial_covariance = 0.950; // 初期姿勢の誤差共分散行列
+  float process_noise = 0.05;       // プロセスノイズの共分散
+  float measurement_noise = 0.35;   // 観測ノイズの共分散
 
   kf_w.init(initial_state, initial_covariance, process_noise,
             measurement_noise);
   kf_v.init(initial_state, initial_covariance, process_noise,
             measurement_noise);
+  kf_batt.init(initial_state, initial_covariance, process_noise,
+               measurement_noise);
+
   // dist_pid.initialize();
   // sen_pid.initialize();
   // sen_dia_pid.initialize();
@@ -882,6 +885,10 @@ void PlanningTask::update_ego_motion() {
       sensing_result->ego.battery_lp * (1 - param_ro->battery_param.lp_delay) +
       sensing_result->ego.battery_raw * param_ro->battery_param.lp_delay;
 
+  kf_batt.predict(0);
+  kf_batt.update(sensing_result->ego.battery_raw);
+  sensing_result->ego.batt_kf = kf_batt.get_state();
+
   tgt_val->ego_in.ang += sensing_result->ego.w_lp * dt;
   tgt_val->global_pos.ang += sensing_result->ego.w_lp * dt;
 
@@ -985,10 +992,10 @@ void PlanningTask::set_next_duty(float duty_l, float duty_r,
         (tgt_val->ego_in.state == 0 || tgt_val->ego_in.state == 1) &&
         tgt_val->motion_type == MotionType::STRAIGHT) {
       duty_suction_in =
-          100.0 * tgt_duty.duty_suction_low / sensing_result->ego.battery_lp;
+          100.0 * tgt_duty.duty_suction_low / sensing_result->ego.batt_kf;
     } else {
       duty_suction_in =
-          100.0 * tgt_duty.duty_suction / sensing_result->ego.battery_lp;
+          100.0 * tgt_duty.duty_suction / sensing_result->ego.batt_kf;
     }
     if (duty_suction_in > 100) {
       duty_suction_in = 100.0;

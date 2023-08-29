@@ -59,7 +59,7 @@ profile_idx: [
     {
       # 2: 最短パラメータ 500
       run_param: 2,
-      suction: 0,
+      suction: 1,
       normal: 0,
       large: 2,
       orval: 2,
@@ -72,7 +72,7 @@ profile_idx: [
     {
       # 3: 最短パラメータ 600
       run_param: 3,
-      suction: 0,
+      suction: 1,
       normal: 0,
       large: 4,
       orval: 3,

@@ -125,7 +125,7 @@ void LoggingTask::task() {
           ld->left45_2_lp = floatToHalf(sensing_result->ego.left45_2_lp);
           ld->right45_2_lp = floatToHalf(sensing_result->ego.right45_2_lp);
 
-          ld->battery_lp = floatToHalf(sensing_result->ego.battery_lp);
+          ld->battery_lp = floatToHalf(sensing_result->ego.batt_kf);
           ld->duty_l = floatToHalf(sensing_result->ego.duty.duty_l);
           ld->duty_r = floatToHalf(sensing_result->ego.duty.duty_r);
 

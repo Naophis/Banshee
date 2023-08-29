@@ -1,9 +1,9 @@
 # goals: [[7, 7], [7, 8], [8, 7], [8, 8]]
-# goals: [[1, 0], [1, 1], [2, 0], [2, 1]]
+goals: [[1, 0], [1, 1], [2, 0], [2, 1]]
 # goals: [[1, 1], [1, 2], [2, 1], [2, 2]]
 # goals: [[3, 0], [3, 1], [2, 0], [2, 1]]
 # goals: [[7, 3], [7, 4], [8, 3], [8, 4]]
-goals: [[1, 0]]
+# goals: [[1, 1]]
 # goals: [[6, 9], [6, 10], [7, 9], [7, 10]]
 # goals: [[11, 0], [11, 1], [12, 0], [12, 1]]
 # goals: [[5, 0], [5, 1], [6, 0], [6, 1]]
@@ -26,10 +26,10 @@ goals: [[1, 0]]
 maze_size: 32
 give_up_time: 30
 debug: 0 #
-mode: 0 # メイン
+# mode: 0 # メイン
 # mode: 1 # 最短スローム
 # mode: 2 # 直進
-# mode: 3 # 超信地
+mode: 3 # 超信地
 # mode: 5 # 探索スラローム
 # mode: 7 # front ctrl
 # mode: 9 # wall off
@@ -42,29 +42,29 @@ mode: 0 # メイン
 # mode: 21 # pivot turn n2
 
 test: # テスト走行時に使用するパラメータ群
-  v_max: 1500
+  v_max: 300
   end_v: 1
-  accl: 18500
-  decel: -18500
-  dist:  270 #直進全部
+  accl: 2500
+  decel: -2500
+  dist:  360 #直進全部
   # dist: 540 #直進全部　
   # dist: 180 # スラロームテスト
   dia: 0
-  w_max: 10.0
-  alpha: 75
-  ang: 360
-  suction_active: 1
+  w_max: 12.5
+  alpha: 60
+  ang: 180
+  suction_active: 0
   suction_duty: 5.25
   # suction_duty_low: 2.75
-  suction_duty_low: 4.75
+  suction_duty_low: 5.0
   suction_gain: 150
   # suction_duty: 3.25
-  file_idx: 12
+  file_idx: 1
   sla_dist: 90
   # sla_type: 3
-  sla_type: 3
-  sla_type2: 6 #復路ターン種類
-  sla_return: 0 # 往復フラグ
+  sla_type: 4
+  sla_type2: 8 #復路ターン種類
+  sla_return: 1 # 往復フラグ
   # sla_type: 1 normal
   # sla_type: 2 #orval
   # sla_type: 3 #large
@@ -75,7 +75,7 @@ test: # テスト走行時に使用するパラメータ群
   # sla_type: 8 #dia45_2
   # sla_type: 9 #dia135_2
   turn_times: 0
-  ignore_opp_sen: 2 #斜めターン後の直進テスト 0無効、1斜め制御なし、2斜め制御あり
+  ignore_opp_sen: 0 #斜めターン後の直進テスト 0無効、1斜め制御なし、2斜め制御あり
   sysid_test_mode: 0 #システム同定のテスト:0 直進、1回転
   sysid_duty: 4.25 #duty 
   sysid_time: 2000 #duty 

@@ -87,6 +87,7 @@ typedef struct {
   float w_lp = 0;
   float w_kf = 0;
   float v_kf = 0;
+  float batt_kf = 0;
   float accel_x_raw = 0;
 
   float v_ave = 0;
@@ -343,6 +344,7 @@ typedef struct {
   int FF_roll = 0;
   int FF_keV = 0;
   float offset_start_dist = 0;
+  float offset_start_dist_search = 0;
   float cell = 90;
   float cell2 = 90;
   pid_param_t motor_pid;

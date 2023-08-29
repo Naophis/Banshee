@@ -8,7 +8,7 @@ from plotorval import PlotOrval
 p = Plot()
 po = PlotOrval()
 
-v = 700
+v = 1250
 # show = True
 show = False
 K = 135

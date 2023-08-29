@@ -916,7 +916,7 @@ void MotionPlanning::exec_path_running(param_set_t &p_set) {
   go_straight(ps);
   reset_tgt_data();
   reset_ego_data();
-  vTaskDelay(750.0 / portTICK_RATE_MS);
+  vTaskDelay(250.0 / portTICK_RATE_MS);
   pt->motor_disable();
   pt->suction_disable();
 
