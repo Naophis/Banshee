@@ -14,13 +14,9 @@ FF_keV: 1
 # FF_roll: 0
 # FF_keV: 0
 
-Ke: 0.00148 # 大：逆起電力大
+Ke: 0.00125 # 大：逆起電力大
 Km: 0.05 # 大：縦系の出力小
-# Ke: 0.00185 # 大：逆起電力大
-# Km: 0.0025 # 大：縦系の出力小
-# Lm: 0.175
-
-Lm: 0.0035
+Lm: 0.000125 # 大：縦系の出力大
 
 # Ke: 0.00105
 # Km: 0.0025
@@ -151,8 +147,8 @@ ff_front_dury: 0.95
 
 # fail_safe
 fail_duty_cnt: 150
-fail_v_cnt: 150000
-fail_w_cnt: 10000
+fail_v_cnt: 15000
+fail_w_cnt: 1000
 
 cell: 90
 cell2: 90
@@ -194,15 +190,15 @@ gyro_pid:
   # d: 0.0
   # mode: 1
   # 通常 mode=0
+  p: 0.275
+  i: 0.0225
+  d: 0.275
   # p: 0.275
   # i: 0.0225
   # d: 0.275
-  # p: 0.275
-  # i: 0.0225
-  # d: 0.275
-  p: 0.0
-  i: 0.0
-  d: 0.0
+  # p: 0.0
+  # i: 0.0
+  # d: 0.0
   mode: 0
   # p: 0.0
   # i: 0.0
@@ -219,18 +215,18 @@ angle_pid:
 str_agl_pid:
   # p: 0.095
   # d: 1.25
-  # p: 0.095 #search_mode
-  # b: 0.175 #!searchm_mode
-  # d: 0.0075
+  p: 0.095 #search_mode
+  b: 0.175 #!searchm_mode
+  d: 0.0075
   i: 0.0
   mode: 1
   # b: 0
   c: 0
 
 
-  p: 0.0 #search_mode
-  b: 0.0 #!searchm_mode
-  d: 0.0
+  # p: 0.0 #search_mode
+  # b: 0.0 #!searchm_mode
+  # d: 0.0
 str_agl_dia_pid:
   # p: 0.095
   # d: 1.25
