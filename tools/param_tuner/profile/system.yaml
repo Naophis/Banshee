@@ -1,5 +1,5 @@
 # goals: [[7, 7], [7, 8], [8, 7], [8, 8]]
-goals: [[1, 0], [1, 1], [2, 0], [2, 1]]
+goals: [[1, 0], [2, 0]]
 # goals: [[1, 1], [1, 2], [2, 1], [2, 2]]
 # goals: [[3, 0], [3, 1], [2, 0], [2, 1]]
 # goals: [[7, 3], [7, 4], [8, 3], [8, 4]]
@@ -21,18 +21,19 @@ goals: [[1, 0], [1, 1], [2, 0], [2, 1]]
 # goals: [ [6,9],[6,10], [7,9],[7,10]]
 
 # goals: [ [4,4],[4,5],[5,4],[5,5]]
+goals: [ [11, 10], [12, 10], [11, 11], [12, 11]] # 金沢草の根12023
 
 #  27 *55
 maze_size: 32
 give_up_time: 30
 debug: 0 #
-mode: 0 # メイン
+# mode: 0 # メイン
 # mode: 1 # 最短スローム
 # mode: 2 # 直進
 # mode: 3 # 超信地
 # mode: 5 # 探索スラローム
 # mode: 7 # front ctrl
-# mode: 9 # wall off
+mode: 9 # wall off
 # mode: 11 # vacume/suction test
 # mode: 12 # silent_keep
 # mode: 13 # keep_pos
@@ -42,27 +43,27 @@ mode: 0 # メイン
 # mode: 21 # pivot turn n2
 
 test: # テスト走行時に使用するパラメータ群
-  v_max: 1500
+  v_max: 200
   end_v: 1
-  accl: 18500
-  decel: -18500
-  dist:  360 #直進全部
+  accl: 2000
+  decel: -2000
+  dist: 360  #直進全部
   # dist: 540 #直進全部　
   # dist: 180 # スラロームテスト
   dia: 0
   w_max: 12.5
   alpha: 60
-  ang: 1800
-  suction_active: 1
-  suction_duty: 7.25
+  ang: 3600
+  suction_active: 0
+  suction_duty: 5.75
   # suction_duty_low: 2.75
-  suction_duty_low: 7.0
-  suction_gain: 150
+  suction_duty_low: 5.50
+  suction_gain: 800
   # suction_duty: 3.25
-  file_idx: 18
+  file_idx: 12
   sla_dist: 90
   # sla_type: 3
-  sla_type: 5
+  sla_type: 2
   sla_type2: 8 #復路ターン種類
   sla_return: 0 # 往復フラグ
   # sla_type: 1 normal

@@ -255,10 +255,10 @@ MotionResult MotionPlanning::slalom(slalom_param2_t &sp, TurnDirection td,
     ps_front.v_max = next_motion.v_max;
     if (param->front_dist_offset_pivot_th <
             sensing_result->ego.left90_mid_dist &&
-        sensing_result->ego.left90_mid_dist < 100 &&
+        sensing_result->ego.left90_mid_dist < 110 &&
         param->front_dist_offset_pivot_th <
             sensing_result->ego.right90_mid_dist &&
-        sensing_result->ego.right90_mid_dist < 100) {
+        sensing_result->ego.right90_mid_dist < 110) {
       auto diff =
           (sensing_result->ego.front_mid_dist - param->front_dist_offset);
       if (diff > param->normal_sla_offset) {
@@ -288,12 +288,15 @@ MotionResult MotionPlanning::slalom(slalom_param2_t &sp, TurnDirection td,
     } else {
       if (sensing_result->ego.right45_dist < th_offset_dist) {
         auto diff = (param->sla_wall_ref_r - sensing_result->ego.right45_dist);
-        if (diff > 3) {
-          diff = 3;
-        } else if (diff < -3) {
-          diff = -3;
+        if (diff > param->normal_sla_offset) {
+          diff = param->normal_sla_offset;
+        } else if (diff < -param->normal_sla_offset) {
+          diff = -param->normal_sla_offset;
         }
         ps_back.dist += diff;
+        if (ps_back.dist < 0) {
+          ps_back.dist = 1;
+        }
       }
     }
     if (ps_front.dist > 0) {
@@ -984,12 +987,14 @@ void MotionPlanning::wall_off(TurnDirection td, param_straight_t &ps_front) {
         break;
       }
       if (40 < sensing_result->ego.left90_far_dist &&
-          sensing_result->ego.left90_far_dist < param->front_dist_offset3 &&
+          sensing_result->ego.left90_far_dist < param->front_dist_offset4 &&
           40 < sensing_result->ego.right90_far_dist &&
-          sensing_result->ego.right90_far_dist < param->front_dist_offset3) {
-        ps_front.dist -=
-            (param->front_dist_offset2 - sensing_result->ego.front_far_dist);
-        return;
+          sensing_result->ego.right90_far_dist < param->front_dist_offset4) {
+        if (sensing_result->ego.front_far_dist < param->front_dist_offset3) {
+          ps_front.dist -=
+              (param->front_dist_offset2 - sensing_result->ego.front_far_dist);
+          return;
+        }
       }
       if (std::abs(tgt_val->ego_in.dist) >= std::abs(tgt_val->nmr.dist)) {
         return;
@@ -1026,12 +1031,14 @@ void MotionPlanning::wall_off(TurnDirection td, param_straight_t &ps_front) {
         break;
       }
       if (40 < sensing_result->ego.left90_far_dist &&
-          sensing_result->ego.left90_far_dist < param->front_dist_offset3 &&
+          sensing_result->ego.left90_far_dist < param->front_dist_offset4 &&
           40 < sensing_result->ego.right90_far_dist &&
-          sensing_result->ego.right90_far_dist < param->front_dist_offset3) {
-        ps_front.dist -=
-            (param->front_dist_offset2 - sensing_result->ego.front_far_dist);
-        return;
+          sensing_result->ego.right90_far_dist < param->front_dist_offset4) {
+        if (sensing_result->ego.front_far_dist < param->front_dist_offset3) {
+          ps_front.dist -=
+              (param->front_dist_offset2 - sensing_result->ego.front_far_dist);
+          return;
+        }
       }
       if (std::abs(tgt_val->ego_in.dist) >= std::abs(tgt_val->nmr.dist)) {
         return;

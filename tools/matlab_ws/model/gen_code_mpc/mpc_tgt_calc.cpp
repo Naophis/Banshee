@@ -156,13 +156,13 @@ void mpc_tgt_calcModelClass::step(const t_tgt *arg_tgt, const t_ego *arg_ego,
     } else if (arg_ego->state == mpc_tgt_calc_P.Constant2_Value) {
       if (arg_ego->v < arg_tgt->v_max) {
         if (arg_ego->v > arg_tgt->accl_param.limit) {
-          // rtb_Abs7 = (mpc_tgt_calc_P.Constant3_Value_c - rt_powf_snf(arg_ego->v /
-          //   arg_tgt->v_max, arg_tgt->accl_param.n)) * (arg_tgt->accl *
-          //   arg_tgt->axel_degenerate_gain);
-
-          rtb_Abs7 = (mpc_tgt_calc_P.Constant3_Value_c - fast_pow(arg_ego->v /
+          rtb_Abs7 = (mpc_tgt_calc_P.Constant3_Value_c - rt_powf_snf(arg_ego->v /
             arg_tgt->v_max, arg_tgt->accl_param.n)) * (arg_tgt->accl *
             arg_tgt->axel_degenerate_gain);
+
+          // rtb_Abs7 = (mpc_tgt_calc_P.Constant3_Value_c - fast_pow(arg_ego->v /
+          //   arg_tgt->v_max, arg_tgt->accl_param.n)) * (arg_tgt->accl *
+          //   arg_tgt->axel_degenerate_gain);
 
 
 
@@ -212,10 +212,10 @@ void mpc_tgt_calcModelClass::step(const t_tgt *arg_tgt, const t_ego *arg_ego,
         if (mpc_tgt_calc_P.ManualSwitch_CurrentSetting_b == 1) {
           rtb_Abs7 = arg_tgt->accl;
         } else {
-          // rtb_Abs7 = (mpc_tgt_calc_P.Constant3_Value_cn - rt_powf_snf(arg_ego->v
-          //   / arg_tgt->v_max, mpc_tgt_calc_P.Constant4_Value_c)) * arg_tgt->accl;
-          rtb_Abs7 = (mpc_tgt_calc_P.Constant3_Value_cn - fast_pow(arg_ego->v
+          rtb_Abs7 = (mpc_tgt_calc_P.Constant3_Value_cn - rt_powf_snf(arg_ego->v
             / arg_tgt->v_max, mpc_tgt_calc_P.Constant4_Value_c)) * arg_tgt->accl;
+          // rtb_Abs7 = (mpc_tgt_calc_P.Constant3_Value_cn - fast_pow(arg_ego->v
+          //   / arg_tgt->v_max, mpc_tgt_calc_P.Constant4_Value_c)) * arg_tgt->accl;
         }
 
         rtb_Switch = rtb_Abs7;

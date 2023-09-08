@@ -31,3 +31,7 @@ void KalmanFilter::reset(float reset_val) {
   x = reset_val;
   P = init_P;
 }
+
+void KalmanFilter::offset(float offset) {
+  x = x + offset; //
+}

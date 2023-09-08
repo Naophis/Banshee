@@ -241,12 +241,13 @@ void MainTask::keep_pivot() {
   mp->reset_gyro_ref_with_check();
   reset_tgt_data();
   reset_ego_data();
+  req_error_reset();
   pt->motor_enable();
   req_error_reset();
   ps.v_max = 0.000000001;
   ps.v_end = 0.000000001;
   ps.dist = 1000;
-  ps.accl = 0.00000001;
+  ps.accl = 0.1;
   ps.decel = -1;
   ps.sct = SensorCtrlType::NONE;
   ps.motion_type = MotionType::STRAIGHT;
@@ -334,6 +335,7 @@ void MainTask::load_hw_param() {
   param->gear_a = getItem(root, "gear_a")->valuedouble;
   param->gear_b = getItem(root, "gear_b")->valuedouble;
   param->max_duty = getItem(root, "max_duty")->valuedouble;
+  param->min_duty = getItem(root, "min_duty")->valuedouble;
   param->Ke = getItem(root, "Ke")->valuedouble;
   param->Km = getItem(root, "Km")->valuedouble;
   param->Resist = getItem(root, "Resist")->valuedouble;
@@ -350,6 +352,7 @@ void MainTask::load_hw_param() {
   param->front_dist_offset = getItem(root, "front_dist_offset")->valuedouble;
   param->front_dist_offset2 = getItem(root, "front_dist_offset2")->valuedouble;
   param->front_dist_offset3 = getItem(root, "front_dist_offset3")->valuedouble;
+  param->front_dist_offset4 = getItem(root, "front_dist_offset4")->valuedouble;
   param->clear_dist_ragne_from =
       getItem(root, "clear_dist_ragne_from")->valuedouble;
   param->clear_dist_ragne_to =

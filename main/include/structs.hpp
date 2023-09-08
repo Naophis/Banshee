@@ -87,6 +87,7 @@ typedef struct {
   float w_lp = 0;
   float w_kf = 0;
   float v_kf = 0;
+  float dist_kf = 0;
   float batt_kf = 0;
   float accel_x_raw = 0;
 
@@ -331,6 +332,7 @@ typedef struct {
   float gear_a = 37;
   float gear_b = 8;
   float max_duty = 99;
+  float min_duty = 8;
   float Ke = 0;
   float Km = 0;
   float Resist = 0;
@@ -370,6 +372,7 @@ typedef struct {
   float front_dist_offset = 0;
   float front_dist_offset2 = 0;
   float front_dist_offset3 = 0;
+  float front_dist_offset4 = 0;
   float front_dist_offset_dia_front = 0;
   float front_dist_offset_dia_45_th = 0;
   float front_dist_offset_dia_right45 = 0;
@@ -753,6 +756,8 @@ typedef struct {
   int16_t v_l_enc;
   real16_T accl;
   real16_T accl_x;
+  real16_T dist_kf;
+  
   real16_T img_w;
   real16_T w_lp;
   real16_T alpha;

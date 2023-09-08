@@ -100,6 +100,8 @@ void LoggingTask::task() {
           ld->v_l_enc = (sensing_result->encoder.left);
           ld->accl = floatToHalf(tgt_val->ego_in.accl);
           ld->accl_x = floatToHalf(sensing_result->ego.w_kf);
+          ld->dist_kf = floatToHalf(sensing_result->ego.dist_kf);
+
           // ld->accl_x = floatToHalf((float)tgt_val->ego_in.state);
           // ld->accl = floatToHalf(tgt_val->v_error);
           // ld->accl_x = floatToHalf(tgt_val->w_error);
@@ -140,7 +142,7 @@ void LoggingTask::task() {
           ld->sen_calc_time = sensing_result->calc_time;
           ld->pln_calc_time = tgt_val->calc_time;
           ld->pln_calc_time2 = tgt_val->calc_time2;
-          
+
           if (heap_caps_get_free_size(MALLOC_CAP_INTERNAL) > 10000) {
             log_vec.emplace_back(std::move(ld));
             idx_slalom_log++;
@@ -380,13 +382,14 @@ void LoggingTask::dump_log(std::string file_name) {
   printf("start___\n"); // csvファイル作成トリガー
   vTaskDelay(xDelay2);
   printf("index,ideal_v,v_c,v_c2,v_l,v_r,v_l_enc,v_r_enc,accl,accl_x,"
-         "ideal_w,w_lp,alpha,ideal_dist,dist,"
+         "ideal_w,w_lp,alpha,ideal_dist,dist,dist_kf,"
          "ideal_ang,ang,left90,left45,front,right45,right90,left45_2,right45_2,"
          "left90_d,left45_d,"
          "front_d,right45_d,right90_d,left90_far_d,front_far_d,right90_far_d,"
          "battery,duty_l,"
          "duty_r,motion_state,duty_sen,dist_mod90,"
-         "sen_dist_l45,sen_dist_r45,timestamp,sen_calc_time,pln_calc_time,pln_calc_time2\n");
+         "sen_dist_l45,sen_dist_r45,timestamp,sen_calc_time,pln_calc_time,pln_"
+         "calc_time2\n");
   int c = 0;
   const char *f1 = format1.c_str();
   const char *f2 = format2.c_str();
@@ -413,6 +416,7 @@ void LoggingTask::dump_log(std::string file_name) {
            halfToFloat(ld->alpha),    //
            halfToFloat(ld->img_dist), //
            halfToFloat(ld->dist),     //
+           halfToFloat(ld->dist_kf),  //
            halfToFloat(ld->img_ang),  //
            halfToFloat(ld->ang));     // 7
 
@@ -483,7 +487,7 @@ void LoggingTask::dump_log(std::string file_name) {
            ld->motion_timestamp,              //
            ld->sen_calc_time,                 //
            ld->pln_calc_time,                 //
-           ld->pln_calc_time2);                // 4
+           ld->pln_calc_time2);               // 4
 
     if (i > 10 && ld->motion_timestamp == 0) {
       break;

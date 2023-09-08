@@ -62,7 +62,7 @@ const callerFun = async () => {
           var str = `${file_name}@${JSON.stringify(saveData)}`;
           write(str);
           // console.log(saveData)
-          await sleep2(700);
+          await sleep2(800);
           console.log(`${file}: finish!!`);
         }
       }

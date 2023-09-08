@@ -23,7 +23,7 @@ straight:
 orval:
   v: 1000.000000
   ang: 180.000000
-  rad: 80.000000
+  rad: 79.5
   pow_n: 2.000000
   time: 0.347078
   front: { left: 8, right: 8 }

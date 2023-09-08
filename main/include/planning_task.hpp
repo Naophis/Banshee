@@ -82,6 +82,7 @@ public:
 
   KalmanFilter kf_w;
   KalmanFilter kf_v;
+  KalmanFilter kf_dist;
   KalmanFilter kf_batt;
 
   float suction_gain = 200;

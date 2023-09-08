@@ -18,4 +18,6 @@ public:
   float get_state();
 
   void reset(float reset_val);
+  
+  void offset(float offset);
 };

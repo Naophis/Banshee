@@ -7,16 +7,21 @@ gear_a: 1
 gear_b: 1
 # max_duty: 99.9
 max_duty: 99.950
+min_duty: 7.5
 FF_front: 1
 FF_roll: 1
-FF_keV: 1
+FF_keV: 1 #FF制御on/off flag
 # FF_front: 0
 # FF_roll: 0
 # FF_keV: 0
 
+# Ke: 0.00125 # 大：逆起電力大
+# Km: 0.0125 # 大：縦系の出力小
+# Lm: 0.0000375 # 大：縦系の出力大
+
 Ke: 0.00125 # 大：逆起電力大
-Km: 0.05 # 大：縦系の出力小
-Lm: 0.000095 # 大：縦系の出力大
+Km: 0.0185 # 大：縦系の出力小
+Lm: 0.0000375 # 大：縦系の出力大
 
 # Ke: 0.00105
 # Km: 0.0025
@@ -29,24 +34,24 @@ slip_param_K: 0.5
 slip_param_k2: 135
 # slip_param_k2: 5
 
-sakiyomi_time: 10
+sakiyomi_time: 5
 clear_angle: 5
 clear_dist_order: 80
 
 # 探索スラローム
-front_dist_offset: 90.0 # 探索時の前壁補正
+front_dist_offset: 94.0 # 探索時の前壁補正
 # スラロームオフセット距離壁補正リファレンス値
 # sla_wall_ref_l: 44.0
 # sla_wall_ref_r: 49.5
-sla_wall_ref_l: 44.50
-sla_wall_ref_r: 45.0
+sla_wall_ref_l: 45.0
+sla_wall_ref_r: 46.0
 sla_max_offset_dist: 6
-normal_sla_offset: 6
 
 # Orvalスラロームオフセット距離壁補正リファレンス値
-sla_wall_ref_l_orval: 45.5
-sla_wall_ref_r_orval: 45.50
+sla_wall_ref_l_orval: 46.0
+sla_wall_ref_r_orval: 47.0
 orval_offset_enable: 1
+
 dia45_offset_enable: 1
 
 # front_dist_offset2: 137.0
@@ -76,30 +81,32 @@ ctrl_exist_wall_th_r: 50
 
 # 壁切れ壁あり判定
 wall_off_exist_wall_th_l: 50
-wall_off_exist_wall_th_r: 55
+wall_off_exist_wall_th_r: 50
 # 壁切れ In
 wall_off_hold_exist_dist_l: 72
 wall_off_hold_exist_dist_r: 72
 # 壁切れ Out
-wall_off_hold_noexist_th_l: 65
+wall_off_hold_noexist_th_l: 60
 wall_off_hold_noexist_th_r: 60
 # 壁切れ Out(最初からあるとき)
-wall_off_hold_noexist_th_l2: 65
+wall_off_hold_noexist_th_l2: 60
 wall_off_hold_noexist_th_r2: 60
 # 壁切れ オフセット距離
 # wall_off_hold_dist_str_l: -4.0
 # wall_off_hold_dist_str_r: -5.5
-wall_off_hold_dist_str_l: -6.0
-wall_off_hold_dist_str_r: -4.5
-wall_off_hold_dist_str_l_exist: -6.0
-wall_off_hold_dist_str_r_exist: -4.5
+wall_off_hold_dist_str_l: -7.0
+wall_off_hold_dist_str_r: -4.0
+wall_off_hold_dist_str_l_exist: -5.5
+wall_off_hold_dist_str_r_exist: -6.0
 # wall_off_hold_dist_str_r_exist: -1.25
 # wall_off_hold_dist_str_r_exist: 0.5
 # wall_off_hold_dist_str_r_exist: 3.50
 # 壁切れ：前壁補正
-front_dist_offset2: 139.0
+front_dist_offset2: 142.0 #ref
 # 壁切れ：前壁補正
-front_dist_offset3: 135
+front_dist_offset3: 145.0 #th
+# 壁切れ：前壁補正
+front_dist_offset4: 150.0 # both front sensors condition th
 
 # 壁切れ In(斜め)
 wall_off_hold_exist_dist_dia_l: 50
@@ -108,8 +115,8 @@ wall_off_hold_exist_dist_dia_r: 50
 wall_off_hold_noexist_dia_th_l: 55
 wall_off_hold_noexist_dia_th_r: 55
 # 壁切れ オフセット距離
-wall_off_hold_dist_dia_l2: -2.0
-wall_off_hold_dist_dia_r2: -0.5
+wall_off_hold_dist_dia_l2: -1.0
+wall_off_hold_dist_dia_r2: -1.5
 #斜めターン壁有り補正
 dia_turn_th_l: 50
 dia_turn_th_r: 50
@@ -117,17 +124,17 @@ dia_turn_th_r: 50
 wall_off_hold_dist_dia_l: -6.0
 wall_off_hold_dist_dia_r: -6.0
 #斜め壁切れ時のmax接近距離
-dia_wall_off_ref_l: 31.0
+dia_wall_off_ref_l: 42.0
 # dia_wall_off_ref_r: 35.5
-dia_wall_off_ref_r: 30.5
+dia_wall_off_ref_r: 42.0
 
 dia_offset_max_dist: 10
 
 #ターン後オフセット距離
 offset_after_turn_l: 25
 offset_after_turn_r: 25
-offset_after_turn_l2: 15
-offset_after_turn_r2: 15
+offset_after_turn_l2: 18
+offset_after_turn_r2: 18
 offset_after_turn_dia_l: 25
 offset_after_turn_dia_r: 25
 
@@ -147,32 +154,57 @@ ff_front_dury: 0.95
 
 # fail_safe
 fail_duty_cnt: 150
-fail_v_cnt: 15000
-fail_w_cnt: 1000
+fail_v_cnt: 30000
+fail_w_cnt: 4500
 
 cell: 90
 cell2: 90
 
 axel_degenerate_x: [0, 1, 2, 4, 6, 8, 10]
 # axel_degenerate_y: [1, 1, 0.2, 0.1, 0.1, 0.1, 0.1]
-axel_degenerate_y: [1, 1, 1, 1, 1, 1, 1]
+axel_degenerate_y: [1, 1, 0.5, 0.2, 0.2, 0.1, 0.1]
+# axel_degenerate_y: [1, 1, 1, 1, 1, 1, 1]
 
 motor_pid:
-  p: 0.00225
-  i: 1.85
-  d: 0.0
+  # p: 0.00225
+  # i: 1.65
+  # d: 0.0
+  p: 0.0040
+  i: 1.75
+  d: 0.00000285
   b: 0
   c: 0
   mode: 1
 motor_pid2:
-  p: 0.00275
-  i: 1.85
-  d: 0.0
-  b: 0
+  # 2cell default
+  p: 0.0040
+  i: 1.75
+  d: 0.00000285
+
+  # mk06
+  # p: 0.0085
+  # i: 0.00185
+  # d: 0.00375
+
+  # 1cell default
+  # p: 0.0035
+  # i: 0.00075
+  # d: 0.0005
+
+  # 1cell default, mode 0
+  # p: 0.00275
+  # i: 1.85
+  # d: 0.0
+
+  b: 0.0
   c: 0
+  # p: 0.00275
+  # i: 1.85
+  # d: 0.0
+
   # p: 0.00
   # i: 0
-  mode: 1
+  mode: 0
 dist_pid:
   p: 0.80
   i: 0.0015
@@ -190,15 +222,12 @@ gyro_pid:
   # d: 0.0
   # mode: 1
   # 通常 mode=0
-  p: 0.275
-  i: 0.0225
-  d: 0.275
   # p: 0.275
   # i: 0.0225
   # d: 0.275
-  # p: 0.0
-  # i: 0.0
-  # d: 0.0
+  p: 0.225
+  i: 0.0225
+  d: 0.225
   mode: 0
   # p: 0.0
   # i: 0.0
@@ -217,7 +246,8 @@ str_agl_pid:
   # d: 1.25
   p: 0.095 #search_mode
   b: 0.175 #!searchm_mode
-  d: 0.0075
+  d: 0.00375
+  # d: 0.00
   i: 0.0
   mode: 1
   # b: 0
@@ -230,8 +260,10 @@ str_agl_pid:
 str_agl_dia_pid:
   # p: 0.095
   # d: 1.25
-  p: 20.75
-  d: 0.375
+  p: 10.75
+  d: 0.125
+  # p: 0
+  # d: 0
   i: 0.0
   mode: 1
   b: 0
@@ -265,8 +297,8 @@ sensor_pid_dia:
 gyro_param:
   # gyro_w_gain_right: 0.0024635
   # gyro_w_gain_left: 0.00246375
-  gyro_w_gain_right: 0.0024475
-  gyro_w_gain_left: 0.0024475
+  gyro_w_gain_right: 0.00245
+  gyro_w_gain_left: 0.00245
   lp_delay: 1
 accel_x_param:
   # gain: 315.56 # 16g
