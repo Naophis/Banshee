@@ -329,6 +329,7 @@ void MainTask::load_hw_param() {
 
   param->dt = getItem(root, "dt")->valuedouble;
   param->tire = getItem(root, "tire")->valuedouble;
+  param->tire2 = getItem(root, "tire2")->valuedouble;
   param->log_size = getItem(root, "log_size")->valueint;
   param->cell = getItem(root, "cell")->valuedouble;
   param->cell2 = getItem(root, "cell2")->valuedouble;

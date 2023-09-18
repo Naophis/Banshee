@@ -6,7 +6,8 @@
 // constexpr int MOTOR_HZ = 100000;
 // constexpr int MOTOR_HZ = 75000 / 1;
 // constexpr int MOTOR_HZ = 25000;
-constexpr int MOTOR_HZ = 75000;
+// constexpr int MOTOR_HZ = 125000;
+constexpr int MOTOR_HZ = 200000 / 1;
 constexpr int SUCTION_MOTOR_HZ = 10000;
 PlanningTask::PlanningTask() {}
 
@@ -235,7 +236,7 @@ void PlanningTask::task() {
   mcpwm_gpio_init(MCPWM_UNIT_0, MCPWM1A, B_PWM);
   mcpwm_gpio_init(MCPWM_UNIT_1, MCPWM2A, SUCTION_PWM);
 
-  // mcpwm_group_set_resolution(MCPWM_UNIT_0, 160'000'000L);
+  mcpwm_group_set_resolution(MCPWM_UNIT_0, 160'000'000L);
   // mcpwm_group_set_resolution(MCPWM_UNIT_1, 160'000'000L);
   // mcpwm_deadtime_disable(MCPWM_UNIT_0, MCPWM_TIMER_0);
   // mcpwm_deadtime_disable(MCPWM_UNIT_0, MCPWM_TIMER_1);
@@ -725,7 +726,7 @@ float PlanningTask::check_sen_error_dia() {
 
 void PlanningTask::calc_vel() {
   const float dt = param_ro->dt;
-  const float tire = param_ro->tire;
+  const float tire = suction_en ? param_ro->tire2 : param_ro->tire;
   const auto enc_delta_l =
       sensing_result->encoder.left - sensing_result->encoder.left_old;
   float enc_ang_l = 0.f;
