@@ -1,11 +1,11 @@
 dt: 0.001
-tire: 13.5675
-tire2: 13.485
+tire: 13.565
+tire2: 13.565
 # offset_start_dist: 21.0
 offset_start_dist_search: 21.0
 offset_start_dist: 14.0
-gear_a: 1
-gear_b: 1
+gear_a: 37
+gear_b: 9
 # max_duty: 99.9
 max_duty: 99.950
 min_duty: 0.5
@@ -23,6 +23,7 @@ FF_keV: 1 #FF制御on/off flag
 Ke: 0.00125 # 大：逆起電力大
 Km: 0.0185 # 大：縦系の出力小
 Lm: 0.0000375 # 大：縦系の出力大
+# Lm: 0.0000035 # 大：縦系の出力大
 
 # Ke: 0.00105
 # Km: 0.0025
@@ -170,9 +171,12 @@ motor_pid:
   # p: 0.00225
   # i: 1.65
   # d: 0.0
-  p: 0.0040
-  i: 1.75
-  d: 0.00000285
+  # p: 0.0040
+  # i: 1.75
+  # d: 0.00000285
+  p: 0.00325
+  i: 1.95
+  d: 0.00000375
   b: 0
   c: 0
   mode: 1
@@ -181,11 +185,10 @@ motor_pid2:
   p: 0.00325
   i: 1.95
   d: 0.00000375
-
+  # p: 0.00375
+  # i: 1.75
+  # d: 0.0
   # mk06
-  # p: 0.0085
-  # i: 0.00185
-  # d: 0.00375
 
   # 1cell default
   # p: 0.0035
@@ -298,8 +301,8 @@ sensor_pid_dia:
 gyro_param:
   # gyro_w_gain_right: 0.0024635
   # gyro_w_gain_left: 0.00246375
-  gyro_w_gain_right: 0.00245
-  gyro_w_gain_left: 0.00245
+  gyro_w_gain_right: 0.0024545
+  gyro_w_gain_left: 0.002454725
   lp_delay: 1
 accel_x_param:
   # gain: 315.56 # 16g

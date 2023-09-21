@@ -166,6 +166,10 @@ private:
 
   ledc_channel_config_t buzzer_ch;
   ledc_timer_config_t buzzer_timer;
+
+  ledc_channel_config_t suction_ch;
+  ledc_timer_config_t suction_timer;
+  
   mcpwm_config_t motor_pwm_conf;
   mcpwm_config_t suction_pwm_conf;
   float duty_c = 0;

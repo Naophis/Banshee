@@ -4,10 +4,10 @@
 // constexpr int MOTOR_HZ = 250000;
 // constexpr int MOTOR_HZ = 125000;
 // constexpr int MOTOR_HZ = 100000;
-// constexpr int MOTOR_HZ = 75000 / 1;
+constexpr int MOTOR_HZ = 75000 / 1;
 // constexpr int MOTOR_HZ = 25000;
 // constexpr int MOTOR_HZ = 125000;
-constexpr int MOTOR_HZ = 200000 / 1;
+// constexpr int MOTOR_HZ = 200000 / 1;
 constexpr int SUCTION_MOTOR_HZ = 10000;
 PlanningTask::PlanningTask() {}
 
@@ -117,6 +117,8 @@ void PlanningTask::suction_motor_enable_main() {
   mcpwm_set_duty_type(MCPWM_UNIT_1, MCPWM_TIMER_2, MCPWM_OPR_A,
                       MCPWM_DUTY_MODE_0);
   mcpwm_start(MCPWM_UNIT_1, MCPWM_TIMER_2);
+  // ledc_channel_config(&suction_ch);
+  // ledc_timer_config(&suction_timer);
 }
 void PlanningTask::suction_motor_disable_main() {
   suction_en = false;
@@ -127,6 +129,8 @@ void PlanningTask::suction_motor_disable_main() {
   mcpwm_set_duty(MCPWM_UNIT_1, MCPWM_TIMER_2, MCPWM_OPR_B, 0);
   mcpwm_set_duty_type(MCPWM_UNIT_1, MCPWM_TIMER_2, MCPWM_OPR_B,
                       MCPWM_DUTY_MODE_0);
+  // ledc_set_duty(suction_ch.speed_mode, suction_ch.channel, 0);
+  // ledc_update_duty(suction_ch.speed_mode, suction_ch.channel);
 }
 
 void PlanningTask::suction_enable(float duty, float duty2) {
@@ -232,12 +236,28 @@ void PlanningTask::task() {
   ledc_channel_config(&buzzer_ch);
   ledc_timer_config(&buzzer_timer);
 
+  // memset(&suction_ch, 0, sizeof(suction_ch));
+  // memset(&suction_timer, 0, sizeof(suction_timer));
+  // suction_ch.channel = (ledc_channel_t)LEDC_CHANNEL_1;
+  // suction_ch.duty = 0;
+  // suction_ch.gpio_num = SUCTION_PWM;
+  // suction_ch.speed_mode = (ledc_mode_t)LEDC_HIGH_SPEED_MODE;
+  // suction_ch.timer_sel = (ledc_timer_t)LEDC_TIMER_1;
+
+  // suction_timer.duty_resolution = (ledc_timer_bit_t)LEDC_TIMER_8_BIT;
+  // suction_timer.freq_hz = SUCTION_MOTOR_HZ;
+  // suction_timer.speed_mode = (ledc_mode_t)LEDC_HIGH_SPEED_MODE; // timer mode
+  // suction_timer.timer_num = (ledc_timer_t)LEDC_TIMER_1;         // timer
+  // index ledc_channel_config(&suction_ch); ledc_timer_config(&suction_timer);
+
   mcpwm_gpio_init(MCPWM_UNIT_0, MCPWM0A, A_PWM);
   mcpwm_gpio_init(MCPWM_UNIT_0, MCPWM1A, B_PWM);
   mcpwm_gpio_init(MCPWM_UNIT_1, MCPWM2A, SUCTION_PWM);
 
-  mcpwm_group_set_resolution(MCPWM_UNIT_0, 160'000'000L);
+  // mcpwm_group_set_resolution(MCPWM_UNIT_0, 160'000'000L);
   // mcpwm_group_set_resolution(MCPWM_UNIT_1, 160'000'000L);
+  // mcpwm_group_set_resolution(MCPWM_UNIT_1, 10'000'000L);
+  mcpwm_group_set_resolution(MCPWM_UNIT_1, 120'000'000L);
   // mcpwm_deadtime_disable(MCPWM_UNIT_0, MCPWM_TIMER_0);
   // mcpwm_deadtime_disable(MCPWM_UNIT_0, MCPWM_TIMER_1);
   mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A,
@@ -762,8 +782,8 @@ void PlanningTask::calc_vel() {
   sensing_result->ego.v_l_old = sensing_result->ego.v_l;
   sensing_result->ego.v_r_old = sensing_result->ego.v_r;
 
-  sensing_result->ego.v_l = -tire * enc_ang_l / dt / dynamics.gear_ratio / 2;
-  sensing_result->ego.v_r = tire * enc_ang_r / dt / dynamics.gear_ratio / 2;
+  sensing_result->ego.v_l = tire * enc_ang_l / dt / dynamics.gear_ratio / 2;
+  sensing_result->ego.v_r = -tire * enc_ang_r / dt / dynamics.gear_ratio / 2;
 
   // if (ABS(sensing_result->ego.v_r - sensing_result->ego.v_r_old) > 1000) {
   //   sensing_result->ego.v_r = sensing_result->ego.v_r_old;
@@ -951,15 +971,15 @@ void PlanningTask::update_ego_motion() {
 void PlanningTask::set_next_duty(float duty_l, float duty_r,
                                  float duty_suction) {
   if (motor_en) {
-    // duty_l =  30.9;
-    // duty_r = 30.9;
+    // duty_l = -15.9;
+    // duty_r = -15.9;
 
-    if (duty_r > 0) {
+    if (duty_l < 0) {
       set_gpio_state(A_CW_CCW1, true);
     } else {
       set_gpio_state(A_CW_CCW1, false);
     }
-    if (duty_l < 0) {
+    if (duty_r > 0) {
       set_gpio_state(B_CW_CCW1, true);
     } else {
       set_gpio_state(B_CW_CCW1, false);
@@ -970,8 +990,8 @@ void PlanningTask::set_next_duty(float duty_l, float duty_r,
     mcpwm_set_signal_low(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B);
     mcpwm_set_signal_low(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_B);
 
-    mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A, tmp_duty_r);
-    mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_A, tmp_duty_l);
+    mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A, tmp_duty_l);
+    mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_A, tmp_duty_r);
 
     mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A,
                         MCPWM_DUTY_MODE_0);
@@ -992,9 +1012,6 @@ void PlanningTask::set_next_duty(float duty_l, float duty_r,
     //                     MCPWM_DUTY_MODE_0);
   }
   if (suction_en) {
-    // mcpwm_set_signal_high(MCPWM_UNIT_1, MCPWM_TIMER_2, MCPWM_OPR_A);
-
-    // mcpwm_set_signal_low(MCPWM_UNIT_1, MCPWM_TIMER_2, MCPWM_OPR_B);
     float duty_suction_in = 0;
 
     if (tgt_val->tgt_in.tgt_dist > 60 &&
@@ -1009,23 +1026,27 @@ void PlanningTask::set_next_duty(float duty_l, float duty_r,
     if (duty_suction_in > 100) {
       duty_suction_in = 100.0;
     }
-    // gain_cnt += 1.0;
-    // if (gain_cnt > suction_gain) {
-    //   gain_cnt = suction_gain;
-    // }
-    // duty_suction_in = duty_suction_in * gain_cnt / suction_gain;
-    // printf("%f, %f, %f\n", duty_suction_in,
-    //        tgt_duty.duty_suction / sensing_result->ego.battery_lp * 100,
-    //        sensing_result->ego.battery_lp);
+    gain_cnt += 1.0;
+    if (gain_cnt > suction_gain) {
+      gain_cnt = suction_gain;
+    }
+    duty_suction_in = duty_suction_in * gain_cnt / suction_gain;
+    // printf("%f, %f, %f, %f\n", gain_cnt, duty_suction_in,
+    //        tgt_duty.duty_suction / sensing_result->ego.batt_kf * 100,
+    //        sensing_result->ego.batt_kf);
+
+    mcpwm_set_signal_low(MCPWM_UNIT_1, MCPWM_TIMER_2, MCPWM_OPR_A);
     mcpwm_set_duty(MCPWM_UNIT_1, MCPWM_TIMER_2, MCPWM_OPR_A, duty_suction_in);
     mcpwm_set_duty_type(MCPWM_UNIT_1, MCPWM_TIMER_2, MCPWM_OPR_A,
                         MCPWM_DUTY_MODE_0);
+
+    // ledc_set_duty(suction_ch.speed_mode, suction_ch.channel,
+    // duty_suction_in); ledc_update_duty(suction_ch.speed_mode,
+    // suction_ch.channel);
   } else {
     gain_cnt = 0;
-    // mcpwm_set_duty(MCPWM_UNIT_1, MCPWM_TIMER_2, MCPWM_OPR_A, 0);
-    // mcpwm_set_duty_type(MCPWM_UNIT_1, MCPWM_TIMER_2, MCPWM_OPR_A,
-    //                     MCPWM_DUTY_MODE_0);
-    // suction_disable();
+    // ledc_set_duty(suction_ch.speed_mode, suction_ch.channel, 0);
+    // ledc_update_duty(suction_ch.speed_mode, suction_ch.channel);
   }
 }
 
