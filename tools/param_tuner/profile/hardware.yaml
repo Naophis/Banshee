@@ -2,8 +2,8 @@ dt: 0.001
 tire: 13.565
 tire2: 13.565
 # offset_start_dist: 21.0
-offset_start_dist_search: 21.0
-offset_start_dist: 14.0
+offset_start_dist_search: 20.0
+offset_start_dist: 12.0
 gear_a: 37
 gear_b: 9
 # max_duty: 99.9
@@ -21,9 +21,8 @@ FF_keV: 1 #FF制御on/off flag
 # Lm: 0.0000375 # 大：縦系の出力大
 
 Ke: 0.00125 # 大：逆起電力大
-Km: 0.0185 # 大：縦系の出力小
-Lm: 0.0000375 # 大：縦系の出力大
-# Lm: 0.0000035 # 大：縦系の出力大
+Km: 0.0485 # 大：縦系の出力小
+Lm: 0.0004 # 大：横系の出力大
 
 # Ke: 0.00105
 # Km: 0.0025
@@ -36,7 +35,7 @@ slip_param_K: 0.5
 slip_param_k2: 135
 # slip_param_k2: 5
 
-sakiyomi_time: 5
+sakiyomi_time: 10
 clear_angle: 5
 clear_dist_order: 80
 
@@ -94,21 +93,17 @@ wall_off_hold_noexist_th_r: 60
 wall_off_hold_noexist_th_l2: 60
 wall_off_hold_noexist_th_r2: 60
 # 壁切れ オフセット距離
-# wall_off_hold_dist_str_l: -4.0
-# wall_off_hold_dist_str_r: -5.5
-wall_off_hold_dist_str_l: -7.0
-wall_off_hold_dist_str_r: -5.0
-wall_off_hold_dist_str_l_exist: -7
-wall_off_hold_dist_str_r_exist: -5.0
-# wall_off_hold_dist_str_r_exist: -1.25
-# wall_off_hold_dist_str_r_exist: 0.5
-# wall_off_hold_dist_str_r_exist: 3.50
+wall_off_hold_dist_str_l: -1.0
+wall_off_hold_dist_str_r: -2.5
+wall_off_hold_dist_str_l_exist: -1.5
+wall_off_hold_dist_str_r_exist: -2.50
+
 # 壁切れ：前壁補正
-front_dist_offset2: 142.0 #ref
+front_dist_offset2: 138.0 #ref
 # 壁切れ：前壁補正
-front_dist_offset3: 145.0 #th
+front_dist_offset3: 140.0 #th
 # 壁切れ：前壁補正
-front_dist_offset4: 150.0 # both front sensors condition th
+front_dist_offset4: 140.0 # both front sensors condition th
 
 # 壁切れ In(斜め)
 wall_off_hold_exist_dist_dia_l: 50
@@ -117,14 +112,14 @@ wall_off_hold_exist_dist_dia_r: 50
 wall_off_hold_noexist_dia_th_l: 55
 wall_off_hold_noexist_dia_th_r: 55
 # 壁切れ オフセット距離
-wall_off_hold_dist_dia_l2: -1.0
-wall_off_hold_dist_dia_r2: -3.5
+wall_off_hold_dist_dia_l2: 1.0
+wall_off_hold_dist_dia_r2: 0.0
 #斜めターン壁有り補正
 dia_turn_th_l: 50
 dia_turn_th_r: 50
 # 壁切れ オフセット距離(反対側の壁有り)
 wall_off_hold_dist_dia_l: -6.0
-wall_off_hold_dist_dia_r: -6.0
+wall_off_hold_dist_dia_r: -4.0
 #斜め壁切れ時のmax接近距離
 dia_wall_off_ref_l: 42.0
 # dia_wall_off_ref_r: 35.5
@@ -146,7 +141,7 @@ search_log_enable: 0
 test_log_enable: 1
 fast_log_enable: 1
 sen_log_size: 100
-log_size: 24000
+log_size: 20000
 
 front_ctrl_error_th: 1
 front_diff_th: 9
@@ -176,18 +171,18 @@ motor_pid:
   # d: 0.00000285
   p: 0.00325
   i: 1.95
-  d: 0.00000375
+  d: 0.0
   b: 0
   c: 0
   mode: 1
 motor_pid2:
   # 2cell default
-  p: 0.00325
+  # p: 0.00275
+  # i: 0.25
+  # d: 0.00
+  p: 0.00375
   i: 1.95
-  d: 0.00000375
-  # p: 0.00375
-  # i: 1.75
-  # d: 0.0
+  d: 0.0
   # mk06
 
   # 1cell default
@@ -206,8 +201,9 @@ motor_pid2:
   # i: 1.85
   # d: 0.0
 
-  # p: 0.00
+  # p: 0.0
   # i: 0
+  # d: 0.0
   mode: 0
 dist_pid:
   p: 0.80
@@ -250,8 +246,8 @@ str_agl_pid:
   # d: 1.25
   p: 0.095 #search_mode
   b: 0.095 #!searchm_mode
-  # d: 0.00375
-  d: 0.00
+  d: 0.00375
+  # d: 0.00
   i: 0.0
   mode: 1
   # b: 0

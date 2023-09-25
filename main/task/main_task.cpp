@@ -322,9 +322,10 @@ void MainTask::load_hw_param() {
   // printf("%s\n", str.c_str());
 
   cJSON *root = cJSON_CreateObject(), *motor_pid, *motor_pid2, *gyro_pid,
-        *str_agl_pid, *str_agl_dia_pid, *gyro_param, *kalman_config, *battery_param, *led_param,
-        *angle_pid, *dist_pid, *sen_pid, *sen_pid_dia, *accel_x, *comp_v_param,
-        *axel_degenerate_x, *axel_degenerate_y;
+        *str_agl_pid, *str_agl_dia_pid, *gyro_param, *kalman_config,
+        *battery_param, *led_param, *angle_pid, *dist_pid, *sen_pid,
+        *sen_pid_dia, *accel_x, *comp_v_param, *axel_degenerate_x,
+        *axel_degenerate_y;
   root = cJSON_Parse(str.c_str());
 
   param->dt = getItem(root, "dt")->valuedouble;
@@ -346,7 +347,8 @@ void MainTask::load_hw_param() {
   param->slip_param_k2 = getItem(root, "slip_param_k2")->valuedouble;
   param->sen_log_size = getItem(root, "sen_log_size")->valueint;
   param->offset_start_dist = getItem(root, "offset_start_dist")->valuedouble;
-  param->offset_start_dist_search = getItem(root, "offset_start_dist_search")->valuedouble;
+  param->offset_start_dist_search =
+      getItem(root, "offset_start_dist_search")->valuedouble;
   param->sakiyomi_time = getItem(root, "sakiyomi_time")->valuedouble;
   param->clear_angle = getItem(root, "clear_angle")->valuedouble;
   param->clear_dist_order = getItem(root, "clear_dist_order")->valuedouble;
@@ -841,7 +843,7 @@ void MainTask::load_sys_param() {
   sys.test.suction_duty_low = getItem(test, "suction_duty_low")->valuedouble;
   sys.test.suction_gain = getItem(test, "suction_gain")->valuedouble;
   pt->suction_gain = sys.test.suction_gain;
-  
+
   sys.test.file_idx = getItem(test, "file_idx")->valueint;
   printf("sys.test.file_idx = %d\n", sys.test.file_idx);
   file_idx = sys.test.file_idx;
@@ -1092,6 +1094,7 @@ void MainTask::rx_uart_json() {
 
   uint8_t *data = (uint8_t *)malloc(BUF_SIZE);
   ui->coin(40);
+  bool update = false;
   while (1) {
     int len = uart_read_bytes(UART_NUM_0, data, (BUF_SIZE - 1),
                               250.0 / portTICK_RATE_MS);
@@ -1100,12 +1103,18 @@ void MainTask::rx_uart_json() {
       data[len] = '\0';
       std::string str = std::string((const char *)data);
       save_json_data(str);
+      update = true;
     }
     if (ui->button_state_hold()) {
       break;
     }
   }
   free(data);
+  if (update) {
+    load_param();
+    ui->coin(40);
+    ui->coin(40);
+  }
   umount();
   ui->coin(100);
   vTaskDelay(100.0 / portTICK_PERIOD_MS);

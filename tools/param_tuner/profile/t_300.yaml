@@ -16,7 +16,7 @@ straight:
     w_end: 0.1
     alpha: 120
   fast_run_dia:
-    v_max: 700
+    v_max: 600
     # v_max: 300
     accl: 2500
     decel: -2500

@@ -324,18 +324,18 @@ extern "C" void app_main() {
   st.set_tgt_val(tgt_val);
   st.set_main_task(mt);
   st.set_input_param_entity(param);
-  st.create_task(1);
+  st.create_task(0);
 
   pt->set_sensing_entity(sensing_entity);
   pt->set_input_param_entity(param);
   pt->set_tgt_val(tgt_val);
   pt->set_queue_handler(xQueue);
-  pt->create_task(1);
+  pt->create_task(0);
 
   lt->set_sensing_entity(sensing_entity);
   lt->set_input_param_entity(param);
   lt->set_tgt_val(tgt_val);
-  lt->create_task(0);
+  lt->create_task(1);
   pt->set_logging_task(lt);
   // vTaskDelay(1000.0 / portTICK_RATE_MS);
   // int i = 0;
@@ -353,7 +353,7 @@ extern "C" void app_main() {
   mt->set_planning_task(pt);
   mt->set_logging_task(lt);
   mt->set_queue_handler(xQueue);
-  mt->create_task(0);
+  mt->create_task(1);
 
   // /* Set the GPIO as a push/pull output */
 
@@ -362,9 +362,9 @@ extern "C" void app_main() {
   // gpio_set_level(LED3, 0);
   // gpio_set_level(LED4, 0);
   // gpio_set_level(LED5, 0);
-  // esp_task_wdt_reset();
-  // esp_task_wdt_add(xTaskGetIdleTaskHandleForCPU(0));
-  // esp_task_wdt_add(xTaskGetIdleTaskHandleForCPU(1));
+  esp_task_wdt_reset();
+  esp_task_wdt_add(xTaskGetIdleTaskHandleForCPU(0));
+  esp_task_wdt_add(xTaskGetIdleTaskHandleForCPU(1));
 
   // init_i2c_master();
   uint8_t writeBuffer[2];

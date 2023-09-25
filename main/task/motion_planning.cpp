@@ -990,6 +990,8 @@ void MotionPlanning::wall_off(TurnDirection td, param_straight_t &ps_front) {
           sensing_result->ego.left90_far_dist < param->front_dist_offset4 &&
           40 < sensing_result->ego.right90_far_dist &&
           sensing_result->ego.right90_far_dist < param->front_dist_offset4) {
+      // if (40 < sensing_result->ego.front_far_dist &&
+      //     sensing_result->ego.front_far_dist < param->front_dist_offset4) {
         if (sensing_result->ego.front_far_dist < param->front_dist_offset3) {
           ps_front.dist -=
               (param->front_dist_offset2 - sensing_result->ego.front_far_dist);
@@ -1034,6 +1036,8 @@ void MotionPlanning::wall_off(TurnDirection td, param_straight_t &ps_front) {
           sensing_result->ego.left90_far_dist < param->front_dist_offset4 &&
           40 < sensing_result->ego.right90_far_dist &&
           sensing_result->ego.right90_far_dist < param->front_dist_offset4) {
+      // if (40 < sensing_result->ego.front_far_dist &&
+      //     sensing_result->ego.front_far_dist < param->front_dist_offset4) {
         if (sensing_result->ego.front_far_dist < param->front_dist_offset3) {
           ps_front.dist -=
               (param->front_dist_offset2 - sensing_result->ego.front_far_dist);

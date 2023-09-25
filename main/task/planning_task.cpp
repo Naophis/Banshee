@@ -4,10 +4,10 @@
 // constexpr int MOTOR_HZ = 250000;
 // constexpr int MOTOR_HZ = 125000;
 // constexpr int MOTOR_HZ = 100000;
-constexpr int MOTOR_HZ = 75000 / 1;
-// constexpr int MOTOR_HZ = 25000;
-// constexpr int MOTOR_HZ = 125000;
-// constexpr int MOTOR_HZ = 200000 / 1;
+// constexpr int MOTOR_HZ = 75000 / 1;
+constexpr int MOTOR_HZ = 15000;
+// constexpr int MOTOR_HZ = 17500;
+// constexpr int MOTOR_HZ = 100000 / 1;
 constexpr int SUCTION_MOTOR_HZ = 10000;
 PlanningTask::PlanningTask() {}
 
@@ -254,15 +254,18 @@ void PlanningTask::task() {
   mcpwm_gpio_init(MCPWM_UNIT_0, MCPWM1A, B_PWM);
   mcpwm_gpio_init(MCPWM_UNIT_1, MCPWM2A, SUCTION_PWM);
 
-  // mcpwm_group_set_resolution(MCPWM_UNIT_0, 160'000'000L);
+  mcpwm_group_set_resolution(MCPWM_UNIT_0, 160'000'000L);
+  // mcpwm_group_set_resolution(MCPWM_UNIT_0, 100'000'000L);
   // mcpwm_group_set_resolution(MCPWM_UNIT_1, 160'000'000L);
   // mcpwm_group_set_resolution(MCPWM_UNIT_1, 10'000'000L);
-  mcpwm_group_set_resolution(MCPWM_UNIT_1, 120'000'000L);
+  // mcpwm_group_set_resolution(MCPWM_UNIT_1, 120'000'000L);
   // mcpwm_deadtime_disable(MCPWM_UNIT_0, MCPWM_TIMER_0);
   // mcpwm_deadtime_disable(MCPWM_UNIT_0, MCPWM_TIMER_1);
   mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A,
                       MCPWM_DUTY_MODE_0);
   mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_A,
+                      MCPWM_DUTY_MODE_0);
+  mcpwm_set_duty_type(MCPWM_UNIT_1, MCPWM_TIMER_2, MCPWM_OPR_A,
                       MCPWM_DUTY_MODE_0);
 
   memset(&motor_pwm_conf, 0, sizeof(motor_pwm_conf));
@@ -1034,6 +1037,10 @@ void PlanningTask::set_next_duty(float duty_l, float duty_r,
     // printf("%f, %f, %f, %f\n", gain_cnt, duty_suction_in,
     //        tgt_duty.duty_suction / sensing_result->ego.batt_kf * 100,
     //        sensing_result->ego.batt_kf);
+
+    if (duty_suction_in > 100) {
+      duty_suction_in = 100;
+    }
 
     mcpwm_set_signal_low(MCPWM_UNIT_1, MCPWM_TIMER_2, MCPWM_OPR_A);
     mcpwm_set_duty(MCPWM_UNIT_1, MCPWM_TIMER_2, MCPWM_OPR_A, duty_suction_in);

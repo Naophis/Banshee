@@ -29,13 +29,13 @@ maze_size: 32
 give_up_time: 30
 debug: 0 #
 # mode: 0 # メイン
-# mode: 1 # 最短スローム
+mode: 1 # 最短スローム
 # mode: 2 # 直進
 # mode: 3 # 超信地
-# mode: 5 # 探索スラローム
+# mode: 5 # 探索スラローム sla_wall_ref_l/r
 # mode: 7 # front ctrl
 # mode: 9 # wall off
-mode: 11 # vacume/suction test
+# mode: 11 # vacume/suction test
 # mode: 12 # silent_keep
 # mode: 13 # keep_pos
 # mode: 14 # sensing
@@ -44,27 +44,27 @@ mode: 11 # vacume/suction test
 # mode: 21 # pivot turn n2
 
 test: # テスト走行時に使用するパラメータ群
-  v_max: 2500
+  v_max: 300
   end_v: 1
-  accl: 12000
-  decel: -12000
-  dist: 720  #直進全部
+  accl: 22000
+  decel: -22000
+  dist: 360  #直進全部
   # dist: 540 #直進全部　
   # dist: 180 # スラロームテスト
   dia: 0
-  w_max: 7.5
-  alpha: 30
-  ang: 360
+  w_max: 12.5
+  alpha: 60
+  ang: 1800
   suction_active: 1
-  suction_duty: 3.75
+  suction_duty: 4.75
   # suction_duty_low: 2.75
-  suction_duty_low: 3.5
-  suction_gain: 1
+  suction_duty_low: 4.5
+  suction_gain: 250
   # suction_duty: 3.25
-  file_idx: 0
+  file_idx: 12
   sla_dist: 90
   # sla_type: 3
-  sla_type: 4
+  sla_type: 3
   sla_type2: 8 #復路ターン種類
   sla_return: 0 # 往復フラグ
   # sla_type: 1 normal
@@ -77,7 +77,7 @@ test: # テスト走行時に使用するパラメータ群
   # sla_type: 8 #dia45_2
   # sla_type: 9 #dia135_2
   turn_times: 0
-  ignore_opp_sen: 2 #斜めターン後の直進テスト 0無効、1斜め制御なし、2斜め制御あり
+  ignore_opp_sen: 0 #斜めターン後の直進テスト 0無効、1斜め制御なし、2斜め制御あり
   sysid_test_mode: 0 #システム同定のテスト:0 直進、1回転
   sysid_duty: 4.25 #duty 
   sysid_time: 2000 #duty 
