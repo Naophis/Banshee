@@ -93,10 +93,10 @@ wall_off_hold_noexist_th_r: 60
 wall_off_hold_noexist_th_l2: 60
 wall_off_hold_noexist_th_r2: 60
 # 壁切れ オフセット距離
-wall_off_hold_dist_str_l: -1.0
-wall_off_hold_dist_str_r: -2.5
-wall_off_hold_dist_str_l_exist: -1.5
-wall_off_hold_dist_str_r_exist: -2.50
+wall_off_hold_dist_str_l: -4.0
+wall_off_hold_dist_str_r: -4.50
+wall_off_hold_dist_str_l_exist: -4.0
+wall_off_hold_dist_str_r_exist: -4.50
 
 # 壁切れ：前壁補正
 front_dist_offset2: 138.0 #ref
@@ -121,9 +121,9 @@ dia_turn_th_r: 50
 wall_off_hold_dist_dia_l: -6.0
 wall_off_hold_dist_dia_r: -4.0
 #斜め壁切れ時のmax接近距離
-dia_wall_off_ref_l: 42.0
+dia_wall_off_ref_l: 37.0
 # dia_wall_off_ref_r: 35.5
-dia_wall_off_ref_r: 42.0
+dia_wall_off_ref_r: 36.50
 
 dia_offset_max_dist: 10
 
@@ -170,7 +170,7 @@ motor_pid:
   # i: 1.75
   # d: 0.00000285
   p: 0.00325
-  i: 1.95
+  i: 1.75
   d: 0.0
   b: 0
   c: 0
@@ -180,8 +180,8 @@ motor_pid2:
   # p: 0.00275
   # i: 0.25
   # d: 0.00
-  p: 0.00375
-  i: 1.95
+  p: 0.00325
+  i: 1.75
   d: 0.0
   # mk06
 

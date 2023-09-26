@@ -8,7 +8,7 @@ from plotorval import PlotOrval
 p = Plot()
 po = PlotOrval()
 
-v = 1500
+v = 500
 # show = True
 show = False
 K = 135
@@ -24,11 +24,11 @@ offset = {
 }
 
 # p.exe("normal", v, show, 0, K, list_K_y, offset)
-p.exe("large", v, show, 0, K, list_K_y, offset)
+# p.exe("large", v, show, 0, K, list_K_y, offset)
 # p.exe("orval", v, show, 0, K, list_K_y, offset)
 # p.exe("dia45", v, show, 0, K, list_K_y, offset)
-p.exe("dia45", v, show, 1, K, list_K_y, offset)
-p.exe("dia45_2", v, show, 0, K, list_K_y, offset)
+# p.exe("dia45", v, show, 1, K, list_K_y, offset)
+# p.exe("dia45_2", v, show, 0, K, list_K_y, offset)
 p.exe("dia135", v, show, 0,  K, list_K_y, offset)
-p.exe("dia135_2", v, show, 0,  K, list_K_y, offset)
-p.exe("dia90", v, show, 0, K, list_K_y, offset)
+# p.exe("dia135_2", v, show, 0,  K, list_K_y, offset)
+# p.exe("dia90", v, show, 0, K, list_K_y, offset)
