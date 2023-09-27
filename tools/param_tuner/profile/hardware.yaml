@@ -32,7 +32,7 @@ Mass: 0.022
 
 slip_param_K: 0.5
 # slip_param_k2: 150
-slip_param_k2: 135
+slip_param_k2: 100
 # slip_param_k2: 5
 
 sakiyomi_time: 10

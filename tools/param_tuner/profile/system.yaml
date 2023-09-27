@@ -29,9 +29,9 @@ maze_size: 32
 give_up_time: 30
 debug: 0 #
 # mode: 0 # メイン
-# mode: 1 # 最短スローム
+mode: 1 # 最短スローム
 # mode: 2 # 直進
-mode: 3 # 超信地
+# mode: 3 # 超信地
 # mode: 5 # 探索スラローム sla_wall_ref_l/r
 # mode: 7 # front ctrl
 # mode: 9 # wall off
@@ -46,8 +46,8 @@ mode: 3 # 超信地
 test: # テスト走行時に使用するパラメータ群
   v_max: 300
   end_v: 1
-  accl: 2200
-  decel: -2200
+  accl: 22000
+  decel: -22000
   dist: 360  #直進全部
   # dist: 540 #直進全部　
   # dist: 180 # スラロームテスト
@@ -55,18 +55,18 @@ test: # テスト走行時に使用するパラメータ群
   w_max: 18.5
   alpha: 90
   ang: 1800
-  suction_active: 0
+  suction_active: 1
   suction_duty: 4.75
   # suction_duty_low: 2.75
   suction_duty_low: 4.5
   suction_gain: 250
   # suction_duty: 3.25
-  file_idx: 0
+  file_idx: 13
   sla_dist: 90
   # sla_type: 3
   sla_type: 5
   sla_type2: 6 #復路ターン種類
-  sla_return: 1 # 往復フラグ
+  sla_return: 0 # 往復フラグ
   # sla_type: 1 normal
   # sla_type: 2 #orval
   # sla_type: 3 #large

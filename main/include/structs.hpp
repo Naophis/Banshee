@@ -88,6 +88,7 @@ typedef struct {
   float w_kf = 0;
   float v_kf = 0;
   float dist_kf = 0;
+  float ang_kf = 0;
   float batt_kf = 0;
   float accel_x_raw = 0;
 
@@ -767,6 +768,7 @@ typedef struct {
   real16_T dist;
   real16_T img_ang;
   real16_T ang;
+  real16_T ang_kf;
 
   real16_T duty_l;
   real16_T duty_r;

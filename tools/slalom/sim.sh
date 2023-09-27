@@ -1,1 +1,1 @@
-python main.py > result.yaml
+python main.py 300 0 > result.yaml

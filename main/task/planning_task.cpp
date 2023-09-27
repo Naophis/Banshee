@@ -307,7 +307,8 @@ void PlanningTask::task() {
                measurement_noise);
   kf_dist.init(initial_state, initial_covariance, process_noise,
                measurement_noise);
-
+  kf_ang.init(initial_state, initial_covariance, process_noise,
+              measurement_noise);
   // dist_pid.initialize();
   // sen_pid.initialize();
   // sen_dia_pid.initialize();
@@ -909,6 +910,11 @@ void PlanningTask::update_ego_motion() {
     kf_dist.predict(tgt_val->ego_in.v);
     kf_dist.update(tgt_val->ego_in.dist);
     sensing_result->ego.dist_kf = kf_dist.get_state();
+  }
+  if (std::isfinite(tgt_val->ego_in.w)) {
+    kf_ang.predict(tgt_val->ego_in.w);
+    kf_ang.update(tgt_val->ego_in.ang);
+    sensing_result->ego.ang_kf = kf_ang.get_state();
   }
 
   sensing_result->ego.battery_raw = sensing_result->battery.data;
@@ -1562,6 +1568,7 @@ void PlanningTask::calc_tgt_duty() {
     tgt_val->global_pos.dist = 0;
     tgt_val->global_pos.img_dist = 0;
     kf_dist.reset(0);
+    kf_ang.reset(0);
   }
   sensing_result->ego.duty.duty_r = tgt_duty.duty_r;
   sensing_result->ego.duty.duty_l = tgt_duty.duty_l;
@@ -1709,6 +1716,7 @@ void PlanningTask::cp_request() {
     tgt_val->ego_in.img_ang -= tgt_val->ego_in.ang;
     tgt_val->ego_in.ang = 0;
   }
+  kf_ang.reset(0);
   if (tgt_val->tgt_in.tgt_dist != 0) {
     const auto tmp_dist = tgt_val->ego_in.dist;
     tgt_val->ego_in.img_dist -= tmp_dist;

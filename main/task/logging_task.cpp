@@ -117,6 +117,7 @@ void LoggingTask::task() {
               (tgt_val->ego_in.img_ang + sensing_result->ego.duty.sen_ang) *
               180 / m_PI);
           ld->ang = floatToHalf(tgt_val->ego_in.ang * 180 / m_PI);
+          ld->ang_kf = floatToHalf(sensing_result->ego.ang_kf * 180 / m_PI);
 
           ld->left90_lp = floatToHalf(sensing_result->ego.left90_lp);
           ld->left45_lp = floatToHalf(sensing_result->ego.left45_lp);
@@ -231,7 +232,8 @@ void LoggingTask::save(std::string file_name) {
             halfToFloat(ld->img_dist), //
             halfToFloat(ld->dist),     //
             halfToFloat(ld->img_ang),  //
-            halfToFloat(ld->ang));     // 7
+            halfToFloat(ld->ang),      //
+            halfToFloat(ld->ang_kf));  // 7
 
     auto l90 = calc_sensor(halfToFloat(ld->left90_lp), param->sensor_gain.l90.a,
                            param->sensor_gain.l90.b, ld->motion_type);
@@ -383,7 +385,8 @@ void LoggingTask::dump_log(std::string file_name) {
   vTaskDelay(xDelay2);
   printf("index,ideal_v,v_c,v_c2,v_l,v_r,v_l_enc,v_r_enc,accl,accl_x,"
          "ideal_w,w_lp,alpha,ideal_dist,dist,dist_kf,"
-         "ideal_ang,ang,left90,left45,front,right45,right90,left45_2,right45_2,"
+         "ideal_ang,ang,ang_kf,left90,left45,front,right45,right90,left45_2,"
+         "right45_2,"
          "left90_d,left45_d,"
          "front_d,right45_d,right90_d,left90_far_d,front_far_d,right90_far_d,"
          "battery,duty_l,"
@@ -418,7 +421,8 @@ void LoggingTask::dump_log(std::string file_name) {
            halfToFloat(ld->dist),     //
            halfToFloat(ld->dist_kf),  //
            halfToFloat(ld->img_ang),  //
-           halfToFloat(ld->ang));     // 7
+           halfToFloat(ld->ang),      //
+           halfToFloat(ld->ang_kf));  // 7
 
     auto l90 = calc_sensor(halfToFloat(ld->left90_lp), param->sensor_gain.l90.a,
                            param->sensor_gain.l90.b, ld->motion_type);
