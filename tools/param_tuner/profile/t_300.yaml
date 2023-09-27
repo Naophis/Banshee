@@ -1,7 +1,7 @@
 straight:
   search:
     # v_max: 385
-    v_max: 500
+    v_max: 450
     # v_max: 300
     accl: 2500
     decel: -2500
@@ -9,7 +9,7 @@ straight:
     w_end: 0.1
     alpha: 120
   fast_run:
-    v_max: 750
+    v_max: 600
     # v_max: 300
     accl: 1500
     decel: -2500
@@ -17,7 +17,7 @@ straight:
     w_end: 0.1
     alpha: 120
   fast_run_dia:
-    v_max: 750
+    v_max: 600
     # v_max: 300
     accl: 2500
     decel: -2500
