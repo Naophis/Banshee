@@ -407,6 +407,11 @@ MotionResult MotionPlanning::slalom(slalom_param2_t &sp, TurnDirection td,
         sp.rad = rad_l;
       }
     }
+    if (td == TurnDirection::Right) {
+      sp.rad += param->orval_rad_offset_r;
+    } else {
+      sp.rad += param->orval_rad_offset_l;
+    }
     ps_back.dist -= (td == TurnDirection::Right) ? param->offset_after_turn_r2
                                                  : param->offset_after_turn_l2;
     if (b) {
@@ -990,8 +995,8 @@ void MotionPlanning::wall_off(TurnDirection td, param_straight_t &ps_front) {
           sensing_result->ego.left90_far_dist < param->front_dist_offset4 &&
           40 < sensing_result->ego.right90_far_dist &&
           sensing_result->ego.right90_far_dist < param->front_dist_offset4) {
-      // if (40 < sensing_result->ego.front_far_dist &&
-      //     sensing_result->ego.front_far_dist < param->front_dist_offset4) {
+        // if (40 < sensing_result->ego.front_far_dist &&
+        //     sensing_result->ego.front_far_dist < param->front_dist_offset4) {
         if (sensing_result->ego.front_far_dist < param->front_dist_offset3) {
           ps_front.dist -=
               (param->front_dist_offset2 - sensing_result->ego.front_far_dist);
@@ -1036,8 +1041,8 @@ void MotionPlanning::wall_off(TurnDirection td, param_straight_t &ps_front) {
           sensing_result->ego.left90_far_dist < param->front_dist_offset4 &&
           40 < sensing_result->ego.right90_far_dist &&
           sensing_result->ego.right90_far_dist < param->front_dist_offset4) {
-      // if (40 < sensing_result->ego.front_far_dist &&
-      //     sensing_result->ego.front_far_dist < param->front_dist_offset4) {
+        // if (40 < sensing_result->ego.front_far_dist &&
+        //     sensing_result->ego.front_far_dist < param->front_dist_offset4) {
         if (sensing_result->ego.front_far_dist < param->front_dist_offset3) {
           ps_front.dist -=
               (param->front_dist_offset2 - sensing_result->ego.front_far_dist);

@@ -485,6 +485,11 @@ void MainTask::load_hw_param() {
       getItem(root, "sla_wall_ref_l_orval")->valuedouble;
   param->sla_wall_ref_r_orval =
       getItem(root, "sla_wall_ref_r_orval")->valuedouble;
+  param->orval_rad_offset_l =
+      getItem(root, "orval_rad_offset_l")->valuedouble;
+  param->orval_rad_offset_r =
+      getItem(root, "orval_rad_offset_r")->valuedouble;
+      
   param->orval_enable = getItem(root, "orval_offset_enable")->valueint;
   param->dia45_offset_enable = getItem(root, "dia45_offset_enable")->valueint;
 
@@ -1628,13 +1633,16 @@ void MainTask::test_turn() {
 
   req_error_reset();
 
+  load_slalom_param(0, 0);
+  str_p = param_set.str_map[StraightType::Search];
+
   if (param->test_log_enable > 0) {
     lt->start_slalom_log();
   }
   // pt->active_logging();
   pr.w_max = sys.test.w_max;
   pr.alpha = sys.test.alpha;
-  pr.w_end = 0;
+  pr.w_end = str_p.w_end;
   pr.ang = sys.test.ang * m_PI / 180;
   pr.RorL = rorl;
 

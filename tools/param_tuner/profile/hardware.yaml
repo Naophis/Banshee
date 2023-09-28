@@ -49,8 +49,11 @@ sla_wall_ref_r: 46.0
 sla_max_offset_dist: 6
 
 # Orvalスラロームオフセット距離壁補正リファレンス値
-sla_wall_ref_l_orval: 46.0
-sla_wall_ref_r_orval: 47.0
+sla_wall_ref_l_orval: 44.5
+sla_wall_ref_r_orval: 44.5
+# orval_rad_offset_l: 5
+orval_rad_offset_l: 1
+orval_rad_offset_r: 0
 orval_offset_enable: 1
 
 dia45_offset_enable: 1
@@ -180,9 +183,16 @@ motor_pid2:
   # p: 0.00275
   # i: 0.25
   # d: 0.00
+  mode: 2
   p: 0.00275
   i: 1.95
+  b: 0.00
   d: 0.00
+  # mode: 4
+  # p: 0.00135
+  # i: 0.00155
+  # b: 1.15
+  # d: 0.00
   # mk06
 
   # 1cell default
@@ -194,8 +204,6 @@ motor_pid2:
   # p: 0.00275
   # i: 1.85
   # d: 0.0
-
-  b: 0.0
   c: 0
   # p: 0.00275
   # i: 1.85
@@ -204,7 +212,6 @@ motor_pid2:
   # p: 0.0
   # i: 0
   # d: 0.0
-  mode: 2
 dist_pid:
   p: 0.80
   i: 0.0015
@@ -227,17 +234,23 @@ gyro_pid:
   # i: 0.0225
   # d: 0.275
   # 通常 mode=2
-  mode: 2
-  p: 0.375
-  i: 0.0325
-  d: 0.375
+  # mode: 2
+  # p: 0.375
+  # i: 0.0325
+  # d: 0.375
+  # b: 0.0225
+  # 通常 mode=3
+  mode: 3
+  p: 0.195
+  i: 0.0195
+  b: 0.0195
+  d: 0.195
   # p: 0.375
   # i: 0.0325
   # d: 0.375
   # p: 0.0
   # i: 0.0
   # d: 0
-  b: 0.0225
   c: 0.225
 angle_pid:
   p: 0.35
