@@ -262,8 +262,7 @@ void SensingTask::task() {
           r90 = l90 = false;
         }
       }
-      if (pt->search_mode && pt->tgt_val->nmr.sct == SensorCtrlType::NONE &&
-          pt->tgt_val->motion_type != MotionType::READY) {
+      if (pt->search_mode && pt->tgt_val->nmr.sct == SensorCtrlType::NONE) {
         // 探索中、壁制御しないときはOFF
         r90 = l90 = false;
         r45 = l45 = false;
@@ -285,6 +284,11 @@ void SensingTask::task() {
           // 壁制御加速中は前は発光させない
           r90 = l90 = false;
         }
+      }
+      if (pt->tgt_val->motion_type == MotionType::READY) {
+        // motion check用
+        r90 = l90 = true;
+        r45 = l45 = false;
       }
 
       if (r90) { // R90

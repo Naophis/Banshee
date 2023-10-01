@@ -38,12 +38,12 @@ normal2: #壁なし補正時
 dia:
   ref:
     right90: 110
-    left90: 130
+    left90: 125
     kireme_r: 160
     kireme_l: 160
   exist:
     right90: 110 # dia.ref.right90と同じ
-    left90: 130 # dia.ref.left90と同じ
+    left90: 125 # dia.ref.left90と同じ
 search:
   ref:
     right45: 38

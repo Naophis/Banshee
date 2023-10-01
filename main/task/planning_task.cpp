@@ -1667,31 +1667,14 @@ void PlanningTask::cp_tgt_val() {
   tgt_val->ego_in.sla_param = mpc_next_ego.sla_param;
   tgt_val->ego_in.state = mpc_next_ego.state;
 
-  // const auto Fx = 0;
-  // const auto Fy = -slip_param.K * slip_param.beta;
-
-  // if (tgt_val->motion_type == MotionType::SLALOM &&
-  //     tgt_val->motion_mode != (int)(RUN_MODE2::SLALOM_RUN2)) {
-  //   const auto ax = Fx / param_ro->Mass + tgt_val->ego_in.w *
-  //   slip_param.vy; const auto ay = Fy / param_ro->Mass - tgt_val->ego_in.w
-  //   * slip_param.vx; const auto old_v = slip_param.v; slip_param.vx += ax *
-  //   dt; slip_param.vy += ay * dt;
-  //   // tgt_val->ego_in.v = mpc_next_ego.v;
-  //   slip_param.v = std::sqrt(slip_param.vx * slip_param.vx +
-  //                            slip_param.vy * slip_param.vy);
-  //   tgt_val->ego_in.v = slip_param.v * 1000;
-  //   tgt_val->ego_in.accl = (slip_param.v - old_v) * 1000 / dt;
-  //   // slip_param.beta = std::atan2(slip_param.vy, slip_param.vx);
-  //   slip_param.beta = (slip_param.beta / dt - mpc_next_ego.w) /
-  //                     (1.0 / dt + slip_param.k / slip_param.v);
-  // } else {
-  //   tgt_val->ego_in.v = mpc_next_ego.v;
-  //   slip_param.vx = mpc_next_ego.v / 1000;
-  //   slip_param.vy = 0;
-  //   slip_param.beta = 0;
-  //   slip_param.v = mpc_next_ego.v / 1000;
-  // }
+  const auto tmp_v = tgt_val->ego_in.v;
   tgt_val->ego_in.v = mpc_next_ego.v;
+  if (tgt_val->motion_type == MotionType::SLALOM) {
+    if (tgt_val->ego_in.v < 10) {
+      tgt_val->ego_in.v = tmp_v;
+    }
+  }
+
   tgt_val->ego_in.w = mpc_next_ego.w;
   tgt_val->ego_in.sla_param.state = mpc_next_ego.sla_param.state;
   tgt_val->ego_in.sla_param.counter = mpc_next_ego.sla_param.counter;

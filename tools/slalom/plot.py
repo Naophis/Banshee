@@ -106,7 +106,7 @@ class Plot:
             end_pos = {"x": -45, "y": 90}
             start_ang = 45
         elif type == "dia90":
-            rad = 36
+            rad = 45
             n = 4
             tgt_ang = 90
             end_pos = {"x": 0, "y": 90}

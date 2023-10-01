@@ -24,7 +24,6 @@ Ke: 0.00125 # 大：逆起電力大
 Km: 0.0485 # 大：縦系の出力小
 Lm: 0.0004 # 大：横系の出力大
 
-# Ke: 0.00105
 # Km: 0.0025
 # Resist: 2.93
 Resist: 2.4
@@ -115,8 +114,8 @@ wall_off_hold_exist_dist_dia_r: 50
 wall_off_hold_noexist_dia_th_l: 55
 wall_off_hold_noexist_dia_th_r: 55
 # 壁切れ オフセット距離
-wall_off_hold_dist_dia_l2: 1.0
-wall_off_hold_dist_dia_r2: 0.0
+wall_off_hold_dist_dia_l2: -1.0
+wall_off_hold_dist_dia_r2: -2.0
 #斜めターン壁有り補正
 dia_turn_th_l: 50
 dia_turn_th_r: 50
@@ -135,8 +134,8 @@ offset_after_turn_l: 20
 offset_after_turn_r: 20
 offset_after_turn_l2: 18
 offset_after_turn_r2: 18
-offset_after_turn_dia_l: 20
-offset_after_turn_dia_r: 20
+offset_after_turn_dia_l: 18
+offset_after_turn_dia_r: 18
 
 #ログON_OFF
 logging_time: 1.0
