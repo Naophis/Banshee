@@ -79,7 +79,7 @@ class Plot:
                 tgt_ang = 45
                 start_ang = 0
             else:
-                rad = 44
+                rad = 68
                 n = 4
                 tgt_ang1 = 45.0 * 1 / 3
                 tgt_ang2 = 45.0 * 2 / 3

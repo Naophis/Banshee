@@ -10,9 +10,15 @@ import sys
 p = Plot()
 po = PlotOrval()
 
-v = int(sys.argv[1])
+v = 1200
+dia45_mode = 0
 show = True
 # show = False
+if len(sys.argv) > 1:
+    v = int(sys.argv[1])
+    dia45_mode = int(sys.argv[2])
+    show = False
+
 K = 100
 list_K_y = [0.5]
 # K = 13540
@@ -27,10 +33,10 @@ offset = {
 
 # p.exe("normal", v, show, 0, K, list_K_y, offset)
 # p.exe("large", v, show, 0, K, list_K_y, offset)
-p.exe("orval", v, show, 0, K, list_K_y, offset)
+# p.exe("orval", v, show, 0, K, list_K_y, offset)
 # p.exe("dia45", v, show, 0, K, list_K_y, offset)
-# p.exe("dia45", v, show, int(sys.argv[2]), K, list_K_y, offset)
+# p.exe("dia45", v, show, dia45_mode, K, list_K_y, offset)
 # p.exe("dia45_2", v, show, 0, K, list_K_y, offset)
-# p.exe("dia135", v, show, 0,  K, list_K_y, offset)
+p.exe("dia135", v, show, 0,  K, list_K_y, offset)
 # p.exe("dia135_2", v, show, 0,  K, list_K_y, offset)
 # p.exe("dia90", v, show, 0, K, list_K_y, offset)

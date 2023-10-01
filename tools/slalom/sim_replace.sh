@@ -14,15 +14,15 @@ python main.py 900 0 > result.yaml
 ./replace.sh 900 
 python main.py 950 1 > result.yaml
 ./replace.sh 950 
-python main.py 1000 1 > result.yaml
+python main.py 1000 0 > result.yaml
 ./replace.sh 1000 
-python main.py 1050 1 > result.yaml
+python main.py 1050 0 > result.yaml
 ./replace.sh 1050 
-python main.py 1100 1 > result.yaml
+python main.py 1100 0 > result.yaml
 ./replace.sh 1100 
-python main.py 1150 1 > result.yaml
+python main.py 1150 0 > result.yaml
 ./replace.sh 1150 
-python main.py 1200 1 > result.yaml
+python main.py 1200 0 > result.yaml
 ./replace.sh 1200 
 python main.py 1250 1 > result.yaml
 ./replace.sh 1250 
