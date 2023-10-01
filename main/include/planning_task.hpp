@@ -56,6 +56,7 @@ public:
   bool motor_en = false;
   bool suction_en = false;
   bool search_mode = false;
+  bool mode_select = false;
 
   t_dynamics dynamics;
   QueueHandle_t *qh;
@@ -87,6 +88,8 @@ public:
   KalmanFilter kf_batt;
 
   float suction_gain = 200;
+
+  std::shared_ptr<motion_tgt_val_t> tgt_val;
 
 private:
   void set_gpio_state(gpio_num_t gpio_num, int state);
@@ -142,7 +145,6 @@ private:
 
   std::shared_ptr<sensing_result_entity_t> sensing_result;
   std::shared_ptr<input_param_t> param_ro;
-  std::shared_ptr<motion_tgt_val_t> tgt_val;
   std::shared_ptr<LoggingTask> lt;
 
   t_tgt *mpc_tgt;
@@ -170,7 +172,7 @@ private:
 
   ledc_channel_config_t suction_ch;
   ledc_timer_config_t suction_timer;
-  
+
   mcpwm_config_t motor_pwm_conf;
   mcpwm_config_t suction_pwm_conf;
   float duty_c = 0;

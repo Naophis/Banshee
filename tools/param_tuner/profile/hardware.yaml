@@ -1,6 +1,6 @@
 dt: 0.001
-tire: 13.565
-tire2: 13.565
+tire: 13.545
+tire2: 13.545
 # offset_start_dist: 21.0
 offset_start_dist_search: 20.0
 offset_start_dist: 12.0
@@ -52,9 +52,9 @@ sla_max_offset_dist: 6
 sla_wall_ref_l_orval: 44.5
 sla_wall_ref_r_orval: 44.5
 # orval_rad_offset_l: 5
-orval_rad_offset_l: 1
+orval_rad_offset_l: 0
 orval_rad_offset_r: 0
-orval_offset_enable: 1
+orval_offset_enable: 0
 
 dia45_offset_enable: 1
 
@@ -154,7 +154,7 @@ ff_front_dury: 0.95
 
 # fail_safe
 fail_duty_cnt: 150
-fail_v_cnt: 25000
+fail_v_cnt: 35000
 fail_w_cnt: 2500
 
 cell: 90
@@ -162,7 +162,8 @@ cell2: 90
 
 axel_degenerate_x: [0, 1, 2, 4, 6, 8, 10]
 # axel_degenerate_y: [1, 1, 0.2, 0.1, 0.1, 0.1, 0.1]
-axel_degenerate_y: [1, 1, 0.5, 0.2, 0.2, 0.1, 0.1]
+# axel_degenerate_y: [1, 1, 0.5, 0.2, 0.2, 0.1, 0.1]
+axel_degenerate_y: [1, 1, 0.8, 0.75, 0.5, 0.2, 0.1]
 # axel_degenerate_y: [1, 1, 1, 1, 1, 1, 1]
 
 motor_pid:
@@ -189,10 +190,10 @@ motor_pid2:
   b: 0.00
   d: 0.00
   # mode: 4
-  # p: 0.00135
-  # i: 0.00155
-  # b: 1.15
-  # d: 0.00
+  # p: 0.000125
+  # i: 0.0015
+  # b: 0.0015
+  # d: 0.000125
   # mk06
 
   # 1cell default
@@ -245,11 +246,16 @@ gyro_pid:
   i: 0.0195
   b: 0.0195
   d: 0.195
+  # p: 0.175
+  # i: 0.0125
+  # b: 0.0195
+  # d: 0.175
   # p: 0.375
   # i: 0.0325
   # d: 0.375
   # p: 0.0
   # i: 0.0
+  # b: 0.0
   # d: 0
   c: 0.225
 angle_pid:
@@ -344,3 +350,5 @@ kalman_config:
   q_ang: 2 #大：応答早
   q_bias: 0.003 # 大：gyro_wの値を類似する
   r_measure: 0.03 #大：応答送れ
+
+led_blight: [0x05, 0x05, 0x08, 0x0d, 0x02, 0x05]

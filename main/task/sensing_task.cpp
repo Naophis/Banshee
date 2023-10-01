@@ -179,6 +179,9 @@ void SensingTask::set_sensing_entity(
   sensing_result = _sensing_result;
 }
 
+void SensingTask::set_planning_task(std::shared_ptr<PlanningTask> &_pt) {
+  pt = _pt;
+}
 void SensingTask::set_tgt_val(std::shared_ptr<motion_tgt_val_t> &_tgt_val) {
   tgt_val = _tgt_val;
 }
@@ -245,43 +248,85 @@ void SensingTask::task() {
         tgt_val->motion_type == MotionType::SLALOM) {
       led_on = false;
     };
-    { // R90
-      set_gpio_state(LED_A0, false);
-      set_gpio_state(LED_A1, false);
-      set_gpio_state(LED_EN, true);
-      lec_cnt = 0;
-      for (int i = 0; i < param->led_light_delay_cnt; i++) {
-        lec_cnt++;
-      }
-      adc2_get_raw(SEN_R90, width, &se->led_sen_after.right90.raw);
+    if (pt->mode_select) {
+      led_on = false;
     }
-    { // L90
-      set_gpio_state(LED_A0, true);
-      set_gpio_state(LED_A1, false);
+    if (led_on) {
+      bool r90 = true;
+      bool l90 = true;
+      bool r45 = true;
+      bool l45 = true;
+      if (pt->search_mode && pt->tgt_val->motion_type == MotionType::STRAIGHT) {
+        // 加速中は正面は発光させない
+        if (pt->tgt_val->ego_in.state == 0) {
+          r90 = l90 = false;
+        }
+      }
+      if (pt->search_mode && pt->tgt_val->nmr.sct == SensorCtrlType::NONE &&
+          pt->tgt_val->motion_type != MotionType::READY) {
+        // 探索中、壁制御しないときはOFF
+        r90 = l90 = false;
+        r45 = l45 = false;
+      }
 
-      lec_cnt = 0;
-      for (int i = 0; i < param->led_light_delay_cnt2; i++) {
-        lec_cnt++;
+      if (pt->tgt_val->motion_mode == (int)RUN_MODE2::KEEP) {
+        // 前壁制御中は横は発光させない
+        r45 = l45 = false;
       }
-      adc2_get_raw(SEN_L90, width, &se->led_sen_after.left90.raw);
-    }
-    { // R45
-      set_gpio_state(LED_A0, false);
-      set_gpio_state(LED_A1, true);
-      lec_cnt = 0;
-      for (int i = 0; i < param->led_light_delay_cnt2; i++) {
-        lec_cnt++;
+      if (pt->tgt_val->nmr.sct == SensorCtrlType::Dia) {
+        if (pt->tgt_val->ego_in.state == 0) {
+          // 斜め壁制御加速中は横は発光させない
+          r45 = l45 = false;
+        }
       }
-      adc2_get_raw(SEN_R45, width, &se->led_sen_after.right45.raw);
-    }
-    { // L45
-      set_gpio_state(LED_A0, true);
-      set_gpio_state(LED_A1, true);
-      lec_cnt = 0;
-      for (int i = 0; i < param->led_light_delay_cnt2; i++) {
-        lec_cnt++;
+      if (pt->tgt_val->nmr.sct == SensorCtrlType::Straight &&
+          pt->tgt_val->motion_mode == (int)RUN_MODE2::ST_RUN) {
+        if (pt->tgt_val->ego_in.state == 0) {
+          // 壁制御加速中は前は発光させない
+          r90 = l90 = false;
+        }
       }
-      adc2_get_raw(SEN_L45, width, &se->led_sen_after.left45.raw);
+
+      if (r90) { // R90
+        set_gpio_state(LED_A0, false);
+        set_gpio_state(LED_A1, false);
+        set_gpio_state(LED_EN, true);
+        lec_cnt = 0;
+        for (int i = 0; i < param->led_light_delay_cnt; i++) {
+          lec_cnt++;
+        }
+        adc2_get_raw(SEN_R90, width, &se->led_sen_after.right90.raw);
+      }
+      if (l90) { // L90
+        set_gpio_state(LED_A0, true);
+        set_gpio_state(LED_A1, false);
+        set_gpio_state(LED_EN, true);
+        lec_cnt = 0;
+        for (int i = 0; i < param->led_light_delay_cnt; i++) {
+          lec_cnt++;
+        }
+        adc2_get_raw(SEN_L90, width, &se->led_sen_after.left90.raw);
+      }
+      if (r45) { // R45
+        set_gpio_state(LED_A0, false);
+        set_gpio_state(LED_A1, true);
+        set_gpio_state(LED_EN, true);
+        lec_cnt = 0;
+        for (int i = 0; i < param->led_light_delay_cnt; i++) {
+          lec_cnt++;
+        }
+        adc2_get_raw(SEN_R45, width, &se->led_sen_after.right45.raw);
+      }
+      if (l45) { // L45
+        set_gpio_state(LED_A0, true);
+        set_gpio_state(LED_A1, true);
+        set_gpio_state(LED_EN, true);
+        lec_cnt = 0;
+        for (int i = 0; i < param->led_light_delay_cnt; i++) {
+          lec_cnt++;
+        }
+        adc2_get_raw(SEN_L45, width, &se->led_sen_after.left45.raw);
+      }
     }
 
     end2 = esp_timer_get_time();
@@ -290,24 +335,25 @@ void SensingTask::task() {
     // se->battery.data = linearInterpolation(x, y, se->battery.raw);
     // se->battery.data = linearInterpolation(x, y, se->battery.raw);
 
-
-    se->battery.data =
-        BATTERY_GAIN * 4 * sensing_result->battery.raw / 4096;
-
-    se->led_sen.right90.raw = std::max(
-        se->led_sen_after.right90.raw - se->led_sen_before.right90.raw, 0);
-    se->led_sen.right45.raw = std::max(
-        se->led_sen_after.right45.raw - se->led_sen_before.right45.raw, 0);
-    se->led_sen.right45_2.raw = std::max(
-        se->led_sen_after.right45_2.raw - se->led_sen_before.right45_2.raw, 0);
-    se->led_sen.left45_2.raw = std::max(
-        se->led_sen_after.left45_2.raw - se->led_sen_before.left45_2.raw, 0);
-    se->led_sen.left45.raw = std::max(
-        se->led_sen_after.left45.raw - se->led_sen_before.left45.raw, 0);
-    se->led_sen.left90.raw = std::max(
-        se->led_sen_after.left90.raw - se->led_sen_before.left90.raw, 0);
-    se->led_sen.front.raw =
-        (se->led_sen.left90.raw + se->led_sen.right90.raw) / 2;
+    se->battery.data = BATTERY_GAIN * 4 * sensing_result->battery.raw / 4096;
+    if (led_on) {
+      se->led_sen.right90.raw = std::max(
+          se->led_sen_after.right90.raw - se->led_sen_before.right90.raw, 0);
+      se->led_sen.right45.raw = std::max(
+          se->led_sen_after.right45.raw - se->led_sen_before.right45.raw, 0);
+      se->led_sen.left45.raw = std::max(
+          se->led_sen_after.left45.raw - se->led_sen_before.left45.raw, 0);
+      se->led_sen.left90.raw = std::max(
+          se->led_sen_after.left90.raw - se->led_sen_before.left90.raw, 0);
+      se->led_sen.front.raw =
+          (se->led_sen.left90.raw + se->led_sen.right90.raw) / 2;
+    } else {
+      se->led_sen.right90.raw = 0;
+      se->led_sen.right45.raw = 0;
+      se->led_sen.left45.raw = 0;
+      se->led_sen.left90.raw = 0;
+      se->led_sen.front.raw = 0;
+    }
 
     // gyro_if.req_read2byte_itr(0x26);
     se->gyro_list[4] = gyro_if.read_2byte_itr();

@@ -23,6 +23,7 @@ goals: [[1, 0], [2, 0]]
 # goals: [ [4,4],[4,5],[5,4],[5,5]]
 # goals: [ [11, 10],[12, 10],[11, 11],[12, 11]] # 金沢草の根 2023
 # goals: [ [9, 9], [9, 10], [10, 9], [10, 10]] # 金沢草の根 2018
+# goals: [ [11, 10], [12, 10], [11, 11], [12, 11]] # 北信越2023
 
 #  27 *55
 maze_size: 32
@@ -44,7 +45,7 @@ mode: 0 # メイン
 # mode: 21 # pivot turn n2
 
 test: # テスト走行時に使用するパラメータ群
-  v_max: 2000
+  v_max: 500
   end_v: 1
   accl: 22000
   decel: -22000
@@ -52,19 +53,19 @@ test: # テスト走行時に使用するパラメータ群
   # dist: 540 #直進全部　
   # dist: 180 # スラロームテスト
   dia: 0
-  w_max: 12.5
-  alpha: 40
+  w_max: 18.5
+  alpha: 120
   ang: 360
   suction_active: 1
-  suction_duty: 4.75
+  suction_duty: 5.75
   # suction_duty_low: 2.75
-  suction_duty_low: 4.5
+  suction_duty_low: 5.5
   suction_gain: 250
   # suction_duty: 3.25
-  file_idx: 8
+  file_idx: 17
   sla_dist: 90
   # sla_type: 3
-  sla_type: 4
+  sla_type: 2
   sla_type2: 6 #復路ターン種類
   sla_return: 0 # 往復フラグ
   # sla_type: 1 normal
@@ -77,7 +78,7 @@ test: # テスト走行時に使用するパラメータ群
   # sla_type: 8 #dia45_2
   # sla_type: 9 #dia135_2
   turn_times: 0
-  ignore_opp_sen: 2 #斜めターン後の直進テスト 0無効、1斜め制御なし、2斜め制御あり
+  ignore_opp_sen: 0 #斜めターン後の直進テスト 0無効、1斜め制御なし、2斜め制御あり
   sysid_test_mode: 0 #システム同定のテスト:0 直進、1回転
   sysid_duty: 4.25 #duty 
   sysid_time: 2000 #duty 

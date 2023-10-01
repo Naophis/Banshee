@@ -52,6 +52,8 @@ public:
   void set_queue_handler(QueueHandle_t &_qh) { qh = &_qh; }
   void init_i2c_master();
 
+  vector<uint8_t> blight_level_list;
+
 private:
   std::shared_ptr<sensing_result_entity_t> sensing_result;
   std::shared_ptr<motion_tgt_val_t> tgt_val;

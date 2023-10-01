@@ -137,7 +137,12 @@ void UserInterface::hello_exia() {
 }
 
 void UserInterface::LED_on_off(char idx, bool state) {
-  uint8_t blight = state ? 0x1F : 0x00;
+  uint8_t blight = 0x00;
+  if (state) {
+    if (blight_level_list.size() > 0) {
+      blight = blight_level_list[idx];
+    }
+  }
   writeBuffer[0] = (idx << 5) | blight;
   writeBuffer[1] = 0x00;
   SCCB_Write(0x9A, writeBuffer[0], writeBuffer[0]);

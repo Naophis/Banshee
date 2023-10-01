@@ -325,7 +325,8 @@ void MainTask::load_hw_param() {
         *str_agl_pid, *str_agl_dia_pid, *gyro_param, *kalman_config,
         *battery_param, *led_param, *angle_pid, *dist_pid, *sen_pid,
         *sen_pid_dia, *accel_x, *comp_v_param, *axel_degenerate_x,
-        *axel_degenerate_y;
+        *axel_degenerate_y, *led_blight;
+
   root = cJSON_Parse(str.c_str());
 
   param->dt = getItem(root, "dt")->valuedouble;
@@ -374,6 +375,14 @@ void MainTask::load_hw_param() {
     const auto y = cJSON_GetArrayItem(axel_degenerate_y, i)->valuedouble;
     pt->axel_degenerate_x.emplace_back(x);
     pt->axel_degenerate_y.emplace_back(y);
+  }
+
+  led_blight = getItem(root, "led_blight");
+  int list_size2 = cJSON_GetArraySize(led_blight);
+  ui->blight_level_list.clear();
+  for (int i = 0; i < list_size2; i++) {
+    const uint8_t level = cJSON_GetArrayItem(led_blight, i)->valueint;
+    ui->blight_level_list.emplace_back(level);
   }
 
   param->ff_v_th = getItem(root, "ff_v_th")->valuedouble;
@@ -485,11 +494,9 @@ void MainTask::load_hw_param() {
       getItem(root, "sla_wall_ref_l_orval")->valuedouble;
   param->sla_wall_ref_r_orval =
       getItem(root, "sla_wall_ref_r_orval")->valuedouble;
-  param->orval_rad_offset_l =
-      getItem(root, "orval_rad_offset_l")->valuedouble;
-  param->orval_rad_offset_r =
-      getItem(root, "orval_rad_offset_r")->valuedouble;
-      
+  param->orval_rad_offset_l = getItem(root, "orval_rad_offset_l")->valuedouble;
+  param->orval_rad_offset_r = getItem(root, "orval_rad_offset_r")->valuedouble;
+
   param->orval_enable = getItem(root, "orval_offset_enable")->valueint;
   param->dia45_offset_enable = getItem(root, "dia45_offset_enable")->valueint;
 
@@ -1241,7 +1248,9 @@ void MainTask::task() {
     read_maze_data();
     search_ctrl->print_maze();
     while (1) {
+      pt->mode_select = true;
       mode_num = select_mode();
+      pt->mode_select = false;
       printf("%d\n", mode_num);
       if (mode_num == 0) {
         lgc->set_goal_pos(sys.goals);

@@ -324,6 +324,7 @@ extern "C" void app_main() {
   st.set_tgt_val(tgt_val);
   st.set_main_task(mt);
   st.set_input_param_entity(param);
+  st.set_planning_task(pt);
   st.create_task(0);
 
   pt->set_sensing_entity(sensing_entity);
