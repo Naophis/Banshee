@@ -103,9 +103,9 @@ wall_off_hold_dist_str_r_exist: -4.50
 # 壁切れ：前壁補正
 front_dist_offset2: 138.0 #ref
 # 壁切れ：前壁補正
-front_dist_offset3: 140.0 #th
+front_dist_offset3: 130.0 #th
 # 壁切れ：前壁補正
-front_dist_offset4: 140.0 # both front sensors condition th
+front_dist_offset4: 130.0 # both front sensors condition th
 
 # 壁切れ In(斜め)
 wall_off_hold_exist_dist_dia_l: 50
@@ -267,8 +267,10 @@ angle_pid:
 str_agl_pid:
   # p: 0.095
   # d: 1.25
-  p: 0.095 #search_mode
-  b: 0.095 #!searchm_mode
+  # p: 0.095 #search_mode
+  # b: 0.095 #!searchm_mode
+  p: 0.125 #search_mode
+  b: 0.125 #!searchm_mode
   d: 0.00375
   # d: 0.00
   i: 0.0

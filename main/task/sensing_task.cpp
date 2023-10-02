@@ -273,12 +273,9 @@ void SensingTask::task() {
           r45 = l45 = false;
         }
       }
-      if (pt->tgt_val->nmr.sct == SensorCtrlType::Straight &&
-          pt->tgt_val->motion_mode == (int)RUN_MODE2::ST_RUN) {
-        if (pt->tgt_val->ego_in.state == 0) {
-          // 壁制御加速中は前は発光させない
-          r90 = l90 = false;
-        }
+      if (pt->tgt_val->nmr.sct == SensorCtrlType::Straight) {
+        r90 = l90 = true;
+        r45 = l45 = true;
       }
       if (pt->tgt_val->motion_type == MotionType::READY) {
         // motion check用
