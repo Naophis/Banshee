@@ -130,8 +130,8 @@ dia_wall_off_ref_r: 36.50
 dia_offset_max_dist: 10
 
 #ターン後オフセット距離
-offset_after_turn_l: 20
-offset_after_turn_r: 20
+offset_after_turn_l: 24
+offset_after_turn_r: 24
 offset_after_turn_l2: 18
 offset_after_turn_r2: 18
 offset_after_turn_dia_l: 18

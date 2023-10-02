@@ -267,11 +267,6 @@ void SensingTask::task() {
         r90 = l90 = false;
         r45 = l45 = false;
       }
-
-      if (pt->tgt_val->motion_mode == (int)RUN_MODE2::KEEP) {
-        // 前壁制御中は横は発光させない
-        r45 = l45 = false;
-      }
       if (pt->tgt_val->nmr.sct == SensorCtrlType::Dia) {
         if (pt->tgt_val->ego_in.state == 0) {
           // 斜め壁制御加速中は横は発光させない
@@ -287,6 +282,11 @@ void SensingTask::task() {
       }
       if (pt->tgt_val->motion_type == MotionType::READY) {
         // motion check用
+        r90 = l90 = true;
+        r45 = l45 = false;
+      }
+      if (pt->tgt_val->motion_type == MotionType::FRONT_CTRL) {
+        // 前壁制御中は横は発光させない
         r90 = l90 = true;
         r45 = l45 = false;
       }
