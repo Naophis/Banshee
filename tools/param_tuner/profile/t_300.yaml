@@ -1,8 +1,8 @@
 straight:
   search:
-    # v_max: 385
-    v_max: 450
-    # v_max: 300
+    # v_max: 420
+    v_max: 385
+    # v_max: 550
     accl: 2500
     decel: -2500
     w_max: 22.5
