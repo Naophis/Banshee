@@ -287,7 +287,10 @@ void SensingTask::task() {
         r90 = l90 = true;
         r45 = l45 = false;
       }
-
+      if (pt->tgt_val->motion_type == MotionType::SENSING_DUMP) {
+        r90 = l90 = true;
+        r45 = l45 = true;
+      }
       if (r90) { // R90
         set_gpio_state(LED_A0, false);
         set_gpio_state(LED_A1, false);

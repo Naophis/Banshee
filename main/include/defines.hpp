@@ -45,8 +45,8 @@ constexpr float cell_size = 90;
 // constexpr gpio_num_t LED_L45 = GPIO_NUM_18;
 // constexpr gpio_num_t LED_L90 = GPIO_NUM_21;
 
-constexpr gpio_num_t SDA_PIN = GPIO_NUM_14;
-constexpr gpio_num_t SCL_PIN = GPIO_NUM_15;
+constexpr gpio_num_t SDA_PIN = GPIO_NUM_15;
+constexpr gpio_num_t SCL_PIN = GPIO_NUM_14;
 
 // constexpr unsigned int LED_R90_BIT = 8;
 // constexpr unsigned int LED_R45_BIT = 9;
@@ -132,7 +132,7 @@ constexpr uint16_t ENC_OPE_V_R_TH = 175;
 constexpr uint16_t LOG_SIZE = 1300;
 constexpr uint16_t LINE_BUF_SIZE = 512;
 // constexpr float BATTERY_GAIN = 3.2075; // 2.97324;
-constexpr float BATTERY_GAIN = 3.246349871866355; // 2.97324;
+constexpr float BATTERY_GAIN = 3.3275086186630136; // 2.97324;
 
 constexpr uint8_t LEDC_HIGH_SPEED_MODE = 0;
 constexpr float LOW_BATTERY_TH = 7.8;

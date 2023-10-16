@@ -8,20 +8,27 @@ gear_a: 37
 gear_b: 9
 # max_duty: 99.9
 max_duty: 99.950
-min_duty: 0.5
+min_duty: 0.001
 FF_front: 1
 FF_roll: 1
 FF_keV: 1 #FF制御on/off flag
 # FF_front: 0
 # FF_roll: 0
 # FF_keV: 0
+# MotorHz: 75000
+MotorHz: 150000
+SuctionHz: 10000
+MotorResolution: 10
+SuctionResolution: 10
+# MotorHz: 175000
+# SuctionHz: 10000
 
 # Ke: 0.00125 # 大：逆起電力大
 # Km: 0.0125 # 大：縦系の出力小
 # Lm: 0.0000375 # 大：縦系の出力大
 
-Ke: 0.00125 # 大：逆起電力大
-Km: 0.0485 # 大：縦系の出力小
+Ke: 0.00075 # 大：逆起電力大
+Km: 0.0785 # 大：縦系の出力小
 Lm: 0.0004 # 大：横系の出力大
 
 # Km: 0.0025
@@ -183,11 +190,14 @@ motor_pid2:
   # p: 0.00275
   # i: 0.25
   # d: 0.00
-  mode: 2
-  p: 0.00275
-  i: 1.95
-  b: 0.00
-  d: 0.00
+  mode: 4
+  # p: 0.00275
+  # i: 3.25
+  p: 0.00175
+  i: 0.00295
+  b: 0
+  d: 0.00125
+  # b: 2.75
   # mode: 4
   # p: 0.000125
   # i: 0.0015
@@ -200,10 +210,12 @@ motor_pid2:
   # i: 0.00075
   # d: 0.0005
 
-  # 1cell default, mode 0
-  # p: 0.00275
-  # i: 1.85
-  # d: 0.0
+  # 1cell default, 
+  # mode: 0
+  # p: 0.00425
+  # i: 3.75
+  # d: 0.00025
+  # b: 0.00
   c: 0
   # p: 0.00275
   # i: 1.85
@@ -322,8 +334,8 @@ sensor_pid_dia:
 gyro_param:
   # gyro_w_gain_right: 0.0024635
   # gyro_w_gain_left: 0.00246375
-  gyro_w_gain_right: 0.0024545
-  gyro_w_gain_left: 0.002454725
+  gyro_w_gain_right: 0.00245785
+  gyro_w_gain_left: 0.0024575
   lp_delay: 1
 accel_x_param:
   # gain: 315.56 # 16g
@@ -352,4 +364,5 @@ kalman_config:
   q_bias: 0.003 # 大：gyro_wの値を類似する
   r_measure: 0.03 #大：応答送れ
 
-led_blight: [0x05, 0x05, 0x08, 0x0d, 0x02, 0x05]
+# led_blight: [0x05, 0x05, 0x08, 0x0d, 0x02, 0x05]
+led_blight: [0x0d, 0x0d, 0x0d, 0x0d, 0x0d, 0x0d]

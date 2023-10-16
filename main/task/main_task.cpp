@@ -88,7 +88,7 @@ TurnType MainTask::cast_turn_type(std::string str) {
 void MainTask::dump1() {
   notify_handle = xTaskGetCurrentTaskHandle();
   mp->reset_gyro_ref_with_check();
-  tgt_val->nmr.motion_type = MotionType::READY;
+  tgt_val->nmr.motion_type = MotionType::SENSING_DUMP;
   tgt_val->nmr.timstamp++;
   xQueueReset(*qh);
   xQueueSendToFront(*qh, &tgt_val, 1);
@@ -192,7 +192,7 @@ void MainTask::dump1() {
 
 void MainTask::dump2() {
 
-  tgt_val->nmr.motion_type = MotionType::READY;
+  tgt_val->nmr.motion_type = MotionType::SENSING_DUMP;
   tgt_val->nmr.timstamp++;
   xQueueReset(*qh);
   xQueueSendToFront(*qh, &tgt_val, 1);
@@ -343,6 +343,15 @@ void MainTask::load_hw_param() {
   param->Km = getItem(root, "Km")->valuedouble;
   param->Resist = getItem(root, "Resist")->valuedouble;
   param->Mass = getItem(root, "Mass")->valuedouble;
+  param->Lm = getItem(root, "Lm")->valuedouble;
+  const unsigned long motor_hz = getItem(root, "MotorHz")->valueint;
+  const unsigned long suction_motor_hz = getItem(root, "SuctionHz")->valueint;
+  const unsigned long motor_res = getItem(root, "MotorResolution")->valueint;
+  const unsigned long suction_motor_res =
+      getItem(root, "SuctionResolution")->valueint;
+  pt->set_motor_hz(motor_hz, motor_res);
+  pt->set_suction_motor_hz(suction_motor_hz, suction_motor_res);
+
   param->Lm = getItem(root, "Lm")->valuedouble;
   param->slip_param_K = getItem(root, "slip_param_K")->valuedouble;
   param->slip_param_k2 = getItem(root, "slip_param_k2")->valuedouble;

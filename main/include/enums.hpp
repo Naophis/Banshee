@@ -46,6 +46,7 @@ enum class MotionType : int {
   SLA_BACK_STR = 14,
   SYS_ID_PARA = 15,
   SYS_ID_ROLL = 16,
+  SENSING_DUMP = 17,
 };
 
 enum class FailSafe : int {

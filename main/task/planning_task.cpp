@@ -4,11 +4,11 @@
 // constexpr int MOTOR_HZ = 250000;
 // constexpr int MOTOR_HZ = 125000;
 // constexpr int MOTOR_HZ = 100000;
-// constexpr int MOTOR_HZ = 75000 / 1;
-constexpr int MOTOR_HZ = 15000;
+constexpr unsigned long MOTOR_HZ = 75000 / 1;
+// constexpr int MOTOR_HZ = 32500;
 // constexpr int MOTOR_HZ = 17500;
 // constexpr int MOTOR_HZ = 100000 / 1;
-constexpr int SUCTION_MOTOR_HZ = 10000;
+constexpr unsigned long SUCTION_MOTOR_HZ = 10000;
 PlanningTask::PlanningTask() {}
 
 PlanningTask::~PlanningTask() {}
@@ -206,6 +206,32 @@ void PlanningTask::calc_filter() {
     sensing_result->ego.filter_v = sensing_result->ego.v_c;
   }
 }
+
+void PlanningTask::set_motor_hz(unsigned long hz, int res) {
+  const unsigned long int resolution = ((unsigned long int)res) * 100'000L;
+  mcpwm_group_set_resolution(MCPWM_UNIT_0, resolution);
+
+  memset(&motor_pwm_conf, 0, sizeof(motor_pwm_conf));
+  motor_pwm_conf.frequency = hz; // PWM周波数= 10kHz,
+  motor_pwm_conf.cmpr_a = 0; // デューティサイクルの初期値（0%）
+  motor_pwm_conf.cmpr_b = 0; // デューティサイクルの初期値（0%）
+  motor_pwm_conf.counter_mode = MCPWM_UP_COUNTER;
+  motor_pwm_conf.duty_mode = MCPWM_DUTY_MODE_0; // アクティブハイ
+  mcpwm_init(MCPWM_UNIT_0, MCPWM_TIMER_0, &motor_pwm_conf);
+  mcpwm_init(MCPWM_UNIT_0, MCPWM_TIMER_1, &motor_pwm_conf);
+}
+void PlanningTask::set_suction_motor_hz(unsigned long hz, int res) {
+  mcpwm_group_set_resolution(MCPWM_UNIT_1, 160'000'000L);
+  memset(&suction_pwm_conf, 0, sizeof(suction_pwm_conf));
+  suction_pwm_conf.frequency = hz; // PWM周波数= 10kHz,
+  suction_pwm_conf.cmpr_a = 0; // デューティサイクルの初期値（0%）
+  suction_pwm_conf.cmpr_b = 0; // デューティサイクルの初期値（0%）
+  suction_pwm_conf.counter_mode = MCPWM_UP_COUNTER;
+  suction_pwm_conf.duty_mode = MCPWM_DUTY_MODE_0; // アクティブハイ
+  suction_pwm_conf.cmpr_a = 0; // デューティサイクルの初期値（0%）
+  mcpwm_init(MCPWM_UNIT_1, MCPWM_TIMER_2, &suction_pwm_conf);
+}
+
 void PlanningTask::task() {
   int64_t start;
   int64_t end;
@@ -254,7 +280,7 @@ void PlanningTask::task() {
   mcpwm_gpio_init(MCPWM_UNIT_0, MCPWM1A, B_PWM);
   mcpwm_gpio_init(MCPWM_UNIT_1, MCPWM2A, SUCTION_PWM);
 
-  mcpwm_group_set_resolution(MCPWM_UNIT_0, 160'000'000L);
+  // mcpwm_group_set_resolution(MCPWM_UNIT_0, 160'000'000L);
   // mcpwm_group_set_resolution(MCPWM_UNIT_0, 100'000'000L);
   // mcpwm_group_set_resolution(MCPWM_UNIT_1, 160'000'000L);
   // mcpwm_group_set_resolution(MCPWM_UNIT_1, 10'000'000L);
@@ -268,23 +294,8 @@ void PlanningTask::task() {
   mcpwm_set_duty_type(MCPWM_UNIT_1, MCPWM_TIMER_2, MCPWM_OPR_A,
                       MCPWM_DUTY_MODE_0);
 
-  memset(&motor_pwm_conf, 0, sizeof(motor_pwm_conf));
-  motor_pwm_conf.frequency = MOTOR_HZ; // PWM周波数= 10kHz,
-  motor_pwm_conf.cmpr_a = 0; // デューティサイクルの初期値（0%）
-  motor_pwm_conf.cmpr_b = 0; // デューティサイクルの初期値（0%）
-  motor_pwm_conf.counter_mode = MCPWM_UP_COUNTER;
-  motor_pwm_conf.duty_mode = MCPWM_DUTY_MODE_0; // アクティブハイ
-  mcpwm_init(MCPWM_UNIT_0, MCPWM_TIMER_0, &motor_pwm_conf);
-  mcpwm_init(MCPWM_UNIT_0, MCPWM_TIMER_1, &motor_pwm_conf);
-
-  memset(&suction_pwm_conf, 0, sizeof(suction_pwm_conf));
-  suction_pwm_conf.frequency = SUCTION_MOTOR_HZ; // PWM周波数= 10kHz,
-  suction_pwm_conf.cmpr_a = 0; // デューティサイクルの初期値（0%）
-  suction_pwm_conf.cmpr_b = 0; // デューティサイクルの初期値（0%）
-  suction_pwm_conf.counter_mode = MCPWM_UP_COUNTER;
-  suction_pwm_conf.duty_mode = MCPWM_DUTY_MODE_0; // アクティブハイ
-  suction_pwm_conf.cmpr_a = 0; // デューティサイクルの初期値（0%）
-  mcpwm_init(MCPWM_UNIT_1, MCPWM_TIMER_2, &suction_pwm_conf);
+  set_motor_hz(MOTOR_HZ, 10);
+  set_suction_motor_hz(SUCTION_MOTOR_HZ, 10);
 
   motor_en = false;
   set_next_duty(0, 0, 0);
@@ -786,8 +797,11 @@ void PlanningTask::calc_vel() {
   sensing_result->ego.v_l_old = sensing_result->ego.v_l;
   sensing_result->ego.v_r_old = sensing_result->ego.v_r;
 
-  sensing_result->ego.v_l = tire * enc_ang_l / dt / dynamics.gear_ratio / 2;
-  sensing_result->ego.v_r = -tire * enc_ang_r / dt / dynamics.gear_ratio / 2;
+  // sensing_result->ego.v_l = -tire * enc_ang_l / dt / dynamics.gear_ratio / 2;
+  // sensing_result->ego.v_r = tire * enc_ang_r / dt / dynamics.gear_ratio / 2;
+
+  sensing_result->ego.v_l = -tire * enc_ang_l / dt / 2;
+  sensing_result->ego.v_r = tire * enc_ang_r / dt / 2;
 
   // if (ABS(sensing_result->ego.v_r - sensing_result->ego.v_r_old) > 1000) {
   //   sensing_result->ego.v_r = sensing_result->ego.v_r_old;
@@ -980,15 +994,15 @@ void PlanningTask::update_ego_motion() {
 void PlanningTask::set_next_duty(float duty_l, float duty_r,
                                  float duty_suction) {
   if (motor_en) {
-    // duty_l = -15.9;
+    // duty_l = 15.9;
     // duty_r = -15.9;
 
-    if (duty_l < 0) {
+    if (duty_l > 0) {
       set_gpio_state(A_CW_CCW1, true);
     } else {
       set_gpio_state(A_CW_CCW1, false);
     }
-    if (duty_r > 0) {
+    if (duty_r < 0) {
       set_gpio_state(B_CW_CCW1, true);
     } else {
       set_gpio_state(B_CW_CCW1, false);
@@ -1286,7 +1300,8 @@ void PlanningTask::calc_tgt_duty() {
                  &param_ro->motor_pid.i, &param_ro->motor_pid.d, &reset, &dt,
                  &duty_c);
   } else {
-    if (tgt_val->motion_type == MotionType::PIVOT) {
+    // if (tgt_val->motion_type == MotionType::PIVOT) {
+    if (tgt_val->motion_type == MotionType::NONE) {
       vel_pid.step(&error_entity.v.error_p, &param_ro->motor_pid.p,
                    &param_ro->motor_pid.i, &param_ro->motor_pid.d, &reset_req,
                    &dt, &duty_c);
@@ -1323,6 +1338,10 @@ void PlanningTask::calc_tgt_duty() {
                  (error_entity.v_log.gain_z - error_entity.v_log.gain_zz) * dt;
         error_entity.v_log.gain_zz = error_entity.v_log.gain_z;
         error_entity.v_log.gain_z = duty_c;
+      } else if (param_ro->motor_pid2.mode == 5) {
+        duty_c = param_ro->motor_pid2.p * error_entity.v.error_p +
+                 param_ro->motor_pid2.i * error_entity.v.error_i +
+                 param_ro->motor_pid2.d * error_entity.v.error_d;
       } else {
         vel_pid.step(&error_entity.v.error_p, &param_ro->motor_pid2.p,
                      &param_ro->motor_pid2.i, &param_ro->motor_pid2.d,
@@ -1764,6 +1783,7 @@ void PlanningTask::cp_request() {
         tgt_val->motion_type == MotionType::PIVOT_PRE ||
         tgt_val->motion_type == MotionType::PIVOT_AFTER ||
         tgt_val->motion_type == MotionType::READY ||
+        tgt_val->motion_type == MotionType::SENSING_DUMP ||
         tgt_val->motion_type == MotionType::WALL_OFF)) {
     const auto tmp_ang = tgt_val->ego_in.img_ang;
     tgt_val->ego_in.ang -= tmp_ang;

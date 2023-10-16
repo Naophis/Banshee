@@ -48,6 +48,9 @@ public:
   void inactive_logging();
   void dump_log();
 
+  void set_motor_hz(unsigned long hz, int res);
+  void set_suction_motor_hz(unsigned long hz, int res);
+
   float interp1d(vector<float> &vx, vector<float> &vy, float x,
                  bool extrapolate);
 
