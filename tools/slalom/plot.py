@@ -52,8 +52,8 @@ class Plot:
                 end_pos = {"x": 90, "y": 90}
                 start_ang = 0
             else:
-                rad = 54
-                n = 2
+                rad = 53.5
+                n = 4
                 tgt_ang = 180
                 end_pos = {"x": 0, "y": 180}
                 start_ang = 0

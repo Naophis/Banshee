@@ -95,6 +95,17 @@ MotionResult MotionPlanning::go_straight(param_straight_t &p,
       } else {
         param->sen_ref_p.normal.exist.left45 = left;
         param->sen_ref_p.normal.exist.right45 = right;
+        req_error_reset();
+        tgt_val->nmr.v_max = 0.1;
+        tgt_val->nmr.v_end = 0.1;
+        tgt_val->nmr.accl = 1000;
+        tgt_val->nmr.decel = p.decel;
+        tgt_val->nmr.dist = 10;
+        tgt_val->nmr.timstamp++;
+        xQueueReset(*qh);
+        xQueueSendToFront(*qh, &tgt_val, 1);
+        vTaskDelay(100.0 / portTICK_RATE_MS);
+
         return MotionResult::ERROR;
       }
     }
@@ -507,7 +518,7 @@ MotionResult MotionPlanning::slalom(slalom_param2_t &sp, TurnDirection td,
   tgt_val->nmr.sct = SensorCtrlType::NONE;
   // tgt_val->ego_in.v = sp.v;//強制的に速度を指定
 
-  if (sp.type == TurnType::Orval) {
+  if (sp.type == TurnType::Orval && sp.pow_n < 2) {
     tgt_val->nmr.motion_mode = RUN_MODE2::SLALOM_RUN2;
     tgt_val->nmr.ang = sp.ang;
     tgt_val->nmr.sla_rad = sp.rad;

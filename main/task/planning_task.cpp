@@ -800,8 +800,8 @@ void PlanningTask::calc_vel() {
   // sensing_result->ego.v_l = -tire * enc_ang_l / dt / dynamics.gear_ratio / 2;
   // sensing_result->ego.v_r = tire * enc_ang_r / dt / dynamics.gear_ratio / 2;
 
-  sensing_result->ego.v_l = -tire * enc_ang_l / dt / 2;
-  sensing_result->ego.v_r = tire * enc_ang_r / dt / 2;
+  sensing_result->ego.v_l = tire * enc_ang_l / dt / dynamics.gear_ratio / 2;
+  sensing_result->ego.v_r = -tire * enc_ang_r / dt / dynamics.gear_ratio / 2;
 
   // if (ABS(sensing_result->ego.v_r - sensing_result->ego.v_r_old) > 1000) {
   //   sensing_result->ego.v_r = sensing_result->ego.v_r_old;
@@ -995,14 +995,14 @@ void PlanningTask::set_next_duty(float duty_l, float duty_r,
                                  float duty_suction) {
   if (motor_en) {
     // duty_l = 15.9;
-    // duty_r = -15.9;
+    // duty_r = 0;
 
-    if (duty_l > 0) {
+    if (duty_l < 0) {
       set_gpio_state(A_CW_CCW1, true);
     } else {
       set_gpio_state(A_CW_CCW1, false);
     }
-    if (duty_r < 0) {
+    if (duty_r > 0) {
       set_gpio_state(B_CW_CCW1, true);
     } else {
       set_gpio_state(B_CW_CCW1, false);
@@ -1010,8 +1010,8 @@ void PlanningTask::set_next_duty(float duty_l, float duty_r,
     float tmp_duty_r = duty_r > 0 ? duty_r : -duty_r;
     float tmp_duty_l = duty_l > 0 ? duty_l : -duty_l;
 
-    mcpwm_set_signal_low(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B);
-    mcpwm_set_signal_low(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_B);
+    // mcpwm_set_signal_low(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B);
+    // mcpwm_set_signal_low(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_B);
 
     mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A, tmp_duty_l);
     mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_A, tmp_duty_r);
@@ -1327,6 +1327,15 @@ void PlanningTask::calc_tgt_duty() {
         duty_c = param_ro->motor_pid2.p * error_entity.v.error_p +
                  param_ro->motor_pid2.i * error_entity.v.error_i +
                  param_ro->motor_pid2.b * diff_dist +
+                 param_ro->motor_pid2.d * error_entity.v.error_d +
+                 (error_entity.v_log.gain_z - error_entity.v_log.gain_zz) * dt;
+        error_entity.v_log.gain_zz = error_entity.v_log.gain_z;
+        error_entity.v_log.gain_z = duty_c;
+      } else if (param_ro->motor_pid2.mode == 6) {
+        const auto diff_v = tgt_val->ego_in.v - sensing_result->ego.v_kf;
+        duty_c = param_ro->motor_pid2.p * error_entity.v.error_p +
+                 param_ro->motor_pid2.i * error_entity.v.error_i +
+                 param_ro->motor_pid2.b * diff_v +
                  param_ro->motor_pid2.d * error_entity.v.error_d +
                  (error_entity.v_log.gain_z - error_entity.v_log.gain_zz) * dt;
         error_entity.v_log.gain_zz = error_entity.v_log.gain_z;

@@ -29,7 +29,7 @@ orval:
   v: 300.000000
   ang: 180.000000
   rad: 77.50 #orval_rad
-  pow_n: 2.000000
+  pow_n: 1.000000
   time: 0.347078
   front: { left: 8, right: 8 }
   back: { left: 5, right: 5 }
@@ -73,8 +73,8 @@ normal:
   rad: 24
   pow_n: 2
   time: 0.10412500000000875
-  front: { left: 8.85821092751005, right: 8.85821092751005 }
-  back: { left: 12.994480341288636, right: 12.994480341288636 }
+  front: { left: 11.85821092751005, right: 11.85821092751005 }
+  back: { left: 10.994480341288636, right: 10.994480341288636 }
 # check
 # 2023年 10月  1日 日曜日 23:16:21 JST
 large:

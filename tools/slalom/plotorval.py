@@ -10,7 +10,7 @@ plot_col = 2
 
 
 class PlotOrval:
-    def exe(self, type, tgt_v, show):
+    def exe(self, type, tgt_v, show, mode=0, K=1, list_K_y=[], offset={}):
 
         # fig = plt.figure(figsize=(5, 5), dpi=500)
         fig = plt.figure(dpi=200, tight_layout=True)
@@ -41,7 +41,7 @@ class PlotOrval:
             start_ang = 0
         elif type == "orval":
             rad = 76
-            n = 2
+            n = 4
             tgt_ang = 180
             end_pos = {"x": 0, "y": 180}
             start_ang = 0
@@ -76,14 +76,14 @@ class PlotOrval:
             end_pos = {"x": 0, "y": 90}
             start_ang = 0
 
-        sla = Slalom(v, rad, n, tgt_ang, end_pos, slip_gain, type)
+        sla = Slalom(v, rad, n, tgt_ang, end_pos, slip_gain, type, K, list_K_y)
         sla.calc_base_time()
         # res = sla.calcnormal(start_ang)
         res = sla.calcnormal(start_ang)
         # sla.calc_offset_front()
         start_pos_x = [0, 0]
         start_pos_y = [0, 0]
-        sla.calc_offset_dist(start_pos_x, start_pos_y, type)
+        res1 = sla.calc_offset_dist(start_pos_x, start_pos_y, type, offset)
         range = [-1000, 1000]
 
         wall_color = "red"
@@ -122,29 +122,25 @@ class PlotOrval:
                  lw=subline_width, alpha=subline_alpha)
 
         # 前距離
-        trj.plot(sla.start_offset_list[0], sla.start_offset_list[1],
-                 ls="-", color="coral", lw=trj_width, alpha=trj_alpha)
+        trj.plot(res1["prev_path_x"], res1["prev_path_y"], ls="-", color="coral", lw=trj_width, alpha=trj_alpha)
         # メイン
-        trj.plot(res["x"] + sla.turn_offset["x"], res["y"] + + sla.turn_offset["y"], color="yellow", lw=trj_width,
+        trj.plot(res["x"] + res1["turn_offset_x"], res["y"] + res1["turn_offset_y"], color="yellow", lw=trj_width,
                  alpha=trj_alpha)
         # # 後距離
-        trj.plot(sla.end_offset_list[0], sla.end_offset_list[1],
-                 ls="-", color="coral", lw=trj_width, alpha=trj_alpha)
-
+        trj.plot(res1["after_path_x2"], res1["after_path_y2"], ls="-", color="coral", lw=trj_width, alpha=trj_alpha)
+      
         first = [sla.start_offset, sla.end_offset]
         start_pos_x = [0, 0]
         start_pos_y = [0, 0]
         # start_pos_y = [-10, -10]
         # res = sla.calc_slip_normalturn(start_ang)
-        res = sla.calc_slip_normalturn(start_ang)
-        sla.calc_offset_dist(start_pos_x, start_pos_y, type)
+        res = sla.calc_slip(start_ang)
+        res2 = sla.calc_offset_dist(start_pos_x, start_pos_y, type, offset)
 
-        trj.plot(sla.start_offset_list[0], sla.start_offset_list[1],
-                 ls="--", color="cyan", lw=1, alpha=trj_alpha)
-        trj.plot(res["x"] + sla.turn_offset["x"], res["y"] + sla.turn_offset["y"], color="blue", lw=1,
+        trj.plot(res2["prev_path_x"], res2["prev_path_y"], ls="--", color="cyan", lw=1, alpha=trj_alpha)
+        trj.plot(res["x"] + res2["turn_offset_x"], res["y"] + res2["turn_offset_y"], color="blue", lw=1,
                  alpha=trj_alpha, ls="--")
-        trj.plot(sla.end_offset_list[0], sla.end_offset_list[1],
-                 ls="--", color="cyan", lw=1, alpha=trj_alpha)
+        trj.plot(res2["after_path_x2"], res2["after_path_y2"], ls="--", color="cyan", lw=1, alpha=trj_alpha)
 
         # plV = plt.subplot2grid((plot_row, plot_col), (1, 0), rowspan=plot_col)
         plV = plt.subplot2grid((plot_row, plot_col), (0, 1), rowspan=1)

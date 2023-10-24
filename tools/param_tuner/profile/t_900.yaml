@@ -24,7 +24,7 @@ orval:
   v: 900.000000
   ang: 180.000000
   rad: 77.50 #orval_rad
-  pow_n: 2.000000
+  pow_n: 1.000000
   time: 0.347078
   front: { left: 8, right: 8 }
   back: { left: 5, right: 5 }

@@ -1,14 +1,14 @@
 dt: 0.001
-tire: 13.635
-tire2: 13.635
+tire: 13.6125
+tire2: 13.6125
 # offset_start_dist: 21.0
-offset_start_dist_search: 20.0
-offset_start_dist: 12.0
+offset_start_dist_search: 21.0
+offset_start_dist: 14.0
 gear_a: 37
 gear_b: 9
 # max_duty: 99.9
 max_duty: 99.950
-min_duty: 0.001
+min_duty: 0.01
 FF_front: 1
 FF_roll: 1
 FF_keV: 1 #FF制御on/off flag
@@ -16,9 +16,9 @@ FF_keV: 1 #FF制御on/off flag
 # FF_roll: 0
 # FF_keV: 0
 # MotorHz: 75000
-MotorHz: 150000
+MotorHz: 35000
 SuctionHz: 10000
-MotorResolution: 10
+MotorResolution: 120
 SuctionResolution: 10
 # MotorHz: 175000
 # SuctionHz: 10000
@@ -27,7 +27,7 @@ SuctionResolution: 10
 # Km: 0.0125 # 大：縦系の出力小
 # Lm: 0.0000375 # 大：縦系の出力大
 
-Ke: 0.00075 # 大：逆起電力大
+Ke: 0.000125 # 大：逆起電力大
 Km: 0.0785 # 大：縦系の出力小
 Lm: 0.0004 # 大：横系の出力大
 
@@ -46,21 +46,21 @@ clear_angle: 5
 clear_dist_order: 80
 
 # 探索スラローム
-front_dist_offset: 94.0 # 探索時の前壁補正
+front_dist_offset: 89.0 # 探索時の前壁補正 大→短くなる
 # スラロームオフセット距離壁補正リファレンス値
 # sla_wall_ref_l: 44.0
 # sla_wall_ref_r: 49.5
 sla_wall_ref_l: 45.0
-sla_wall_ref_r: 46.0
+sla_wall_ref_r: 45.0
 sla_max_offset_dist: 6
 
 # Orvalスラロームオフセット距離壁補正リファレンス値
-sla_wall_ref_l_orval: 44.5
-sla_wall_ref_r_orval: 44.5
+sla_wall_ref_l_orval: 45.0
+sla_wall_ref_r_orval: 44.0
 # orval_rad_offset_l: 5
 orval_rad_offset_l: 0
 orval_rad_offset_r: 0
-orval_offset_enable: 0
+orval_offset_enable: 1
 
 dia45_offset_enable: 1
 
@@ -80,7 +80,7 @@ front_dist_offset_dia_left45: 50
 seach_timer: 450
 seach_timer_slowdown: 450
 
-clear_dist_ragne_from: 23
+clear_dist_ragne_from: 26
 clear_dist_ragne_to: 50
 
 wall_off_hold_dist: 30
@@ -102,36 +102,35 @@ wall_off_hold_noexist_th_r: 60
 wall_off_hold_noexist_th_l2: 60
 wall_off_hold_noexist_th_r2: 60
 # 壁切れ オフセット距離
-wall_off_hold_dist_str_l: -4.0
-wall_off_hold_dist_str_r: -4.50
-wall_off_hold_dist_str_l_exist: -4.0
-wall_off_hold_dist_str_r_exist: -4.50
+wall_off_hold_dist_str_l: -5.0
+wall_off_hold_dist_str_r: -2.0
+wall_off_hold_dist_str_l_exist: -5.0
+wall_off_hold_dist_str_r_exist: -2.0
 
 # 壁切れ：前壁補正
-front_dist_offset2: 138.0 #ref
+front_dist_offset2: 135.0 #ref
 # 壁切れ：前壁補正
 front_dist_offset3: 130.0 #th
 # 壁切れ：前壁補正
-front_dist_offset4: 130.0 # both front sensors condition th
+front_dist_offset4: 127.0 # both front sensors condition th
 
 # 壁切れ In(斜め)
-wall_off_hold_exist_dist_dia_l: 50
+wall_off_hold_exist_dist_dia_l: 45
 wall_off_hold_exist_dist_dia_r: 50
 # 壁切れ Out(斜め)
-wall_off_hold_noexist_dia_th_l: 55
+wall_off_hold_noexist_dia_th_l: 50
 wall_off_hold_noexist_dia_th_r: 55
 # 壁切れ オフセット距離
 wall_off_hold_dist_dia_l2: -1.0
-wall_off_hold_dist_dia_r2: -2.0
+wall_off_hold_dist_dia_r2: 3.0
 #斜めターン壁有り補正
-dia_turn_th_l: 50
+dia_turn_th_l: 53
 dia_turn_th_r: 50
 # 壁切れ オフセット距離(反対側の壁有り)
 wall_off_hold_dist_dia_l: -6.0
-wall_off_hold_dist_dia_r: -4.0
+wall_off_hold_dist_dia_r: -6.0
 #斜め壁切れ時のmax接近距離
-dia_wall_off_ref_l: 37.0
-# dia_wall_off_ref_r: 35.5
+dia_wall_off_ref_l: 36.0
 dia_wall_off_ref_r: 36.50
 
 dia_offset_max_dist: 10
@@ -190,20 +189,24 @@ motor_pid2:
   # p: 0.00275
   # i: 0.25
   # d: 0.00
-  mode: 4
-  # p: 0.00275
-  # i: 3.25
-  p: 0.00175
-  i: 0.00295
-  b: 0
-  d: 0.00125
   # b: 2.75
-  # mode: 4
-  # p: 0.000125
-  # i: 0.0015
-  # b: 0.0015
-  # d: 0.000125
+  mode: 4
+  p: 0.00275
+  i: 0.00275
+  b: 0.00275
+  d: 0.00195
+
+  # mode: 6
+  # p: 0.00245
+  # i: 0.0025
+  # b: 0.25
+  # d: 0.00
   # mk06
+  # mode: 4
+  # p: 0.000275
+  # i: 0.00275
+  # b: 0.0
+  # d: 0.000
 
   # 1cell default
   # p: 0.0035
@@ -235,27 +238,30 @@ dist_pid:
   # i: 0.0
   # d: 0.0
 gyro_pid:
-  # 速度型 mode=1
+  # 速度型 
+  # mode: 1
   # p: 0.165
   # i: 15.25
   # d: 0.0
+  # b: 0.0
   # mode: 1
   # 通常 mode=0
   # mode: 0
   # p: 0.275
   # i: 0.0225
   # d: 0.275
+  # b: 0.0
   # 通常 mode=2
   # mode: 2
   # p: 0.375
   # i: 0.0325
   # d: 0.375
-  # b: 0.0225
+  # b: 0.0325
   # 通常 mode=3
   mode: 3
   p: 0.195
   i: 0.0195
-  b: 0.0195
+  b: 0.0215
   d: 0.195
   # p: 0.175
   # i: 0.0125
@@ -281,7 +287,7 @@ str_agl_pid:
   # d: 1.25
   # p: 0.095 #search_mode
   # b: 0.095 #!searchm_mode
-  p: 0.125 #search_mode
+  p: 0.095 #search_mode
   b: 0.125 #!searchm_mode
   d: 0.00375
   # d: 0.00
@@ -334,8 +340,8 @@ sensor_pid_dia:
 gyro_param:
   # gyro_w_gain_right: 0.0024635
   # gyro_w_gain_left: 0.00246375
-  gyro_w_gain_right: 0.00245785
-  gyro_w_gain_left: 0.0024575
+  gyro_w_gain_right: 0.00245600
+  gyro_w_gain_left: 0.00245580
   lp_delay: 1
 accel_x_param:
   # gain: 315.56 # 16g
