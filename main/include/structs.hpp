@@ -446,6 +446,7 @@ typedef struct {
 
 typedef struct {
   pid_error_t v;
+  pid_error_t v_kf;
   pid_error_t dist;
   pid_error_t w;
   pid_error_t ang;

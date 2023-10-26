@@ -129,7 +129,7 @@ void SearchController::front_wall_ctrl() {
   // vTaskDelay(25.0 / portTICK_RATE_MS);
   pt->motor_enable();
   mp->front_ctrl(false);
-  vTaskDelay(25.0 / portTICK_RATE_MS);
+  vTaskDelay(5.0 / portTICK_RATE_MS);
   pt->motor_disable();
   mp->reset_tgt_data();
   mp->reset_ego_data();
@@ -223,7 +223,7 @@ MotionResult SearchController::pivot(param_set_t &p_set, float diff) {
     vTaskDelay(1.0 / portTICK_RATE_MS);
     saved = true;
   }
-  vTaskDelay(25.0 / portTICK_RATE_MS);
+  vTaskDelay(5.0 / portTICK_RATE_MS);
 
   mp->reset_tgt_data();
   mp->reset_ego_data();
@@ -265,7 +265,7 @@ MotionResult SearchController::pivot(param_set_t &p_set, float diff) {
     pt->motor_disable();
     mp->reset_tgt_data();
     mp->reset_ego_data();
-    vTaskDelay(25.0 / portTICK_RATE_MS);
+    vTaskDelay(5.0 / portTICK_RATE_MS);
     mp->reset_tgt_data();
     mp->reset_ego_data();
     pt->motor_enable();
@@ -289,7 +289,7 @@ MotionResult SearchController::pivot(param_set_t &p_set, float diff) {
   //   return MotionResult::ERROR;
 
   if (back_enable) {
-    vTaskDelay(25.0 / portTICK_RATE_MS);
+    vTaskDelay(5.0 / portTICK_RATE_MS);
     pt->motor_enable();
     mp->reset_tgt_data();
     mp->reset_ego_data();
@@ -304,9 +304,9 @@ MotionResult SearchController::pivot(param_set_t &p_set, float diff) {
     res = mp->go_straight(p);
     mp->reset_tgt_data();
     mp->reset_ego_data();
-    vTaskDelay(25.0 / portTICK_RATE_MS);
+    vTaskDelay(5.0 / portTICK_RATE_MS);
     pt->motor_disable();
-    vTaskDelay(100.0 / portTICK_RATE_MS);
+    vTaskDelay(5.0 / portTICK_RATE_MS);
   }
 
   // mp->reset_gyro_ref();
@@ -314,10 +314,10 @@ MotionResult SearchController::pivot(param_set_t &p_set, float diff) {
 
   if (adachi != nullptr) {
     adachi->update();
-    vTaskDelay(10.0 / portTICK_RATE_MS);
+    vTaskDelay(1.0 / portTICK_RATE_MS);
   }
 
-  vTaskDelay(25.0 / portTICK_RATE_MS);
+  vTaskDelay(5.0 / portTICK_RATE_MS);
   mp->reset_tgt_data();
   mp->reset_ego_data();
   pt->motor_enable();
@@ -344,8 +344,9 @@ MotionResult SearchController::pivot90(param_set_t &p_set,
                                        const TurnDirection td, float diff) {
   // param_straight_t p;
   MotionResult res;
+  const auto tmp_v = 45;
   p.v_max = p_set.str_map[StraightType::Search].v_max;
-  p.v_end = 20;
+  p.v_end = tmp_v;
   p.accl = p_set.str_map[StraightType::Search].accl;
   p.decel = p_set.str_map[StraightType::Search].decel;
   p.dist = 40 - diff;
@@ -369,7 +370,7 @@ MotionResult SearchController::pivot90(param_set_t &p_set,
 
   res = mp->go_straight(p);
 
-  p.v_max = 20;
+  p.v_max = tmp_v;
   p.v_end = 5;
   p.accl = p_set.str_map[StraightType::Search].accl;
   p.decel = p_set.str_map[StraightType::Search].decel;

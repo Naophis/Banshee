@@ -1182,6 +1182,7 @@ void PlanningTask::calc_tgt_duty() {
   sensing_result->ego.duty.sen_ang = sen_ang;
 
   error_entity.v.error_d = error_entity.v.error_p;
+  error_entity.v_kf.error_d = error_entity.v_kf.error_p;
   error_entity.dist.error_d = error_entity.dist.error_p;
 
   error_entity.w.error_d = error_entity.w.error_p;
@@ -1190,6 +1191,7 @@ void PlanningTask::calc_tgt_duty() {
   if (param_ro->comp_param.enable == 0) {
     error_entity.v.error_p = tgt_val->ego_in.v - sensing_result->ego.v_c;
     error_entity.w.error_p = tgt_val->ego_in.w - sensing_result->ego.w_lp;
+    error_entity.v_kf.error_p = tgt_val->ego_in.v - sensing_result->ego.v_kf;
   } else {
     error_entity.v.error_p = tgt_val->ego_in.v - sensing_result->ego.v_kf;
     error_entity.w.error_p = tgt_val->ego_in.w - sensing_result->ego.w_kf;
@@ -1243,6 +1245,8 @@ void PlanningTask::calc_tgt_duty() {
     }
   }
 
+  error_entity.v_kf.error_d =
+      error_entity.v_kf.error_p - error_entity.v_kf.error_d;
   error_entity.v.error_d = error_entity.v.error_p - error_entity.v.error_d;
   error_entity.dist.error_d =
       error_entity.dist.error_p - error_entity.dist.error_d;
@@ -1274,6 +1278,7 @@ void PlanningTask::calc_tgt_duty() {
 
   if (tgt_val->motion_type == MotionType::FRONT_CTRL || !motor_en) {
     error_entity.v.error_i = error_entity.v.error_d = 0;
+    error_entity.v_kf.error_i = error_entity.v_kf.error_d = 0;
     error_entity.v_log.gain_z = error_entity.v_log.gain_zz = 0;
   }
 
@@ -1328,6 +1333,16 @@ void PlanningTask::calc_tgt_duty() {
                  param_ro->motor_pid2.i * error_entity.v.error_i +
                  param_ro->motor_pid2.b * diff_dist +
                  param_ro->motor_pid2.d * error_entity.v.error_d +
+                 (error_entity.v_log.gain_z - error_entity.v_log.gain_zz) * dt;
+        error_entity.v_log.gain_zz = error_entity.v_log.gain_z;
+        error_entity.v_log.gain_z = duty_c;
+      } else if (param_ro->motor_pid2.mode == 7) {
+        const auto diff_dist =
+            tgt_val->ego_in.img_dist - sensing_result->ego.dist_kf;
+        duty_c = param_ro->motor_pid2.p * error_entity.v.error_p +
+                 param_ro->motor_pid2.i * error_entity.v.error_i +
+                 param_ro->motor_pid2.b * diff_dist +
+                 param_ro->motor_pid2.d * error_entity.v_kf.error_d +
                  (error_entity.v_log.gain_z - error_entity.v_log.gain_zz) * dt;
         error_entity.v_log.gain_zz = error_entity.v_log.gain_z;
         error_entity.v_log.gain_z = duty_c;
