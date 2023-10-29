@@ -979,7 +979,7 @@ void MotionPlanning::wall_off(TurnDirection td, param_straight_t &ps_front) {
   tgt_val->nmr.v_end = ps_front.v_end;
   tgt_val->nmr.accl = ps_front.accl;
   tgt_val->nmr.decel = ps_front.decel;
-  tgt_val->nmr.dist = 40;
+  tgt_val->nmr.dist = param->wall_off_wait_dist;
   tgt_val->nmr.w_max = 0;
   tgt_val->nmr.w_end = 0;
   tgt_val->nmr.alpha = 0;
@@ -1098,7 +1098,7 @@ bool MotionPlanning::wall_off_dia(TurnDirection td,
   tgt_val->nmr.v_end = ps_front.v_end;
   tgt_val->nmr.accl = ps_front.accl;
   tgt_val->nmr.decel = ps_front.decel;
-  tgt_val->nmr.dist = 45;
+  tgt_val->nmr.dist =  param->wall_off_wait_dist_dia;
   tgt_val->nmr.w_max = 0;
   tgt_val->nmr.w_end = 0;
   tgt_val->nmr.alpha = 0;

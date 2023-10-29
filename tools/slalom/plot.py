@@ -41,6 +41,14 @@ class Plot:
             tgt_ang = 90
             end_pos = {"x": 90, "y": 90}
             start_ang = 0
+            if mode > 0:
+                rad = 120
+                n = 4
+                tgt_ang = 90
+                end_pos = {"x": 180, "y": 180}
+                start_ang = 0
+            mode =0
+                
         elif type == "orval":
             if mode == 1:
                 rad = 54
@@ -153,6 +161,10 @@ class Plot:
                  lw=wall_width, alpha=wall_alpha)
         trj.plot([135, 135], range, ls="-", c=wall_color,
                  lw=wall_width, alpha=wall_alpha)
+        trj.plot([225, 225], range, ls="-", c=wall_color,
+                 lw=wall_width, alpha=wall_alpha)
+        trj.plot(range, [225, 225], ls="-", c=wall_color,
+                 lw=wall_width, alpha=wall_alpha)
 
         # 点線
         trj.plot(range, [0, 0], ls="--", c=sub_line_color,
@@ -161,9 +173,17 @@ class Plot:
                  lw=subline_width, alpha=subline_alpha)
         trj.plot(range, [-90, -90], ls="--", c=sub_line_color,
                  lw=subline_width, alpha=subline_alpha)
+
+        trj.plot(range, [180, 180], ls="--", c=sub_line_color,
+                 lw=subline_width, alpha=subline_alpha)
+
+
         trj.plot([0, 0], range, ls="--", c=sub_line_color,
                  lw=subline_width, alpha=subline_alpha)
         trj.plot([90, 90], range, ls="--", c=sub_line_color,
+                 lw=subline_width, alpha=subline_alpha)
+
+        trj.plot([180, 180], range, ls="--", c=sub_line_color,
                  lw=subline_width, alpha=subline_alpha)
 
         # 前距離
@@ -215,7 +235,7 @@ class Plot:
         accY.plot(res["acc_y"] / 9.8)
 
         trj.set_aspect('1.0')
-        plot_range = [-60, 180]
+        plot_range = [-60, 240]
         trj.set_xlim(plot_range)
         trj.set_ylim(plot_range)
         # plt.xlim(plot_range)

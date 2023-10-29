@@ -396,6 +396,8 @@ typedef struct {
   float wall_off_hold_dist;
   wall_off_hold_dist_t wall_off_dist;
 
+  float wall_off_wait_dist = 40;
+  float wall_off_wait_dist_dia = 40;
   int search_log_enable = 0;
   int seach_timer = 60 * 3;
   int test_log_enable = 0;
@@ -449,6 +451,7 @@ typedef struct {
   pid_error_t v_kf;
   pid_error_t dist;
   pid_error_t w;
+  pid_error_t w_kf;
   pid_error_t ang;
   gain_log_t v_log;
   gain_log_t dist_log;
@@ -628,6 +631,7 @@ typedef struct {
   std::vector<point_t> goals;
   int maze_size = 0;
   int user_mode = 0;
+  int circuit_mode = 0;
   test_mode_t test;
 } system_t;
 
@@ -762,7 +766,7 @@ typedef struct {
   real16_T accl;
   real16_T accl_x;
   real16_T dist_kf;
-  
+
   real16_T img_w;
   real16_T w_lp;
   real16_T alpha;

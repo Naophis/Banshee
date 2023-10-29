@@ -446,6 +446,10 @@ void MainTask::load_hw_param() {
   param->wall_off_dist.right_str_exist =
       getItem(root, "wall_off_hold_dist_str_r_exist")->valuedouble;
 
+  param->wall_off_wait_dist = getItem(root, "wall_off_wait_dist")->valuedouble;
+  param->wall_off_wait_dist_dia =
+      getItem(root, "wall_off_wait_dist_dia")->valuedouble;
+
   param->wall_off_dist.left_dia =
       getItem(root, "wall_off_hold_dist_dia_l")->valuedouble;
   param->wall_off_dist.right_dia =
@@ -819,6 +823,42 @@ void MainTask::load_sensor_param() {
   cJSON_Delete(root);
 }
 
+void MainTask::load_circuit_path() {
+  mount();
+  string fileName = "/spiflash/circuit.txt";
+  std::ifstream ifs(fileName);
+  if (!ifs) {
+    printf("not found\n");
+    return;
+  }
+  std::string str;
+  std::string buf;
+  while (!ifs.eof()) {
+    std::getline(ifs, buf);
+    str += buf;
+  }
+  cJSON *root = cJSON_CreateObject(), *path_str, *path_turn;
+  root = cJSON_Parse(str.c_str());
+  path_str = getItem(root, "path_str");
+  path_turn = getItem(root, "path_turn");
+  int path_size = cJSON_GetArraySize(path_str);
+  printf("path_size: %d\n", path_size);
+  pc->other_route_map.clear();
+  pc->path_s.clear();
+  pc->path_t.clear();
+  for (int i = 0; i < path_size; i++) {
+    float str = cJSON_GetArrayItem(path_str, i)->valuedouble;
+    int turn = cJSON_GetArrayItem(path_turn, i)->valueint;
+    pc->path_s.emplace_back(str);
+    pc->path_t.emplace_back(turn);
+  }
+
+  printf("path_size2: %d %d\n", pc->path_s.size(), pc->path_t.size());
+
+  cJSON_Delete(root);
+  umount();
+}
+
 void MainTask::load_sys_param() {
   string fileName = "/spiflash/system.txt";
   std::ifstream ifs(fileName);
@@ -847,6 +887,8 @@ void MainTask::load_sys_param() {
   }
   sys.maze_size = getItem(root, "maze_size")->valueint;
   sys.user_mode = getItem(root, "mode")->valueint;
+  sys.circuit_mode = getItem(root, "circuit_mode")->valueint;
+  printf("circuit_mode: %d\n", sys.circuit_mode);
   test = getItem(root, "test");
 
   sys.test.v_max = getItem(test, "v_max")->valuedouble;
@@ -2238,11 +2280,11 @@ void MainTask::test_dia_walloff() {
 void MainTask::test_sla_walloff() {
   rorl = ui->select_direction();
 
-  if (rorl == TurnDirection::Right) {
-    param->sen_ref_p.normal.exist.right45 = 1;
-  } else {
-    param->sen_ref_p.normal.exist.left45 = 1;
-  }
+  // if (rorl == TurnDirection::Right) {
+  //   param->sen_ref_p.normal.exist.right45 = 1;
+  // } else {
+  //   param->sen_ref_p.normal.exist.left45 = 1;
+  // }
   mp->reset_gyro_ref_with_check();
 
   if (sys.test.suction_active) {
@@ -2433,39 +2475,8 @@ void MainTask::read_maze_data() {
 }
 
 void MainTask::path_run(int idx, int idx2) {
-  // printf("read_param\n");
-  // printf("before: %d bytes\n", heap_caps_get_free_size(MALLOC_CAP_INTERNAL));
   load_slalom_param(idx, idx2);
-
-  // printf("after: %d bytes\n", heap_caps_get_free_size(MALLOC_CAP_INTERNAL));
-
-  // printf("path_create\n");
-  // printf("before: %d bytes\n", heap_caps_get_free_size(MALLOC_CAP_INTERNAL));
-  pc->other_route_map.clear();
-  const bool res = pc->path_create(false);
-  if (!res) {
-    ui->error();
-    return;
-  }
-  pc->convert_large_path(true);
-  pc->diagonalPath(true, true);
-
-  pc->path_s2.clear();
-  pc->path_t2.clear();
-  for (int i = 0; i < pc->path_t.size(); i++) {
-    pc->path_s2.push_back(pc->path_s[i]);
-    pc->path_t2.push_back(pc->path_t[i]);
-  }
-  //速度ベース経路導出
-  auto result = pc->timebase_path_create(false, param_set);
-  if (result == 1) { //成功
-    pc->path_s.clear();
-    pc->path_t.clear();
-    for (int i = 0; i < pc->path_t2.size(); i++) {
-      pc->path_s.push_back(pc->path_s2[i]);
-      pc->path_t.push_back(pc->path_t2[i]);
-    }
-  } else { //失敗
+  if (sys.circuit_mode == 0) {
     pc->other_route_map.clear();
     const bool res = pc->path_create(false);
     if (!res) {
@@ -2474,6 +2485,34 @@ void MainTask::path_run(int idx, int idx2) {
     }
     pc->convert_large_path(true);
     pc->diagonalPath(true, true);
+
+    pc->path_s2.clear();
+    pc->path_t2.clear();
+    for (int i = 0; i < pc->path_t.size(); i++) {
+      pc->path_s2.push_back(pc->path_s[i]);
+      pc->path_t2.push_back(pc->path_t[i]);
+    }
+    //速度ベース経路導出
+    auto result = pc->timebase_path_create(false, param_set);
+    if (result == 1) { //成功
+      pc->path_s.clear();
+      pc->path_t.clear();
+      for (int i = 0; i < pc->path_t2.size(); i++) {
+        pc->path_s.push_back(pc->path_s2[i]);
+        pc->path_t.push_back(pc->path_t2[i]);
+      }
+    } else { //失敗
+      pc->other_route_map.clear();
+      const bool res = pc->path_create(false);
+      if (!res) {
+        ui->error();
+        return;
+      }
+      pc->convert_large_path(true);
+      pc->diagonalPath(true, true);
+    }
+  } else {
+    load_circuit_path();
   }
   pc->print_path();
   printf("%f\n", pc->route.time);

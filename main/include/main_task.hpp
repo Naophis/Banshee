@@ -150,6 +150,7 @@ private:
   void
   load_straight(int idx,
                 std::unordered_map<StraightType, straight_param_t> &str_map);
+  void load_circuit_path();
   void save_maze_data(bool write);
   void save_maze_kata_data(bool write);
   void save_maze_return_data(bool write);
