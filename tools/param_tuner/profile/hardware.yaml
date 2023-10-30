@@ -1,6 +1,6 @@
 dt: 0.001
-tire: 13.675
-tire2: 13.675
+tire: 13.60125
+tire2: 13.60125
 # offset_start_dist: 21.0
 offset_start_dist_search: 21.0
 offset_start_dist: 14.0
@@ -93,8 +93,8 @@ ctrl_exist_wall_th_r: 50
 wall_off_exist_wall_th_l: 50
 wall_off_exist_wall_th_r: 50
 # 壁切れ In
-wall_off_hold_exist_dist_l: 72
-wall_off_hold_exist_dist_r: 72
+wall_off_hold_exist_dist_l: 58
+wall_off_hold_exist_dist_r: 58
 # 壁切れ Out
 wall_off_hold_noexist_th_l: 60
 wall_off_hold_noexist_th_r: 60
@@ -103,9 +103,9 @@ wall_off_hold_noexist_th_l2: 60
 wall_off_hold_noexist_th_r2: 60
 # 壁切れ オフセット距離
 wall_off_hold_dist_str_l: -4.0
-wall_off_hold_dist_str_r: -0.5
-wall_off_hold_dist_str_l_exist: -6.50
-wall_off_hold_dist_str_r_exist: -3.0
+wall_off_hold_dist_str_r: -2.0
+wall_off_hold_dist_str_l_exist: -6.25
+wall_off_hold_dist_str_r_exist: -3.50
 
 wall_off_wait_dist_dia: 45
 
@@ -130,8 +130,8 @@ wall_off_hold_exist_dist_dia_r: 50
 wall_off_hold_noexist_dia_th_l: 50
 wall_off_hold_noexist_dia_th_r: 55
 # 壁切れ オフセット距離
-wall_off_hold_dist_dia_l2: -1.750
-wall_off_hold_dist_dia_r2: 1.0
+wall_off_hold_dist_dia_l2: -2.0
+wall_off_hold_dist_dia_r2: -2.0
 #斜めターン壁有り補正
 dia_turn_th_l: 47
 dia_turn_th_r: 47
@@ -296,8 +296,8 @@ str_agl_pid:
   # d: 1.25
   # p: 0.095 #search_mode
   # b: 0.095 #!searchm_mode
-  p: 0.095 #search_mode
-  b: 0.125 #!searchm_mode
+  p: 0.125 #search_mode
+  b: 0.175 #!searchm_mode
   d: 0.00475
   # d: 0.00
   i: 0.0

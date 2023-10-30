@@ -47,11 +47,11 @@ mode: 0 # メイン
 # mode: 21 # pivot turn n2
 
 test: # テスト走行時に使用するパラメータ群
-  v_max: 150
+  v_max: 300
   end_v: 1
   accl: 2400
   decel: -2400
-  dist: 360  #直進全部
+  dist: 720  #直進全部
   # dist: 540 #直進全部　
   # dist: 180 # スラロームテスト
   dia: 0
@@ -67,9 +67,9 @@ test: # テスト走行時に使用するパラメータ群
   file_idx: 0
   sla_dist: 90
   # sla_type: 3
-  sla_type: 3
-  sla_type2: 6 #復路ターン種類
-  sla_return: 0 # 往復フラグ
+  sla_type: 4
+  sla_type2: 8 #復路ターン種類
+  sla_return: 1 # 往復フラグ
   # sla_type: 1 normal
   # sla_type: 2 #orval
   # sla_type: 3 #large

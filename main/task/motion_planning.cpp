@@ -580,8 +580,8 @@ MotionResult MotionPlanning::slalom(slalom_param2_t &sp, TurnDirection td,
     }
   }
 
-  ps_back.v_max = sp.v;
-  ps_back.v_end = sp.v;
+  ps_back.v_max = MAX(sp.v, next_motion.v_max);
+  ps_back.v_end = next_motion.v_end;
   ps_back.accl = next_motion.accl;
   ps_back.decel = next_motion.decel;
   ps_back.motion_type = MotionType::SLA_BACK_STR;
@@ -889,7 +889,8 @@ void MotionPlanning::exec_path_running(param_set_t &p_set) {
       // nm.v_end =
       //     fast_mode ? p_set.map[turn_type].v : p_set.map_slow[turn_type].v;
 
-      nm.v_max = p_set.map[turn_type].v;
+      // nm.v_max = p_set.map[turn_type].v;
+      nm.v_max = MAX(p_set.map[turn_type].v, p_set.str_map[st].v_max);
       nm.v_end = p_set.map[turn_type].v;
 
       nm.accl = p_set.str_map[st].accl;
@@ -905,7 +906,8 @@ void MotionPlanning::exec_path_running(param_set_t &p_set) {
         // nm.v_end = fast_mode ? p_set.map[next_turn_type].v
         //                      : p_set.map_slow[next_turn_type].v;
         nm.is_turn = true;
-        nm.v_max = p_set.map[next_turn_type].v;
+        // nm.v_max = p_set.map[next_turn_type].v;
+        nm.v_max = MAX(p_set.map[next_turn_type].v, p_set.str_map[st].v_max);
         nm.v_end = p_set.map[next_turn_type].v;
       }
       auto res =
@@ -1098,7 +1100,7 @@ bool MotionPlanning::wall_off_dia(TurnDirection td,
   tgt_val->nmr.v_end = ps_front.v_end;
   tgt_val->nmr.accl = ps_front.accl;
   tgt_val->nmr.decel = ps_front.decel;
-  tgt_val->nmr.dist =  param->wall_off_wait_dist_dia;
+  tgt_val->nmr.dist = param->wall_off_wait_dist_dia;
   tgt_val->nmr.w_max = 0;
   tgt_val->nmr.w_end = 0;
   tgt_val->nmr.alpha = 0;
