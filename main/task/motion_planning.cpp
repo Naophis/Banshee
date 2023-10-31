@@ -1013,6 +1013,7 @@ void MotionPlanning::wall_off(TurnDirection td, param_straight_t &ps_front) {
         if (sensing_result->ego.front_far_dist < param->front_dist_offset3) {
           ps_front.dist -=
               (param->front_dist_offset2 - sensing_result->ego.front_far_dist);
+          ps_front.dist = MAX(ps_front.dist, 0.1);
           return;
         }
       }
@@ -1034,12 +1035,14 @@ void MotionPlanning::wall_off(TurnDirection td, param_straight_t &ps_front) {
         if (sensing_result->ego.right45_dist >
             param->wall_off_dist.noexist_th_r2) {
           ps_front.dist += param->wall_off_dist.right_str_exist;
+          ps_front.dist = MAX(ps_front.dist, 0.1);
           return;
         }
       } else {
         if (sensing_result->ego.right45_dist >
             param->wall_off_dist.noexist_th_r) {
           ps_front.dist += param->wall_off_dist.right_str;
+          ps_front.dist = MAX(ps_front.dist, 0.1);
           return;
         }
       }
@@ -1059,6 +1062,7 @@ void MotionPlanning::wall_off(TurnDirection td, param_straight_t &ps_front) {
         if (sensing_result->ego.front_far_dist < param->front_dist_offset3) {
           ps_front.dist -=
               (param->front_dist_offset2 - sensing_result->ego.front_far_dist);
+          ps_front.dist = MAX(ps_front.dist, 0.1);
           return;
         }
       }
@@ -1080,12 +1084,14 @@ void MotionPlanning::wall_off(TurnDirection td, param_straight_t &ps_front) {
         if (sensing_result->ego.left45_dist >
             param->wall_off_dist.noexist_th_l2) {
           ps_front.dist += param->wall_off_dist.left_str_exist;
+          ps_front.dist = MAX(ps_front.dist, 0.1);
           return;
         }
       } else {
         if (sensing_result->ego.left45_dist >
             param->wall_off_dist.noexist_th_l) {
           ps_front.dist += param->wall_off_dist.left_str;
+          ps_front.dist = MAX(ps_front.dist, 0.1);
           return;
         }
       }
@@ -1122,6 +1128,7 @@ bool MotionPlanning::wall_off_dia(TurnDirection td,
       // 反対側の壁あり
       if (sensing_result->ego.left45_dist < param->dia_turn_th_l) {
         ps_front.dist += param->wall_off_dist.right_dia;
+        ps_front.dist = MAX(ps_front.dist, 0.1);
         return false;
       }
       vTaskDelay(1.0 / portTICK_RATE_MS);
@@ -1131,6 +1138,7 @@ bool MotionPlanning::wall_off_dia(TurnDirection td,
       if (sensing_result->ego.right45_dist >
           param->wall_off_dist.noexist_dia_th_r) {
         ps_front.dist += param->wall_off_dist.right_dia2;
+        ps_front.dist = MAX(ps_front.dist, 0.1);
         return true;
       }
       vTaskDelay(1.0 / portTICK_RATE_MS);
@@ -1145,6 +1153,7 @@ bool MotionPlanning::wall_off_dia(TurnDirection td,
       // 反対側壁あり
       if (sensing_result->ego.right45_dist < param->dia_turn_th_r) {
         ps_front.dist += param->wall_off_dist.left_dia;
+        ps_front.dist = MAX(ps_front.dist, 0.1);
         return false;
       }
       vTaskDelay(1.0 / portTICK_RATE_MS);
@@ -1154,6 +1163,7 @@ bool MotionPlanning::wall_off_dia(TurnDirection td,
       if (sensing_result->ego.left45_dist >
           param->wall_off_dist.noexist_dia_th_l) {
         ps_front.dist += param->wall_off_dist.left_dia2;
+        ps_front.dist = MAX(ps_front.dist, 0.1);
         return true;
       }
       vTaskDelay(1.0 / portTICK_RATE_MS);

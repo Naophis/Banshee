@@ -87,7 +87,7 @@ class Plot:
                 tgt_ang = 45
                 start_ang = 0
             else:
-                rad = 68
+                rad = 64
                 n = 4
                 tgt_ang1 = 45.0 * 1 / 3
                 tgt_ang2 = 45.0 * 2 / 3
@@ -102,13 +102,13 @@ class Plot:
             end_pos = {"x": 45, "y": 90}
             start_ang = 0
         elif type == "dia45_2":
-            rad = 66
+            rad = 72
             n = 4
             tgt_ang = 45
             end_pos = {"x": 90, "y": 45}
             start_ang = 45
         elif type == "dia135_2":
-            rad = 45
+            rad = 43
             n = 4
             tgt_ang = 135
             end_pos = {"x": -45, "y": 90}

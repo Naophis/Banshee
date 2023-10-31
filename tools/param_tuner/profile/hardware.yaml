@@ -149,8 +149,8 @@ offset_after_turn_l: 24
 offset_after_turn_r: 24
 offset_after_turn_l2: 18
 offset_after_turn_r2: 18
-offset_after_turn_dia_l: 18
-offset_after_turn_dia_r: 18
+offset_after_turn_dia_l: 16
+offset_after_turn_dia_r: 16
 
 #ログON_OFF
 logging_time: 1.0

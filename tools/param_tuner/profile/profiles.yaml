@@ -18,13 +18,18 @@ list: [
     "t_1400.txt", #16
     "t_1450.txt", #17
     "t_1500.txt", #18
+    "t_1550.txt", #19
+    "t_1600.txt", #20
+    "t_1650.txt", #21
+    "t_1700.txt", #22
+    "t_1800.txt", #23
   ]
 # 限界性能
-# Large: 1500
+# Large: 1800
 # Orval: 1500
-# 45: ~1100  1050?
-# 135: ~1350
-# 45_2: ~1450
+# 45: 1200 ~ 1350
+# 135: ~1800
+# 45_2: ~1550
 # 135_2: ~1500
 # V90: 1200　1150?
 profile_idx_size: 19
@@ -273,8 +278,73 @@ profile_idx: [
       orval: 15,
       dia45: 14,
       dia45_2: 14,
-      dia135: 17,
-      dia135_2: 17,
+      dia135: 18,
+      dia135_2: 18,
+      dia90: 15,
+    },
+    {
+      # 19: 最短パラメータ 1500
+      run_param: 19,
+      suction: 1,
+      normal: 0,
+      large: 19,
+      orval: 15,
+      dia45: 15,
+      dia45_2: 19,
+      dia135: 18,
+      dia135_2: 18,
+      dia90: 15,
+    },
+    {
+      # 20: 最短パラメータ 1500
+      run_param: 20,
+      suction: 1,
+      normal: 0,
+      large: 20,
+      orval: 15,
+      dia45: 15,
+      dia45_2: 19,
+      dia135: 18,
+      dia135_2: 18,
+      dia90: 15,
+    },
+    {
+      # 21: 最短パラメータ 1500
+      run_param: 21,
+      suction: 1,
+      normal: 0,
+      large: 21,
+      orval: 15,
+      dia45: 15,
+      dia45_2: 19,
+      dia135: 18,
+      dia135_2: 18,
+      dia90: 15,
+    },
+    {
+      # 22: 最短パラメータ 1500
+      run_param: 22,
+      suction: 1,
+      normal: 0,
+      large: 22,
+      orval: 15,
+      dia45: 15,
+      dia45_2: 19,
+      dia135: 18,
+      dia135_2: 18,
+      dia90: 15,
+    },
+    {
+      # 23: 最短パラメータ 1500
+      run_param: 23,
+      suction: 1,
+      normal: 0,
+      large: 23,
+      orval: 15,
+      dia45: 15,
+      dia45_2: 19,
+      dia135: 18,
+      dia135_2: 18,
       dia90: 15,
     },
   ]

@@ -1,0 +1,96 @@
+straight:
+  search:
+    v_max: 500
+    accl: 1000
+    decel: -1000
+    w_max: 5
+    w_end: 0.1
+    alpha: 10
+  fast_run:
+    v_max: 5000
+    accl: 24000
+    decel: -24000
+    w_max: 5
+    w_end: 0.1
+    alpha: 10
+  fast_run_dia:
+    v_max: 4500
+    accl: 17500
+    decel: -17500
+    w_max: 5
+    w_end: 0.1
+    alpha: 10
+orval:
+  v: 1500.000000
+  ang: 180.000000
+  rad: 77.50 #orval_rad
+  pow_n: 1.000000
+  time: 0.347078
+  front: { left: 5, right: 5 }
+  back: { left: 5, right: 5 }
+normal:
+  v: 300.000000
+  ang: 90.000000
+  rad: 26.000000
+  pow_n: 2.000000
+  time: 0.112813
+  front: { left: 4.94298864, right: 4.94298864 }
+  back: { left: 4.74724031, right: 4.74724031 }
+# large:
+#   v: 1500
+#   ang: 90
+#   rad: 57
+#   pow_n: 4
+#   time: 0.03910937499999743
+#   front: { left: 8.801393980582672, right: 8.801393980582672 }
+#   back: { left: 36.86635387303123, right: 36.86635387303123 }
+# check
+# 2023年 10月 31日 火曜日 01:22:10 JST
+large:
+  v: 1800
+  ang: 90
+  rad: 60
+  pow_n: 4
+  time: 0.034312499999997956
+  front: { left: 4.013763772036484, right: 4.013763772036484 }
+  back: { left: 43.60861870035036, right: 43.60861870035036 }
+dia45:
+  v: 1800
+  ang: 45
+  rad: 68
+  pow_n: 4
+  time: 0.01945312499999959
+  front: { left: 0.7833738451420587, right: 0.7833738451420587 }
+  back: { left: 45.79620737601115, right: 45.79620737601115 }
+dia45_2:
+  v: 1800
+  ang: 45
+  rad: 66
+  pow_n: 4
+  time: 0.018874999999999652
+  front: { left: 19.140781054908906, right: 19.140781054908906 }
+  back: { left: 27.714210359652164, right: 27.714210359652164 }
+dia135:
+  v: 1800
+  ang: 135
+  rad: 45
+  pow_n: 4
+  time: 0.038593749999997484
+  front: { left: 8.524647755461068, right: 8.524647755461068 }
+  back: { left: 43.43555613005432, right: 43.43555613005432 }
+dia135_2:
+  v: 1800
+  ang: 135
+  rad: 45
+  pow_n: 4
+  time: 0.038593749999997484
+  front: { left: 13.196131630960325, right: 13.196131630960325 }
+  back: { left: 59.918988903228765, right: 59.918988903228765 }
+dia90:
+  v: 1800
+  ang: 90
+  rad: 45
+  pow_n: 4
+  time: 0.025734374999998897
+  front: { left: 2.699332893891061, right: 2.699332893891061 }
+  back: { left: 31.087175078977268, right: 31.087175078977268 }

@@ -57,6 +57,8 @@ public:
 
   std::vector<float> path_s;
   std::vector<unsigned char> path_t;
+  std::vector<float> path_time_s;
+  std::vector<float> path_time_t;
   vector<float> path_s2;
   vector<unsigned char> path_t2;
   int path_size;

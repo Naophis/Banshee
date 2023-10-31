@@ -218,8 +218,8 @@ int MainTask::select_mode() {
     int res = ui->encoder_operation();
     mode_num += res;
     if (mode_num == -1) {
-      mode_num = 23;
-    } else if (mode_num == 24) {
+      mode_num = 28;
+    } else if (mode_num == 29) {
       mode_num = (int)(MODE::SEARCH);
     }
     lbit.byte = mode_num + 1;
@@ -1098,6 +1098,11 @@ void MainTask::load_slas(
     turn_map[p.first].back.left =
         getItem(getItem(getItem(root, p.second.c_str()), "back"), "left")
             ->valuedouble;
+
+    printf(" - front: [%0.2f, %0.2ff]\n", turn_map[p.first].front.left,
+           turn_map[p.first].front.right);
+    printf(" - back: [%0.2f, %0.2ff]\n", turn_map[p.first].back.left,
+           turn_map[p.first].back.right);
     turn_map[p.first].type = cast_turn_type(p.second);
   }
   cJSON_Delete(root);
@@ -1385,16 +1390,26 @@ void MainTask::task() {
       } else if (mode_num == 20) {
         path_run(18, 8);
       } else if (mode_num == 21) {
+        path_run(19, 8);
+      } else if (mode_num == 22) {
+        path_run(20, 8);
+      } else if (mode_num == 23) {
+        path_run(21, 8);
+      } else if (mode_num == 24) {
+        path_run(22, 8);
+      } else if (mode_num == 25) {
+        path_run(23, 8);
+      } else if (mode_num == 26) {
         printf("keep_pivot\n");
         keep_pivot();
-      } else if (mode_num == 22) {
+      } else if (mode_num == 27) {
         // dump1(); // taskの最終行に配置すること
         printf("suction\n");
         mp->reset_gyro_ref_with_check();
         pt->suction_enable(sys.test.suction_duty, sys.test.suction_duty_low);
         vTaskDelay(1000 * 10 / portTICK_PERIOD_MS);
         pt->suction_disable();
-      } else if (mode_num == 23) {
+      } else if (mode_num == 28) {
         save_maze_data(false);
         save_maze_kata_data(false);
         save_maze_return_data(false);
