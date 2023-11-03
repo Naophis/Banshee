@@ -47,11 +47,11 @@ mode: 0 # メイン
 # mode: 21 # pivot turn n2
 
 test: # テスト走行時に使用するパラメータ群
-  v_max: 300
+  v_max: 500
   end_v: 10
   accl: 2400
   decel: -2400
-  dist: 360  #直進全部
+  dist: 1350  #直進全部
   # dist: 540 #直進全部　
   # dist: 180 # スラロームテスト
   dia: 0
