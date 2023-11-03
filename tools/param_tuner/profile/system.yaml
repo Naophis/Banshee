@@ -1,5 +1,5 @@
-# goals: [[7, 7], [7, 8], [8, 7], [8, 8]]
-goals: [[1, 0], [2, 0]]
+goals: [[7, 7], [7, 8], [8, 7], [8, 8]]
+# goals: [[1, 0], [2, 0]]
 # goals: [[1, 1], [1, 2], [2, 1], [2, 2]]
 # goals: [[3, 0], [3, 1], [2, 0], [2, 1]]
 # goals: [[7, 3], [7, 4], [8, 3], [8, 4]]
@@ -47,27 +47,27 @@ mode: 0 # メイン
 # mode: 21 # pivot turn n2
 
 test: # テスト走行時に使用するパラメータ群
-  v_max: 1500
+  v_max: 300
   end_v: 10
-  accl: 24000
-  decel: -24000
-  dist: 720  #直進全部
+  accl: 2400
+  decel: -2400
+  dist: 360  #直進全部
   # dist: 540 #直進全部　
   # dist: 180 # スラロームテスト
   dia: 0
   w_max: 18.5
   alpha: 80
   ang: 3600
-  suction_active: 1
+  suction_active: 0
   suction_duty: 5.75
   # suction_duty_low: 2.75
   suction_duty_low: 5.5
   suction_gain: 250
   # suction_duty: 3.25
-  file_idx: 14
+  file_idx: 19
   sla_dist: 90
   # sla_type: 3
-  sla_type: 3
+  sla_type: 2
   sla_type2: 9 #復路ターン種類
   sla_return: 0 # 往復フラグ
   # sla_type: 1 normal

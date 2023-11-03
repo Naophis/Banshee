@@ -58,12 +58,21 @@ const callerFun = async () => {
             encoding: "utf-8",
           });
           var file_name = file.replaceAll("yaml", "txt");
-          var saveData = yaml.load(txt);
-          var str = `${file_name}@${JSON.stringify(saveData)}`;
-          write(str);
-          // console.log(saveData)
-          await sleep2(800);
-          console.log(`${file}: finish!!`);
+          if (file === "maze.yaml") {
+            var str = `${file_name}@${txt}`;
+            write(str);
+            // console.log(saveData)
+            await sleep2(800);
+            console.log(`${file}: finish22!!`);
+          } else {
+            var saveData = yaml.load(txt);
+            console.log(saveData)
+            var str = `${file_name}@${JSON.stringify(saveData)}`;
+            write(str);
+            // console.log(saveData)
+            await sleep2(800);
+            console.log(`${file}: finish!!`);
+          }
         }
       }
     } else {
@@ -75,12 +84,20 @@ const callerFun = async () => {
         encoding: "utf-8",
       });
       var file_name = list[idx].replaceAll("yaml", "txt");
-      var saveData = yaml.load(txt);
-      var str = `${file_name}@${JSON.stringify(saveData)}`;
-      write(str);
-      // console.log(saveData)
-      await sleep2(600);
-      console.log(`${list[idx]}: finish!!`);
+      if (file_name === "maze.txt") {
+        var str = `${file_name}@${txt}`;
+        write(str);
+        // console.log(saveData)
+        await sleep2(800);
+        console.log(`${file_name}: finish22!!`);
+      } else {
+        var saveData = yaml.load(txt);
+        var str = `${file_name}@${JSON.stringify(saveData)}`;
+        write(str);
+        // console.log(saveData)
+        await sleep2(600);
+        console.log(`${list[idx]}: finish!!`);
+      }
     }
   }
 };
@@ -160,7 +177,7 @@ SerialPort.list().then(
       if (
         p.path.match(/usbserial/) ||
         p.path.match(/COM/) ||
-        p.path.match(/ttyUSB/)||
+        p.path.match(/ttyUSB/) ||
         p.path.match(/ttyACM/)
       ) {
         if (p.serialNumber) {

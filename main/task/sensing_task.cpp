@@ -247,6 +247,10 @@ void SensingTask::task() {
     if (tgt_val->motion_type == MotionType::PIVOT ||
         tgt_val->motion_type == MotionType::SLALOM) {
       led_on = false;
+      // if (tgt_val->ego_in.sla_param.counter >
+      //     (tgt_val->ego_in.sla_param.limit_time_count / 2)) {
+      //   led_on = true;
+      // }
     };
     if (pt->mode_select) {
       led_on = false;

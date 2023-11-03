@@ -130,7 +130,7 @@ constexpr uint16_t MOTION_CHECK_TH = 1000;
 constexpr uint16_t ENC_OPE_V_R_TH = 175;
 
 constexpr uint16_t LOG_SIZE = 1300;
-constexpr uint16_t LINE_BUF_SIZE = 512;
+constexpr uint16_t LINE_BUF_SIZE = 1024;
 // constexpr float BATTERY_GAIN = 3.2075; // 2.97324;
 constexpr float BATTERY_GAIN = 3.262263351630405; // 2.97324;
 
@@ -161,7 +161,7 @@ static const std::initializer_list<std::pair<StraightType, std::string>>
 
 static const std::string slalom_log_file("/spiflash/sla.log");
 static const std::string sysid_log_file("/spiflash/sysid.log");
-static const std::string maze_log_file("/spiflash/maze.log");
+static const std::string maze_log_file("/spiflash/maze.txt");
 static const std::string maze_log_kata_file("/spiflash/maze_kata.log");
 static const std::string maze_log_return_file("/spiflash/maze_return.log");
 

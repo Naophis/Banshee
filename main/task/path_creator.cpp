@@ -561,8 +561,8 @@ void PathCreator::print_path() {
   auto size = path_s.size();
   for (int i = 0; i < size; i++) {
     float dist2 = 0.5 * path_s[i] - 1;
-    printf("[%d]: %0.2f,\t%d\t(%0.2f, %0.2f)\n", i, dist2, path_t[i],
-           path_time_s[i], path_time_t[i]);
+    printf("[%d]: %0.2f,\t%d\t(%0.3f, %0.3f, %0.3f)\n", i, dist2, path_t[i],
+           path_time_s[i], path_time_t[i], path_time_total[i]);
     if (path_t[i] == 255 || path_t[i] == 0) {
       break;
     }
@@ -716,6 +716,7 @@ float PathCreator::calc_goal_time(param_set_t &p_set) {
   Direction ego_dir = Direction::North;
   path_time_s.clear();
   path_time_t.clear();
+  path_time_total.clear();
   for (int i = 0; i < path_t.size(); i++) {
     float dist = (0.5 * path_s[i] - 1) * 90;
     auto turn_dir = tc.get_turn_dir(path_t[i]);
@@ -753,7 +754,7 @@ float PathCreator::calc_goal_time(param_set_t &p_set) {
       }
       tmp_str_time =
           go_straight_dummy(v_now, ps.v_max, ps.v_end, ps.accl, ps.decel, dist);
-      printf("%f\n", tmp_str_time);
+      // printf("%f\n", tmp_str_time);
       time += tmp_str_time;
       if (time > 100) {
         break;
@@ -782,6 +783,7 @@ float PathCreator::calc_goal_time(param_set_t &p_set) {
     }
     path_time_s.push_back(tmp_str_time);
     path_time_t.push_back(tmp_turn_time);
+    path_time_total.push_back(time);
     if (turn_type == TurnType::None) {
       break;
     }

@@ -374,6 +374,17 @@ MotionResult MotionPlanning::slalom(slalom_param2_t &sp, TurnDirection td,
     // float default_rad = sp.rad;
     float rad_r = sp.rad;
     float rad_l = sp.rad;
+
+    if (sp.pow_n > 20) {
+      if (td == TurnDirection::Left) {
+        rad_r = sp.rad;
+        rad_l = sp.rad;
+      } else {
+        rad_r = sp.pow_n;
+        rad_l = sp.pow_n;
+      }
+    }
+
     const auto orval_gain = 2;
     if (td == TurnDirection::Right) {
       if (sensing_result->ego.right45_dist < th_offset_dist) {
@@ -518,7 +529,7 @@ MotionResult MotionPlanning::slalom(slalom_param2_t &sp, TurnDirection td,
   tgt_val->nmr.sct = SensorCtrlType::NONE;
   // tgt_val->ego_in.v = sp.v;//強制的に速度を指定
 
-  if (sp.type == TurnType::Orval && sp.pow_n < 2) {
+  if (sp.type == TurnType::Orval && (sp.pow_n < 2 || sp.pow_n > 40)) {
     tgt_val->nmr.motion_mode = RUN_MODE2::SLALOM_RUN2;
     tgt_val->nmr.ang = sp.ang;
     tgt_val->nmr.sla_rad = sp.rad;
