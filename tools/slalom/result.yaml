@@ -1,48 +1,90 @@
-large:
-  v: 1500
-  ang: 90
-  rad: 60
+orval:
+  v: 1400
+  ang: 180
   pow_n: 4
-  time: 0.0411718749999972
-  front: { left: 9.56314808306098, right: 9.56314808306098 }
-  back: { left: 39.088638268686275, right: 39.088638268686275 }
-dia45:
-  v: 1500
-  ang: 45
-  rad: 64
+  rad: 53.5
+  rad2: 53.5
+  time: 0.07865625000000025
+  time2: 0.07865625000000025
+  front: { left: 0, right: 0 }
+  back: { left: 0, right: 0 }
+orval:
+  v: 1450
+  ang: 180
   pow_n: 4
-  time: 0.021968749999999312
-  front: { left: 4.698561465340436, right: 4.698561465340436 }
-  back: { left: 44.45671910791107, right: 44.45671910791107 }
-dia45_2:
+  rad: 53.5
+  rad2: 53.5
+  time: 0.07595312499999934
+  time2: 0.07595312499999934
+  front: { left: 0, right: 0 }
+  back: { left: 0, right: 0 }
+orval:
   v: 1500
-  ang: 45
-  rad: 66
+  ang: 180
   pow_n: 4
-  time: 0.022640624999999238
-  front: { left: 21.803722943064912, right: 21.803722943064912 }
-  back: { left: 24.321237360943968, right: 24.321237360943968 }
-dia135:
-  v: 1500
-  ang: 135
-  rad: 45
+  rad: 53.5
+  rad2: 53.5
+  time: 0.0734218749999985
+  time2: 0.0734218749999985
+  front: { left: 0, right: 0 }
+  back: { left: 0, right: 0 }
+orval:
+  v: 1550
+  ang: 180
   pow_n: 4
-  time: 0.046312499999996634
-  front: { left: 15.685892230707093, right: 15.685892230707093 }
-  back: { left: 41.78541016775611, right: 41.78541016775611 }
-dia135_2:
-  v: 1500
-  ang: 135
-  rad: 45
+  rad: 53.5
+  rad2: 53.5
+  time: 0.0710468749999977
+  time2: 0.0710468749999977
+  front: { left: 0, right: 0 }
+  back: { left: 0, right: 0 }
+orval:
+  v: 1600
+  ang: 180
   pow_n: 4
-  time: 0.046312499999996634
-  front: { left: 7.965112844285716, right: 7.965112844285716 }
-  back: { left: 49.5061895541776, right: 49.5061895541776 }
-dia90:
-  v: 1500
-  ang: 90
-  rad: 45
+  rad: 53.5
+  rad2: 53.5
+  time: 0.06882812499999696
+  time2: 0.06882812499999696
+  front: { left: 0, right: 0 }
+  back: { left: 0, right: 0 }
+orval:
+  v: 1650
+  ang: 180
   pow_n: 4
-  time: 0.03087499999999833
-  front: { left: 1.9863846026549297, right: 1.9863846026549297 }
-  back: { left: 27.97626396716091, right: 27.97626396716091 }
+  rad: 53.5
+  rad2: 53.5
+  time: 0.06673437499999627
+  time2: 0.06673437499999627
+  front: { left: 0, right: 0 }
+  back: { left: 0, right: 0 }
+orval:
+  v: 1700
+  ang: 180
+  pow_n: 4
+  rad: 53.5
+  rad2: 53.5
+  time: 0.06478124999999561
+  time2: 0.06478124999999561
+  front: { left: 0, right: 0 }
+  back: { left: 0, right: 0 }
+orval:
+  v: 1800
+  ang: 180
+  pow_n: 4
+  rad: 53.5
+  rad2: 53.5
+  time: 0.061187499999994996
+  time2: 0.061187499999994996
+  front: { left: 0, right: 0 }
+  back: { left: 0, right: 0 }
+orval:
+  v: 1400
+  ang: 180
+  pow_n: 4
+  rad: 53.65
+  rad2: 53.65
+  time: 0.07887500000000032
+  time2: 0.07887500000000032
+  front: { left: 0, right: 0 }
+  back: { left: 0, right: 0 }

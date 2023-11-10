@@ -1819,6 +1819,9 @@ void PlanningTask::cp_request() {
   tgt_val->dia_state.left_save = receive_req->dia_state.right_save = false;
   tgt_val->dia_state.left_old = receive_req->dia_state.right_old = 0;
 
+  tgt_val->dia_state.left_save = false;
+  tgt_val->dia_state.right_save = false;
+  tgt_val->dia_state.left_old = tgt_val->dia_state.right_old = 0;
   if (!(tgt_val->motion_type == MotionType::NONE ||
         tgt_val->motion_type == MotionType::STRAIGHT ||
         tgt_val->motion_type == MotionType::PIVOT_PRE ||

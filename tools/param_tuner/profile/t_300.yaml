@@ -26,14 +26,13 @@ straight:
     alpha: 120
 
 orval:
-  v: 300.000000
-  ang: 180.000000
-  # rad: 77.50 #orval_rad
-  # pow_n: 1.000000
-  # time: 0.347078
-  rad: 52.5
+  v: 300
+  ang: 180
   pow_n: 4
+  rad: 52.5
+  rad2: 52.5
   time: 0.3601875000000811
+  time2: 0.3601875000000811
   front: { left: 8, right: 8 }
   back: { left: 5, right: 5 }
 # normal:
@@ -96,7 +95,7 @@ dia45:
   rad: 68
   pow_n: 4
   time: 0.11664062500001293
-  front: { left: 15.4000748449469, right: 14.4000748449469 }
+  front: { left: 14.4000748449469, right: 14.4000748449469 }
   back: { left: 29.047265781365134, right: 29.047265781365134 }
 dia45_2:
   v: 300

@@ -36,7 +36,7 @@ class Plot:
             end_pos = {"x": 45, "y": 45}
             start_ang = 0
         elif type == "large":
-            rad = 60
+            rad = 57.5
             n = 4
             tgt_ang = 90
             end_pos = {"x": 90, "y": 90}
@@ -61,7 +61,7 @@ class Plot:
                 start_ang = 0
             else:
                 # rad = 53.5
-                rad = 52.5
+                rad = 55.25
                 n = 4
                 tgt_ang = 180
                 end_pos = {"x": 0, "y": 180}
@@ -224,9 +224,14 @@ class Plot:
         print('{}:'.format(type))
         print('  v: {}'.format(sla.v))
         print('  ang: {}'.format(sla.base_ang))
-        print('  rad: {}'.format(sla.rad))
         print('  pow_n: {}'.format(sla.pow_n))
+        print('  rad: {}'.format(sla.rad))
+        if type == "orval":
+            print('  rad2: {}'.format(sla.rad))
         print('  time: {}'.format(sla.base_time))
+        if type == "orval":
+            print('  time2: {}'.format(sla.base_time))
+            
         print('  front: {{ left: {}, right: {} }}'.format(
             res2["prev_dist"], res2["prev_dist"]))
         print('  back: {{ left: {}, right: {} }}'.format(

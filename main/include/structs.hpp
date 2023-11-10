@@ -538,8 +538,8 @@ typedef struct {
 typedef struct {
   float right_old;
   float left_old;
-  float right_save;
-  float left_save;
+  bool right_save = false;
+  bool left_save = false;
 } dia_state_t;
 typedef struct {
   t_tgt tgt_in;
@@ -668,10 +668,12 @@ typedef struct {
   float end_v = 0;
   float ang = 0;
   float rad = 0;
+  float rad2 = 0;
   slalom_offset_t front;
   slalom_offset_t back;
   int pow_n = 0;
   float time = 0;
+  float time2 = 0;
   TurnType type = TurnType::None;
 } slalom_param2_t;
 

@@ -21,15 +21,14 @@ straight:
     w_end: 0.1
     alpha: 10
 orval:
-  v: 1500.000000
-  ang: 180.000000
-  # rad: 77.50 #orval_rad
-  # pow_n: 1.000000
-  # time: 0.347078
-  rad: 52.5
+  v: 1600
+  ang: 180
   pow_n: 4
-  time: 0.06754687499999654
-  front: { left: 5, right: 5 }
+  rad: 54.75
+  rad2: 54.75
+  time: 0.0704374999999975
+  time2: 0.0704374999999975
+  front: { left: 8, right: 8 }
   back: { left: 5, right: 5 }
 normal:
   v: 300.000000

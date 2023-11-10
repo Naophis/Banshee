@@ -1082,10 +1082,17 @@ void MainTask::load_slas(
 
     turn_map[p.first].rad =
         getItem(getItem(root, p.second.c_str()), "rad")->valuedouble;
-    turn_map[p.first].pow_n =
-        getItem(getItem(root, p.second.c_str()), "pow_n")->valueint;
     turn_map[p.first].time =
         getItem(getItem(root, p.second.c_str()), "time")->valuedouble;
+    if (p.first == TurnType::Orval) {
+      turn_map[p.first].rad2 =
+          getItem(getItem(root, p.second.c_str()), "rad2")->valuedouble;
+      turn_map[p.first].time2 =
+          getItem(getItem(root, p.second.c_str()), "time2")->valuedouble;
+    }
+
+    turn_map[p.first].pow_n =
+        getItem(getItem(root, p.second.c_str()), "pow_n")->valueint;
     turn_map[p.first].front.right =
         getItem(getItem(getItem(root, p.second.c_str()), "front"), "right")
             ->valuedouble;
@@ -1370,33 +1377,33 @@ void MainTask::task() {
       } else if (mode_num == 10) {
         path_run(8, 8);
       } else if (mode_num == 11) {
-        path_run(9, 8);
+        path_run(9, 9);
       } else if (mode_num == 12) {
-        path_run(10, 8);
+        path_run(10, 10);
       } else if (mode_num == 13) {
-        path_run(11, 8);
+        path_run(11, 11);
       } else if (mode_num == 14) {
-        path_run(12, 8);
+        path_run(12, 12);
       } else if (mode_num == 15) {
-        path_run(13, 8);
+        path_run(13, 12);
       } else if (mode_num == 16) {
-        path_run(14, 8);
+        path_run(14, 12);
       } else if (mode_num == 17) {
-        path_run(15, 8);
+        path_run(15, 12);
       } else if (mode_num == 18) {
-        path_run(16, 8);
+        path_run(16, 12);
       } else if (mode_num == 19) {
-        path_run(17, 8);
+        path_run(17, 12);
       } else if (mode_num == 20) {
-        path_run(18, 8);
+        path_run(18, 12);
       } else if (mode_num == 21) {
-        path_run(19, 8);
+        path_run(19, 12);
       } else if (mode_num == 22) {
-        path_run(20, 8);
+        path_run(20, 12);
       } else if (mode_num == 23) {
-        path_run(21, 8);
+        path_run(21, 12);
       } else if (mode_num == 24) {
-        path_run(22, 8);
+        path_run(22, 12);
       } else if (mode_num == 25) {
         path_run(23, 8);
       } else if (mode_num == 26) {

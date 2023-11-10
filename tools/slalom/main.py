@@ -10,10 +10,10 @@ import sys
 p = Plot()
 po = PlotOrval()
 
-v = 1800
+v = 1650
 dia45_mode = 0
-show = True
-# show = False
+# show = True
+show = False
 if len(sys.argv) > 1:
     v = int(sys.argv[1])
     dia45_mode = int(sys.argv[2])
@@ -32,9 +32,9 @@ offset = {
 }
 
 # p.exe("normal", v, show, 0, K, list_K_y, offset)
-p.exe("large", v, show, 0, K, list_K_y, offset)
+# p.exe("large", v, show, 0, K, list_K_y, offset)
 # p.exe("large", v, show, 1, K, list_K_y, offset)
-# p.exe("orval", v, show, 0, K, list_K_y, offset)
+p.exe("orval", v, show, 0, K, list_K_y, offset)
 # p.exe("dia45", v, show, 0, K, list_K_y, offset)
 # p.exe("dia45", v, show, dia45_mode, K, list_K_y, offset)
 # p.exe("dia45_2", v, show, 0, K, list_K_y, offset)
