@@ -46,7 +46,7 @@ clear_angle: 5
 clear_dist_order: 80
 
 # 探索スラローム
-front_dist_offset: 89.0 # 探索時の前壁補正 大→短くなる
+front_dist_offset: 93.0 # 探索時の前壁補正 大→短くなる
 # スラロームオフセット距離壁補正リファレンス値
 # sla_wall_ref_l: 44.0
 # sla_wall_ref_r: 49.5
@@ -60,7 +60,7 @@ sla_wall_ref_r_orval: 45.0
 # orval_rad_offset_l: 5
 orval_rad_offset_l: 0
 orval_rad_offset_r: 0
-orval_offset_enable: 0
+orval_offset_enable: 1
 
 dia45_offset_enable: 1
 

@@ -209,7 +209,7 @@ MotionResult SearchController::pivot(param_set_t &p_set, float diff) {
   }
 
   if (back_enable) {
-    tmp_dist = 23;
+    tmp_dist = 15;
   }
   bool front_ctrl =
       (sensing_result->ego.front_dist < param->front_dist_offset_pivot_th);
