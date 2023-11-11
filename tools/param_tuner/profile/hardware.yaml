@@ -107,6 +107,10 @@ wall_off_hold_dist_str_r: -4.0
 wall_off_hold_dist_str_l_exist: -6.75
 wall_off_hold_dist_str_r_exist: -4.50
 
+diff_dist_th_l: 5
+diff_dist_th_r: 5 
+wall_off_diff_check_dist: 10
+
 wall_off_wait_dist_dia: 45
 
 # 壁切れ：前壁補正

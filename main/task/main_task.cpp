@@ -445,6 +445,12 @@ void MainTask::load_hw_param() {
       getItem(root, "wall_off_hold_dist_str_l_exist")->valuedouble;
   param->wall_off_dist.right_str_exist =
       getItem(root, "wall_off_hold_dist_str_r_exist")->valuedouble;
+  param->wall_off_dist.diff_dist_th_l =
+      getItem(root, "diff_dist_th_l")->valuedouble;
+  param->wall_off_dist.diff_dist_th_r =
+      getItem(root, "diff_dist_th_r")->valuedouble;
+  param->wall_off_dist.diff_check_dist =
+      getItem(root, "wall_off_diff_check_dist")->valuedouble;
 
   param->wall_off_wait_dist = getItem(root, "wall_off_wait_dist")->valuedouble;
   param->wall_off_wait_dist_dia =

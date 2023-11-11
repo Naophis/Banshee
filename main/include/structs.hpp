@@ -141,6 +141,9 @@ typedef struct {
   volatile float right90_mid_dist = 0;
   volatile float front_mid_dist = 0;
 
+  volatile float left45_dist_diff = 0;
+  volatile float right45_dist_diff = 0;
+
   float front_dist_old = 0;
   float left45_dist_old = 0;
   float left90_dist_old = 0;
@@ -311,6 +314,11 @@ typedef struct {
 
   float ctrl_exist_wall_th_l;
   float ctrl_exist_wall_th_r;
+
+  float diff_check_dist = 20;
+  float diff_dist_th_l = 20;
+  float diff_dist_th_r = 20;
+
 } wall_off_hold_dist_t;
 
 typedef struct {

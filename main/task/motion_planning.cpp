@@ -969,11 +969,14 @@ void MotionPlanning::wall_off(TurnDirection td, param_straight_t &ps_front) {
   vTaskDelay(1.0 / portTICK_RATE_MS);
   if (td == TurnDirection::Right) {
     while (true) {
-      // if (ulTaskNotifyTake(pdTRUE, pdMS_TO_TICKS(1))) {
-      // }
-      if (sensing_result->ego.right45_dist <
-          param->wall_off_dist.exist_dist_r) {
-        break;
+      if (std::abs(tgt_val->ego_in.dist) >=
+          std::abs(param->wall_off_dist.diff_check_dist)) {
+        if (sensing_result->ego.right45_dist_diff >
+            param->wall_off_dist.diff_dist_th_r) {
+          ps_front.dist -= 8;
+          ps_front.dist = MAX(ps_front.dist, 0.1);
+          return;
+        }
       }
       if (40 < sensing_result->ego.left90_far_dist &&
           sensing_result->ego.left90_far_dist < param->front_dist_offset4 &&
@@ -1021,6 +1024,17 @@ void MotionPlanning::wall_off(TurnDirection td, param_straight_t &ps_front) {
     }
   } else {
     while (true) {
+
+      if (std::abs(tgt_val->ego_in.dist) >=
+          std::abs(param->wall_off_dist.diff_check_dist)) {
+        if (sensing_result->ego.left45_dist_diff >
+            param->wall_off_dist.diff_dist_th_l) {
+          ps_front.dist -= 8;
+          ps_front.dist = MAX(ps_front.dist, 0.1);
+          return;
+        }
+      }
+
       if (sensing_result->ego.left45_dist < param->wall_off_dist.exist_dist_l) {
         break;
       }

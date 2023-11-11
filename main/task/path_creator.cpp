@@ -561,8 +561,12 @@ void PathCreator::print_path() {
   auto size = path_s.size();
   for (int i = 0; i < size; i++) {
     float dist2 = 0.5 * path_s[i] - 1;
-    printf("[%d]: %0.2f,\t%d\t(%0.3f, %0.3f, %0.3f)\n", i, dist2, path_t[i],
-           path_time_s[i], path_time_t[i], path_time_total[i]);
+    if (path_time_s.size() > i) {
+      printf("[%d]: %0.2f,\t%d\t(%0.3f, %0.3f, %0.3f)\n", i, dist2, path_t[i],
+             path_time_s[i], path_time_t[i], path_time_total[i]);
+    } else {
+      printf("[%d]: %0.2f,\t%d\n", i, dist2, path_t[i]);
+    }
     if (path_t[i] == 255 || path_t[i] == 0) {
       break;
     }
