@@ -33,10 +33,10 @@ union LED_bit {
 };
 
 typedef struct {
-  int16_t right = 0;
-  int16_t left = 0;
-  int16_t right_old = 0;
-  int16_t left_old = 0;
+  int32_t right = 0;
+  int32_t left = 0;
+  int32_t right_old = 0;
+  int32_t left_old = 0;
 } encoder_data_t;
 
 typedef struct {
@@ -702,6 +702,22 @@ typedef struct {
   float suction_duty = 0;
   float suction_duty_low = 0;
 } param_set_t;
+
+typedef struct {
+  std::vector<float> path_s;
+  std::vector<unsigned char> path_t;
+  float time = 10000;
+  bool result = false;
+  char type = 0;
+} path_set_t;
+
+typedef struct {
+  float time;
+} path_req_t;
+
+typedef struct {
+  float time;
+} create_path_result_t;
 
 typedef struct {
   bool is_turn = false;

@@ -279,7 +279,7 @@ Motion Adachi::exec(bool is_stepped, bool force_back) {
 
   if (goal_startpos_lock) {
     if (ego->x == 0 && ego->y == 0) {
-      lgc->set_param3();
+      lgc->set_param();
       calc_cnt += lgc->searchGoalPosition(false, subgoal_list);
       if (!is_stepped) {
         lgc->update_dist_map(1, false); // search
@@ -322,7 +322,8 @@ void Adachi::update() {
       subgoal_list.erase(ego->x + ego->y * lgc->maze_size);
     }
     {
-      lgc->set_param3();
+      lgc->set_param_num(1);
+      lgc->set_param();
       lgc->searchGoalPosition(true, subgoal_list);
       cost_mode = 3;
     }

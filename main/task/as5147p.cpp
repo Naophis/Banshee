@@ -52,7 +52,7 @@ uint8_t AS5147P::read1byte(const uint8_t address) { return 0; }
 
 int16_t AS5147P::read2byte(const uint16_t address) { return 0; }
 
-int32_t AS5147P::read2byte(const uint8_t address1, const uint8_t address2,
+uint32_t AS5147P::read2byte(const uint8_t address1, const uint8_t address2,
                            bool rorl) {
   esp_err_t ret;
   spi_transaction_t t;
@@ -75,10 +75,9 @@ int32_t AS5147P::read2byte(const uint8_t address1, const uint8_t address2,
     ret = spi_device_polling_transmit(spi_r, &t); // Transmit!
   }
   assert(ret == ESP_OK);
-  // cout << (uint32_t)(t.rx_data[0]) << ", " << (uint32_t)(t.rx_data[1]) << ",
-  // "
+  // cout << (uint32_t)(t.rx_data[0]) << ", " << (uint32_t)(t.rx_data[1]) << ","
   //      << (uint32_t)(t.rx_data[2]) << endl;
-  return (int32_t)((uint16_t)(t.rx_data[0]) << 8) | (uint16_t)(t.rx_data[1]);
+  return (uint32_t)((uint16_t)(t.rx_data[0]) << 8) | (uint16_t)(t.rx_data[1]);
   // std::bitset<8> bs1(t.rx_data[0]);
   // std::bitset<8> bs2(t.rx_data[1]);
   // std::bitset<16> bs3(t.rx_data[1] << 8 | t.rx_data[0]);

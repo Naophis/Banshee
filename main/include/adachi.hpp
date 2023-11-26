@@ -36,6 +36,8 @@ public:
   vector<point_t> pt_list;
   std::shared_ptr<MazeSolverBaseLgc> lgc;
 
+  int param_type = 3;
+
   float diff = 0;
   SearchMode sm;
 

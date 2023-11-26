@@ -20,7 +20,7 @@ public:
   uint8_t read1byte(const uint8_t address);
   int16_t read2byte(const uint16_t address);
   int16_t read2byte(const uint8_t address1, const uint8_t address2);
-  int32_t read2byte(const uint8_t address1, const uint8_t address2, bool rorl);
+  uint32_t read2byte(const uint8_t address1, const uint8_t address2, bool rorl);
 
   int16_t read2byte_2(const uint8_t address1, const uint8_t address2);
 

@@ -277,7 +277,11 @@ void PlanningTask::task() {
   // index ledc_channel_config(&suction_ch); ledc_timer_config(&suction_timer);
 
   mcpwm_gpio_init(MCPWM_UNIT_0, MCPWM0A, A_PWM);
+  mcpwm_gpio_init(MCPWM_UNIT_0, MCPWM0B, A_PWM2);
+
   mcpwm_gpio_init(MCPWM_UNIT_0, MCPWM1A, B_PWM);
+  mcpwm_gpio_init(MCPWM_UNIT_0, MCPWM1B, B_PWM2);
+
   mcpwm_gpio_init(MCPWM_UNIT_1, MCPWM2A, SUCTION_PWM);
 
   // mcpwm_group_set_resolution(MCPWM_UNIT_0, 160'000'000L);
@@ -289,8 +293,13 @@ void PlanningTask::task() {
   // mcpwm_deadtime_disable(MCPWM_UNIT_0, MCPWM_TIMER_1);
   mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A,
                       MCPWM_DUTY_MODE_0);
+  mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B,
+                      MCPWM_DUTY_MODE_0);
   mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_A,
                       MCPWM_DUTY_MODE_0);
+  mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_B,
+                      MCPWM_DUTY_MODE_0);
+
   mcpwm_set_duty_type(MCPWM_UNIT_1, MCPWM_TIMER_2, MCPWM_OPR_A,
                       MCPWM_DUTY_MODE_0);
 
@@ -800,8 +809,8 @@ void PlanningTask::calc_vel() {
   // sensing_result->ego.v_l = -tire * enc_ang_l / dt / dynamics.gear_ratio / 2;
   // sensing_result->ego.v_r = tire * enc_ang_r / dt / dynamics.gear_ratio / 2;
 
-  sensing_result->ego.v_l = tire * enc_ang_l / dt / dynamics.gear_ratio / 2;
-  sensing_result->ego.v_r = -tire * enc_ang_r / dt / dynamics.gear_ratio / 2;
+  sensing_result->ego.v_l = -tire * enc_ang_l / dt / dynamics.gear_ratio / 2;
+  sensing_result->ego.v_r = tire * enc_ang_r / dt / dynamics.gear_ratio / 2;
 
   // if (ABS(sensing_result->ego.v_r - sensing_result->ego.v_r_old) > 1000) {
   //   sensing_result->ego.v_r = sensing_result->ego.v_r_old;
@@ -994,32 +1003,62 @@ void PlanningTask::update_ego_motion() {
 void PlanningTask::set_next_duty(float duty_l, float duty_r,
                                  float duty_suction) {
   if (motor_en) {
-    // duty_l = 15.9;
-    // duty_r = 0;
-
-    if (duty_l < 0) {
-      set_gpio_state(A_CW_CCW1, true);
-    } else {
-      set_gpio_state(A_CW_CCW1, false);
-    }
-    if (duty_r > 0) {
-      set_gpio_state(B_CW_CCW1, true);
-    } else {
-      set_gpio_state(B_CW_CCW1, false);
-    }
+    duty_l = 15.9;
+    duty_r = 0;
     float tmp_duty_r = duty_r > 0 ? duty_r : -duty_r;
     float tmp_duty_l = duty_l > 0 ? duty_l : -duty_l;
 
-    // mcpwm_set_signal_low(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B);
-    // mcpwm_set_signal_low(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_B);
+    // if (duty_l < 0) {
+    //   set_gpio_state(A_CW_CCW1, true);
+    // } else {
+    //   set_gpio_state(A_CW_CCW1, false);
+    // }
+    // if (duty_r > 0) {
+    //   set_gpio_state(B_CW_CCW1, true);
+    // } else {
+    //   set_gpio_state(B_CW_CCW1, false);
+    // }
+    if (duty_r > 0) {
+      mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A, tmp_duty_r);
+      mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A,
+                          MCPWM_DUTY_MODE_0);
+      mcpwm_set_signal_low(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B);
+      mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B, 0);
+      mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B,
+                          MCPWM_DUTY_MODE_0);
+    } else {
+      mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A, 0);
+      mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A,
+                          MCPWM_DUTY_MODE_0);
+      mcpwm_set_signal_low(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A);
+      mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B, tmp_duty_r);
+      mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B,
+                          MCPWM_DUTY_MODE_0);
+    }
+    if (duty_l > 0) {
+      mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_A, tmp_duty_l);
+      mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_A,
+                          MCPWM_DUTY_MODE_0);
+      mcpwm_set_signal_low(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_B);
+      mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_B, 0);
+      mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_B,
+                          MCPWM_DUTY_MODE_0);
+    } else {
+      mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_A, 0);
+      mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_A,
+                          MCPWM_DUTY_MODE_0);
+      mcpwm_set_signal_low(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_A);
+      mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_B, tmp_duty_l);
+      mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_B,
+                          MCPWM_DUTY_MODE_0);
+    }
+    // mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A, tmp_duty_l);
+    // mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_A, tmp_duty_r);
 
-    mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A, tmp_duty_l);
-    mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_A, tmp_duty_r);
-
-    mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A,
-                        MCPWM_DUTY_MODE_0);
-    mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_A,
-                        MCPWM_DUTY_MODE_0);
+    // mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A,
+    //                     MCPWM_DUTY_MODE_0);
+    // mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_A,
+    //                     MCPWM_DUTY_MODE_0);
 
     // mcpwm_set_signal_low(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B);
     // mcpwm_set_signal_low(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_B);

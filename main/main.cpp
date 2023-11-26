@@ -226,64 +226,63 @@ extern "C" void app_main() {
 
   init_gpio();
   init_uart();
-  // while (1) {
-  //   printf("aaaaaaaaaaa\n");
-  //   vTaskDelay(10.0 / portTICK_RATE_MS);
-  // }
-  // constexpr unsigned long hz = 75000 / 1;
-  // const int res = 10;
-  // const unsigned long int resolution = ((unsigned long int)res) * 100'000L;
-  // mcpwm_group_set_resolution(MCPWM_UNIT_0, resolution);
-  // mcpwm_config_t motor_pwm_conf;
-  // memset(&motor_pwm_conf, 0, sizeof(motor_pwm_conf));
-  // motor_pwm_conf.frequency = hz; // PWM周波数= 10kHz,
-  // motor_pwm_conf.cmpr_a = 0; // デューティサイクルの初期値（0%）
-  // motor_pwm_conf.cmpr_b = 0; // デューティサイクルの初期値（0%）
-  // motor_pwm_conf.counter_mode = MCPWM_UP_COUNTER;
-  // motor_pwm_conf.duty_mode = MCPWM_DUTY_MODE_0; // アクティブハイ
-  // mcpwm_init(MCPWM_UNIT_0, MCPWM_TIMER_0, &motor_pwm_conf);
-  // mcpwm_init(MCPWM_UNIT_0, MCPWM_TIMER_1, &motor_pwm_conf);
+  /*
+  constexpr unsigned long hz = 75000 / 1;
+  const int res = 10;
+  const unsigned long int resolution = ((unsigned long int)res) * 100'000L;
+  mcpwm_group_set_resolution(MCPWM_UNIT_0, resolution);
+  mcpwm_config_t motor_pwm_conf;
+  memset(&motor_pwm_conf, 0, sizeof(motor_pwm_conf));
+  motor_pwm_conf.frequency = hz; // PWM周波数= 10kHz,
+  motor_pwm_conf.cmpr_a = 0; // デューティサイクルの初期値（0%）
+  motor_pwm_conf.cmpr_b = 0; // デューティサイクルの初期値（0%）
+  motor_pwm_conf.counter_mode = MCPWM_UP_COUNTER;
+  motor_pwm_conf.duty_mode = MCPWM_DUTY_MODE_0; // アクティブハイ
+  mcpwm_init(MCPWM_UNIT_0, MCPWM_TIMER_0, &motor_pwm_conf);
+  mcpwm_init(MCPWM_UNIT_0, MCPWM_TIMER_1, &motor_pwm_conf);
 
-  // mcpwm_gpio_init(MCPWM_UNIT_0, MCPWM0A, GPIO_NUM_7);
-  // mcpwm_gpio_init(MCPWM_UNIT_0, MCPWM0B, GPIO_NUM_6);
-  // mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A,
-  //                     MCPWM_DUTY_MODE_0);
-  // mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B,
-  //                     MCPWM_DUTY_MODE_0);
+  mcpwm_gpio_init(MCPWM_UNIT_0, MCPWM0A, B_PWM);
+  mcpwm_gpio_init(MCPWM_UNIT_0, MCPWM0B, B_PWM2);
+  mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A,
+                      MCPWM_DUTY_MODE_0);
+  mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B,
+                      MCPWM_DUTY_MODE_0);
 
-  // mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A, 0);
-  // mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B, 0);
+  mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A, 0);
+  mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B, 0);
 
-  // mcpwm_set_signal_low(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A);
-  // mcpwm_set_signal_low(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B);
-  // const auto DUTY_CYCLE = 20;
+  mcpwm_set_signal_low(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A);
+  mcpwm_set_signal_low(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B);
+  const auto DUTY_CYCLE = 20;
 
-  // printf("\n");
-  // while (true) {
-  //   const auto state = gpio_get_level(SW1);
+  printf("\n");
+  while (true) {
+    const auto state = gpio_get_level(SW1);
 
-  //   printf("aaa\n");
-  //   if (state) {
+    printf("aaa\n");
+    if (state) {
 
-  //     mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A, DUTY_CYCLE);
-  //     mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A,
-  //                         MCPWM_DUTY_MODE_0);
-  //     mcpwm_set_signal_low(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B);
-  //     mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B, 0);
-  //     mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B,
-  //                         MCPWM_DUTY_MODE_0);
-  //   } else {
-  //     mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A, 0);
-  //     mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A,
-  //                         MCPWM_DUTY_MODE_0);
-  //     mcpwm_set_signal_low(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A);
-  //     mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B, DUTY_CYCLE);
-  //     mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B,
-  //                         MCPWM_DUTY_MODE_0);
-  //   }
+      mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A, DUTY_CYCLE);
+      mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A,
+                          MCPWM_DUTY_MODE_0);
+      mcpwm_set_signal_low(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B);
+      mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B, 0);
+      mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B,
+                          MCPWM_DUTY_MODE_0);
+    } else {
+      mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A, 0);
+      mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A,
+                          MCPWM_DUTY_MODE_0);
+      mcpwm_set_signal_low(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A);
+      mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B, DUTY_CYCLE);
+      mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B,
+                          MCPWM_DUTY_MODE_0);
+    }
 
-  //   vTaskDelay(10.0 / portTICK_RATE_MS);
-  // }
+    vTaskDelay(10.0 / portTICK_RATE_MS);
+  }
+
+  */
   // adc2_config_channel_atten(BATTERY, ADC_ATTEN_DB_11);
 
   // const int arraySize = 100;

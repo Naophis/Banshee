@@ -111,7 +111,7 @@ void MainTask::dump1() {
     printf("accel_y: %d\n", sensing_result->accel_y.raw);
     printf("battery: %0.3f (%d)\n", sensing_result->ego.battery_lp,
            sensing_result->battery.raw);
-    printf("encoder: %d, %d\n", sensing_result->encoder.left,
+    printf("encoder: %ld, %ld\n", sensing_result->encoder.left,
            sensing_result->encoder.right);
     printf(
         "sensor: %4d, %4d, %4d, %4d, %4d, %4d, %4d\n",
@@ -158,7 +158,7 @@ void MainTask::dump1() {
            param->sen_ref_p.search_exist.right45,
            param->sen_ref_p.search_exist.right90);
 
-    printf("ego_v: %4.3f, %4.3f, %4.3f, %4.3f, (%4d, %4d)\n",
+    printf("ego_v: %4.3f, %4.3f, %4.3f, %4.3f, (%4ld, %4ld)\n",
            sensing_result->ego.v_l, sensing_result->ego.v_c,
            sensing_result->ego.v_r, tgt_val->ego_in.dist,
            sensing_result->encoder.left, sensing_result->encoder.right);
@@ -2505,31 +2505,64 @@ void MainTask::read_maze_data() {
 void MainTask::path_run(int idx, int idx2) {
   load_slalom_param(idx, idx2);
   if (sys.circuit_mode == 0) {
-    pc->other_route_map.clear();
-    const bool res = pc->path_create(false);
-    if (!res) {
-      ui->error();
-      return;
-    }
-    pc->convert_large_path(true);
-    pc->diagonalPath(true, true);
-
-    pc->path_s2.clear();
-    pc->path_t2.clear();
-    for (int i = 0; i < pc->path_t.size(); i++) {
-      pc->path_s2.push_back(pc->path_s[i]);
-      pc->path_t2.push_back(pc->path_t[i]);
-    }
-    //速度ベース経路導出
-    auto result = pc->timebase_path_create(false, param_set);
-    if (result == 1) { //成功
-      pc->path_s.clear();
-      pc->path_t.clear();
-      for (int i = 0; i < pc->path_t2.size(); i++) {
-        pc->path_s.push_back(pc->path_s2[i]);
-        pc->path_t.push_back(pc->path_t2[i]);
+    const auto rorl = ui->select_direction2();
+    if (rorl == TurnDirection::Right) {
+      //速度ベース経路導出
+      for (int i = 1; i <= 5; i++) {
+        lgc->set_param_num(i);
+        pc->other_route_map.clear();
+        const bool res = pc->path_create(false);
+        if (!res) {
+          ui->error();
+          return;
+        }
+        pc->convert_large_path(true);
+        pc->diagonalPath(true, true);
+        if (i == 0) {
+          pc->path_s2.clear();
+          pc->path_t2.clear();
+          for (int i = 0; i < pc->path_t.size(); i++) {
+            pc->path_s2.push_back(pc->path_s[i]);
+            pc->path_t2.push_back(pc->path_t[i]);
+          }
+        }
+        path_set_t p;
+        p.type = i;
+        p.time = 10000;
+        pc->timebase_path_create(false, param_set, p);
+        pc->path_set_map.push(p);
       }
-    } else { //失敗
+
+      // 先頭に最適な経路を持ってくる
+      const auto top_p = pc->path_set_map.top();
+      if (top_p.result) { //成功
+        pc->path_s.clear();
+        pc->path_t.clear();
+        for (int i = 0; i < top_p.path_s.size(); i++) {
+          pc->path_s.push_back(top_p.path_s[i]);
+          pc->path_t.push_back(top_p.path_t[i]);
+        }
+        // clear map
+        while (!pc->path_set_map.empty()) {
+          auto p2 = pc->path_set_map.top();
+          printf("type: %d, time: %f, turn: %d\n", p2.type, p2.time,
+                 p2.path_t.size());
+          p2.path_s.clear();
+          p2.path_t.clear();
+          pc->path_set_map.pop();
+        }
+
+      } else { //失敗
+        pc->other_route_map.clear();
+        const bool res = pc->path_create(false);
+        if (!res) {
+          ui->error();
+          return;
+        }
+        pc->convert_large_path(true);
+        pc->diagonalPath(true, true);
+      }
+    } else {
       pc->other_route_map.clear();
       const bool res = pc->path_create(false);
       if (!res) {
@@ -2538,6 +2571,7 @@ void MainTask::path_run(int idx, int idx2) {
       }
       pc->convert_large_path(true);
       pc->diagonalPath(true, true);
+      pc->print_path();
     }
   } else {
     load_circuit_path();
@@ -2546,22 +2580,9 @@ void MainTask::path_run(int idx, int idx2) {
   printf("%f\n", pc->route.time);
   // printf("after: %d bytes\n", heap_caps_get_free_size(MALLOC_CAP_INTERNAL));
 
-  const auto rorl = ui->select_direction2();
   const auto backup_l45 = param->sen_ref_p.normal.exist.left45;
   const auto backup_r45 = param->sen_ref_p.normal.exist.right45;
-  if (rorl == TurnDirection::Right) {
 
-  } else {
-    pc->other_route_map.clear();
-    const bool res = pc->path_create(false);
-    if (!res) {
-      ui->error();
-      return;
-    }
-    pc->convert_large_path(true);
-    pc->diagonalPath(true, true);
-    pc->print_path();
-  }
   mp->exec_path_running(param_set);
 
   param->sen_ref_p.normal.exist.left45 = backup_l45;

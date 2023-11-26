@@ -1,6 +1,9 @@
 dt: 0.001
-tire: 13.60125
-tire2: 13.60125
+# tire: 13.60125
+# tire2: 13.60125
+
+tire: 13.595
+tire2: 13.595
 # offset_start_dist: 21.0
 offset_start_dist_search: 21.0
 offset_start_dist: 14.0
@@ -120,6 +123,7 @@ front_dist_offset3: 130.0 #th
 # 壁切れ：前壁補正
 front_dist_offset4: 130.0 # both front sensors condition th
 wall_off_wait_dist: 40
+# wall_off_wait_dist: 4000 #circuit
 
 # 壁切れ：前壁補正
 # front_dist_offset2: 135.0 #ref

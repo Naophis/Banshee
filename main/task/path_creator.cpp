@@ -123,7 +123,7 @@ bool PathCreator::path_create(bool is_search, int tgt_x, int tgt_y,
   int y = 1;
 
   path_reflash();
-  lgc->set_param3();
+  lgc->set_param();
   lgc->updateVectorMap(is_search);
 
   path_s.emplace_back(3);
@@ -602,10 +602,10 @@ bool PathCreator::path_create_with_change(bool is_search, int tgt_x, int tgt_y,
   return true;
 }
 
-float PathCreator::timebase_path_create(bool is_search, param_set_t &p_set) {
+float PathCreator::timebase_path_create(bool is_search, param_set_t &p_set,
+                                        path_set_t &p) {
   bool next_end = false;
   candidate_route_info_t tmp_cand_route;
-  float time = 10000;
 
   for (int i = 0; i < 5; i++) { //何かでリミットを設ける
     const auto before = other_route_map.size();
@@ -634,6 +634,7 @@ float PathCreator::timebase_path_create(bool is_search, param_set_t &p_set) {
         bool goal =
             path_create_with_change(is_search, x, y, dir, pc_result, p_set);
         if (ui->button_state_hold()) {
+          p.result = false;
           return 0;
         }
         if (!pc_result.state || !goal) {
@@ -641,13 +642,13 @@ float PathCreator::timebase_path_create(bool is_search, param_set_t &p_set) {
           other_route_map[x + lgc->maze_size * y].candidate_dir_set.erase(dir);
         } else {
           route.time = pc_result.time;
-          if (time > route.time) {
-            time = route.time;
-            path_s2.clear();
-            path_t2.clear();
+          if (p.time > route.time) {
+            p.time = route.time;
+            p.path_s.clear();
+            p.path_t.clear();
             for (int i = 0; i < path_t.size(); i++) {
-              path_s2.push_back(path_s[i]);
-              path_t2.push_back(path_t[i]);
+              p.path_s.push_back(path_s[i]);
+              p.path_t.push_back(path_t[i]);
             }
             // print_path();
           }
@@ -670,6 +671,7 @@ float PathCreator::timebase_path_create(bool is_search, param_set_t &p_set) {
     const auto after = other_route_map.size();
     // このアルゴリズムで辿れるルートの膨れ上がりが止まったら終了。一応for文でlimitは設ける。
     if (next_end) {
+      p.result = true;
       return 1;
     }
     if (before == after) {
@@ -677,6 +679,7 @@ float PathCreator::timebase_path_create(bool is_search, param_set_t &p_set) {
       next_end = true;
     }
   }
+  p.result = false;
   return 0;
 }
 // 他のルートがあったらmapに保存する

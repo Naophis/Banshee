@@ -5,10 +5,10 @@
 #include "stdio.h"
 #include <vector>
 
+#include "include/ui.hpp"
 #include "logic.hpp"
 #include "maze_solver.hpp"
 #include "trajectory_creator.hpp"
-#include "include/ui.hpp"
 
 // constexpr int checkQlength = 256;
 constexpr int R = 1;
@@ -50,6 +50,7 @@ private:
 
 public:
   std::unordered_map<int, candidate_route_info_t> other_route_map;
+  std::unordered_map<int, candidate_route_info_t> other_route_map_bk;
   std::shared_ptr<MazeSolverBaseLgc> lgc;
   std::shared_ptr<UserInterface> ui;
   void set_logic(std::shared_ptr<MazeSolverBaseLgc> &_lgc);
@@ -62,6 +63,22 @@ public:
   std::vector<float> path_time_total;
   vector<float> path_s2;
   vector<unsigned char> path_t2;
+
+  struct CompairPath {
+    bool operator()(path_set_t const &p1, path_set_t const &p2) {
+      // 時間最短。同じならパスの長さが短い方が優先。
+      if (p1.time > p2.time) {
+        return true;
+      } else if (p1.time == p2.time) {
+        if (p1.path_t.size() > p2.path_t.size()) {
+          return true;
+        }
+      }
+      return false;
+    };
+  };
+  std::priority_queue<path_set_t, vector<path_set_t>, CompairPath> path_set_map;
+
   int path_size;
 
   PathCreator(/* args */);
@@ -80,13 +97,12 @@ public:
   void print_path2();
 
   float calc_goal_time(param_set_t &p_set);
-  float timebase_path_create(bool is_search, param_set_t &p_set);
+  float timebase_path_create(bool is_search, param_set_t &p_set, path_set_t &p);
   path_create_status_t pc_result;
   route_t route;
   float go_straight_dummy(float v1, float vmax, float v2, float ac, float diac,
                           float dist);
-  float slalom_dummy(TurnType turn_type, TurnDirection td,
-                     param_set_t &p_set);
+  float slalom_dummy(TurnType turn_type, TurnDirection td, param_set_t &p_set);
 
   char asc(float d, float d2);
 };

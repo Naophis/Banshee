@@ -367,14 +367,18 @@ void SensingTask::task() {
     se->gyro_list[4] = gyro_if.read_2byte_itr();
     se->gyro.raw = se->gyro_list[4];
     se->gyro.data = (float)(se->gyro_list[4]);
-    int32_t enc_r = enc_if.read2byte(0x3F, 0xFF, true) & 0x3FFF;
+    int32_t enc_r = (enc_if.read2byte(0x00, 0x00, true) & 0xFFFF) >> 2;
     se->encoder.right_old = se->encoder.right;
-    se->encoder.right = -enc_r;
+    se->encoder.right = enc_r;
 
-    int32_t enc_l = enc_if.read2byte(0x3F, 0xFF, false) & 0x3FFF;
+    int32_t enc_l = (enc_if.read2byte(0x00, 0x00, false) & 0xFFFF) >> 2;
     se->encoder.left_old = se->encoder.left;
-    se->encoder.left = -enc_l;
+    se->encoder.left = enc_l;
 
+    // std::bitset<32> bits(enc_r);
+    // std::cout << bits << std::endl;
+
+    // cout << enc_r << ", " << enc_l << endl;
     end = esp_timer_get_time();
     se->calc_time = end - start;
     // printf("sen: %d, %d\n", (int16_t)(end - start), (int16_t)(end2 -

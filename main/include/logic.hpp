@@ -129,67 +129,6 @@ public:
   vector<point_t> goal_list3;
   vector<point_t> goal_list_origin;
 
-  void set_param1() {
-    cell_size = 180;
-    Dia = cell_size * 1.41421356 / 2;
-    Dia2 = cell_size * 1.41421356 / 2;
-    Dia3 = cell_size * 1.41421356 / 2;
-    St1 = cell_size;
-    St2 = cell_size;
-    St3 = cell_size;
-  }
-  void set_param2() {
-    cell_size = 1;
-    Dia = 1;
-    Dia2 = 1;
-    Dia3 = 1;
-    St1 = 1;
-    St2 = 1;
-    St3 = 1;
-  }
-
-  void set_param3() {
-    cell_size = 7;
-    Dia = cell_size * 1.41421356 / 2;
-    Dia2 = cell_size * 1.41421356 / 2 * 3 / 5;
-    Dia3 = cell_size * 1.41421356 / 2 * 2 / 5;
-
-    St1 = cell_size;
-    St2 = cell_size * 2 / 7;
-    St3 = cell_size * 1 / 7;
-  }
-
-  void set_param4() {
-    // cell_size = 1;
-    // float tmp = 5;
-    // Dia = cell_size * 1.41421356 / tmp;
-    // Dia2 = cell_size * 1.41421356 / tmp;
-    // Dia3 = cell_size * 1.41421356 / tmp;
-    // St1 = cell_size;
-    // St2 = cell_size / 2;
-    // St3 = cell_size / 4;
-
-    cell_size = 7;
-    Dia = cell_size * 1.41421356 / 2;
-    Dia2 = cell_size * 1.41421356 / 2 * 3 / 5;
-    Dia3 = cell_size * 1.41421356 / 2 * 2 / 5;
-
-    St1 = cell_size;
-    St2 = cell_size * 3 / 7;
-    St3 = cell_size * 2 / 7;
-  }
-
-  void set_param5() {
-    cell_size = 1;
-    float tmp = 1;
-    float tmp2 = 2;
-    Dia = cell_size * 1.41421356 / tmp;
-    Dia2 = cell_size * 1.41421356 / tmp;
-    Dia3 = cell_size * 1.41421356 / tmp;
-    St1 = cell_size / tmp2;
-    St2 = cell_size / (tmp2 + 1);
-    St3 = cell_size / (tmp2 + 3);
-  }
   void priorityStraight2(int x, int y, Direction now_dir, Direction dir,
                          float &dist_val, Direction &next_dir);
 
@@ -203,6 +142,24 @@ public:
   unsigned int vector_max_step_val = 180 * 1024;
   unsigned int VectorMax = vector_max_step_val;
   const float VectorMaxF = (float)vector_max_step_val;
+  int param_num = 1;
+  void set_param_num(int type) { param_num = type; }
+
+  void set_param() {
+    if (param_num == 1) {
+      set_param3();
+    } else if (param_num == 2) {
+      set_param2();
+    } else if (param_num == 3) {
+      set_param1();
+    } else if (param_num == 4) {
+      set_param4();
+    } else if (param_num == 5) {
+      set_param5();
+    } else {
+      set_param3(); // default
+    }
+  }
 
 private:
   std::shared_ptr<ego_t> ego;
@@ -239,6 +196,59 @@ private:
   float St2 = cell_size * 2 / 7;
   float St3 = cell_size * 1 / 7;
   dir_pt_t dir_pt;
+
+  void set_param1() {
+    cell_size = 180;
+    Dia = cell_size * 1.41421356 / 2;
+    Dia2 = cell_size * 1.41421356 / 2;
+    Dia3 = cell_size * 1.41421356 / 2;
+    St1 = cell_size;
+    St2 = cell_size;
+    St3 = cell_size;
+  }
+  void set_param2() {
+    cell_size = 1;
+    Dia = 1;
+    Dia2 = 1;
+    Dia3 = 1;
+    St1 = 1;
+    St2 = 1;
+    St3 = 1;
+  }
+
+  void set_param3() {
+    cell_size = 7;
+    Dia = cell_size * 1.41421356 / 2;
+    Dia2 = cell_size * 1.41421356 / 2 * 3 / 5;
+    Dia3 = cell_size * 1.41421356 / 2 * 2 / 5;
+
+    St1 = cell_size;
+    St2 = cell_size * 2 / 7;
+    St3 = cell_size * 1 / 7;
+  }
+
+  void set_param4() {
+    cell_size = 7;
+    Dia = cell_size * 1.41421356 / 2;
+    Dia2 = cell_size * 1.41421356 / 2 * 3 / 5;
+    Dia3 = cell_size * 1.41421356 / 2 * 2 / 5;
+
+    St1 = cell_size;
+    St2 = cell_size * 3 / 7;
+    St3 = cell_size * 2 / 7;
+  }
+
+  void set_param5() {
+    cell_size = 1;
+    float tmp = 1;
+    float tmp2 = 2;
+    Dia = cell_size * 1.41421356 / tmp;
+    Dia2 = cell_size * 1.41421356 / tmp;
+    Dia3 = cell_size * 1.41421356 / tmp;
+    St1 = cell_size / tmp2;
+    St2 = cell_size / (tmp2 + 1);
+    St3 = cell_size / (tmp2 + 3);
+  }
 };
 
 #endif
