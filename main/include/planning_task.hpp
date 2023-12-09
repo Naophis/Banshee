@@ -37,6 +37,7 @@ public:
   set_sensing_entity(std::shared_ptr<sensing_result_entity_t> &_sensing_result);
   void set_input_param_entity(std::shared_ptr<input_param_t> &_param_ro);
   void set_tgt_val(std::shared_ptr<motion_tgt_val_t> &_tgt_val);
+  void set_error_entity(std::shared_ptr<pid_error_entity_t> &_error_entity);
   void set_logging_task(std::shared_ptr<LoggingTask> &_lt);
 
   void buzzer(ledc_channel_config_t &buzzer_ch,
@@ -93,8 +94,18 @@ public:
   float suction_gain = 200;
 
   std::shared_ptr<motion_tgt_val_t> tgt_val;
+  std::shared_ptr<pid_error_entity_t> error_entity_ptr;
 
 private:
+  void copy_error_entity(pid_error_entity_t &in);
+
+  void pid_gain_data(pid_error_t &in, pid_error_t &save);
+  void pid_val_data(pid_error_t &in, pid_error_t &save);
+
+  void set_ctrl_val(pid_error2_t &val, float error_p, float error_i,
+                    float error_i2, float error_d, float val_p, float val_i,
+                    float val_i2, float val_d, float zz, float z);
+
   void set_gpio_state(gpio_num_t gpio_num, int state);
   float diff_old = 0;
   float diff = 0;

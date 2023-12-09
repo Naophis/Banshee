@@ -450,6 +450,19 @@ typedef struct {
 } pid_error_t;
 
 typedef struct {
+  float p;
+  float i;
+  float i2;
+  float d;
+  float p_val;
+  float i_val;
+  float i2_val;
+  float d_val;
+  float zz;
+  float z;
+} pid_error2_t;
+
+typedef struct {
   float gain_z;
   float gain_zz;
 } gain_log_t;
@@ -469,6 +482,11 @@ typedef struct {
   gain_log_t sen_log_dia;
   pid_error_t sen;
   pid_error_t sen_dia;
+
+  pid_error2_t v_val;
+  pid_error2_t w_val;
+  pid_error2_t s_val;
+
 } pid_error_entity_t;
 
 // 指示速度
@@ -827,6 +845,34 @@ typedef struct {
   int16_t sen_calc_time;
   int16_t pln_calc_time;
   int16_t pln_calc_time2;
+
+  real16_T m_pid_p;
+  real16_T m_pid_i;
+  real16_T m_pid_i2;
+  real16_T m_pid_d;
+  real16_T m_pid_p_v;
+  real16_T m_pid_i_v;
+  real16_T m_pid_i2_v;
+  real16_T m_pid_d_v;
+
+  real16_T g_pid_p;
+  real16_T g_pid_i;
+  real16_T g_pid_i2;
+  real16_T g_pid_d;
+  real16_T g_pid_p_v;
+  real16_T g_pid_i_v;
+  real16_T g_pid_i2_v;
+  real16_T g_pid_d_v;
+
+  real16_T s_pid_p;
+  real16_T s_pid_i;
+  real16_T s_pid_i2;
+  real16_T s_pid_d;
+  real16_T s_pid_p_v;
+  real16_T s_pid_i_v;
+  real16_T s_pid_i2_v;
+  real16_T s_pid_d_v;
+
 } log_data_t2;
 
 typedef struct {

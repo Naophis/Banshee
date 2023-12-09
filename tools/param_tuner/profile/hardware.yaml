@@ -14,15 +14,15 @@ max_duty: 99.950
 min_duty: 0.01
 FF_front: 1
 FF_roll: 1
-FF_keV: 1 #FF制御on/off flag
+FF_keV: 0 #FF制御on/off flag
 # FF_front: 0
 # FF_roll: 0
 # FF_keV: 0
 # MotorHz: 75000
-MotorHz: 35000
-SuctionHz: 10000
+MotorHz: 97500
+SuctionHz: 50000
 MotorResolution: 120
-SuctionResolution: 10
+SuctionResolution: 120
 # MotorHz: 175000
 # SuctionHz: 10000
 
@@ -30,9 +30,21 @@ SuctionResolution: 10
 # Km: 0.0125 # 大：縦系の出力小
 # Lm: 0.0000375 # 大：縦系の出力大
 
-Ke: 0.000125 # 大：逆起電力大
-Km: 0.0785 # 大：縦系の出力小
+# Ke: 0.000125 # 大：逆起電力大
+# Km: 0.0785 # 大：縦系の出力小
+# Lm: 0.0004 # 大：横系の出力大
+
+# front
+# Ke: 0.0025 # 大：逆起電力大
+# Km: 0.00045 # 大：縦系の出力小
+# Lm: 0.0004 # 大：横系の出力大
+
+# roll
+Ke: 0.0025 # 大：逆起電力大
+Km: 0.00325 # 大：縦系の出力小
 Lm: 0.0004 # 大：横系の出力大
+
+
 
 # Km: 0.0025
 # Resist: 2.93
@@ -68,8 +80,8 @@ orval_offset_enable: 0
 dia45_offset_enable: 1
 
 # front_dist_offset2: 137.0
-led_light_delay_cnt: 750
-led_light_delay_cnt2: 750
+led_light_delay_cnt: 1250
+led_light_delay_cnt2: 1250
 
 front_dist_offset_pivot_th: 78
 front_dist_offset_pivot: 90
@@ -200,6 +212,12 @@ motor_pid:
   d: 0.0
   b: 0
   c: 0
+
+  # p: 0.0
+  # i: 0.0
+  # d: 0.0
+  # b: 0
+  # c: 0
   mode: 1
 motor_pid2:
   # 2cell default
@@ -208,10 +226,15 @@ motor_pid2:
   # d: 0.00
   # b: 2.75
   mode: 7
-  p: 0.00275
-  i: 0.00195
-  b: 0.00195
-  d: 0.00275
+  p: 0.0925
+  i: 0.00885
+  b: 0.0
+  d: 0.00125
+
+  # p: 0.00275
+  # i: 0.00195
+  # b: 0.00195
+  # d: 0.00275
 
   # mode: 6
   # p: 0.00245
@@ -232,17 +255,28 @@ motor_pid2:
 
   # 1cell default, 
   # mode: 0
+  # p: 0.0875
+  # i: 1.45
+  # d: 0.00
+  # b: 0.00
+
+  # p: 0.0875
+  # i: 1.45
+  # d: 0.00
   # p: 0.00425
   # i: 3.75
   # d: 0.00025
-  # b: 0.00
   c: 0
   # p: 0.00275
   # i: 1.85
   # d: 0.0
-
   # p: 0.0
   # i: 0
+  # d: 0.0
+
+  # p: 0.0
+  # i: 0.0
+  # b: 0.0
   # d: 0.0
 dist_pid:
   p: 0.80
@@ -276,10 +310,10 @@ gyro_pid:
   # b: 0.0325
   # 通常 mode=3
   mode: 3
-  p: 0.195
-  i: 0.0195
-  b: 0.0215
-  d: 0.195
+  p: 0.375
+  i: 0.065
+  b: 0.0275
+  d: 0.275
   # p: 0.175
   # i: 0.0125
   # b: 0.0195

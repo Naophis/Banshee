@@ -26,6 +26,7 @@ public:
   set_sensing_entity(std::shared_ptr<sensing_result_entity_t> &_sensing_result);
   void set_input_param_entity(std::shared_ptr<input_param_t> &_param);
   void set_tgt_val(std::shared_ptr<motion_tgt_val_t> &_tgt_val);
+  void set_error_entity(std::shared_ptr<pid_error_entity_t> &error_entity);
 
   void start_slalom_log();
   void stop_slalom_log();
@@ -56,6 +57,7 @@ private:
   std::shared_ptr<sensing_result_entity_t> sensing_result;
   std::shared_ptr<input_param_t> param;
   std::shared_ptr<motion_tgt_val_t> tgt_val;
+  std::shared_ptr<pid_error_entity_t> error_entity;
 
   int idx_slalom_log = 0;
   FILE *f_slalom_log;

@@ -53,7 +53,7 @@ void MainTask::check_battery() {
 
   printf("battery= %f\n", sensing_result->ego.battery_raw);
   if (sensing_result->ego.battery_raw > LOW_BATTERY_TH ||
-      sensing_result->ego.battery_raw < 6.5)
+      sensing_result->ego.battery_raw < 9.5)
     return;
   while (1) {
     ui->music_sync(MUSIC::G5_, 250);

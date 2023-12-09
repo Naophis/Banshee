@@ -140,7 +140,7 @@ constexpr uint16_t LINE_BUF_SIZE = 1024;
 constexpr float BATTERY_GAIN = 3.40350897405363; // 2.97324;
 
 constexpr uint8_t LEDC_HIGH_SPEED_MODE = 0;
-constexpr float LOW_BATTERY_TH = 7.8;
+constexpr float LOW_BATTERY_TH = 11.7;
 
 constexpr uint16_t RESET_GYRO_LOOP_CNT = 512;
 
@@ -178,7 +178,9 @@ static const std::string
     format3("%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0."
             "3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,"
             "%0.3f,%d,");
-static const std::string format4("%0.3f,%0.3f,%0.3f,%0.3f,%d,%d,%d,%d\n");
+static const std::string format4("%0.3f,%0.3f,%0.3f,%0.3f,%d,%d,%d,%d,");
+static const std::string format5("%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,");
+static const std::string format6("%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f\n");
 static const std::string
     formatsysid("%d,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f\n");
 static char line_buf[LINE_BUF_SIZE];

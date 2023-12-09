@@ -23,6 +23,11 @@ void LoggingTask::set_tgt_val(std::shared_ptr<motion_tgt_val_t> &_tgt_val) {
   tgt_val = _tgt_val;
 }
 
+void LoggingTask::set_error_entity(
+    std::shared_ptr<pid_error_entity_t> &_error_entity) {
+  error_entity = _error_entity;
+}
+
 void LoggingTask::start_slalom_log() {
   req_logging_active = true;
   idx_slalom_log = 0;
@@ -144,6 +149,33 @@ void LoggingTask::task() {
           ld->pln_calc_time = tgt_val->calc_time;
           ld->pln_calc_time2 = tgt_val->calc_time2;
 
+          ld->m_pid_p = floatToHalf(error_entity->v_val.p);
+          ld->m_pid_i = floatToHalf(error_entity->v_val.i);
+          ld->m_pid_i2 = floatToHalf(error_entity->v_val.i2);
+          ld->m_pid_d = floatToHalf(error_entity->v_val.d);
+          ld->m_pid_p_v = floatToHalf(error_entity->v_val.p_val);
+          ld->m_pid_i_v = floatToHalf(error_entity->v_val.i_val);
+          ld->m_pid_i2_v = floatToHalf(error_entity->v_val.i2_val);
+          ld->m_pid_d_v = floatToHalf(error_entity->v_val.d_val);
+
+          ld->g_pid_p = floatToHalf(error_entity->w_val.p);
+          ld->g_pid_i = floatToHalf(error_entity->w_val.i);
+          ld->g_pid_i2 = floatToHalf(error_entity->w_val.i2);
+          ld->g_pid_d = floatToHalf(error_entity->w_val.d);
+          ld->g_pid_p_v = floatToHalf(error_entity->w_val.p_val);
+          ld->g_pid_i_v = floatToHalf(error_entity->w_val.i_val);
+          ld->g_pid_i2_v = floatToHalf(error_entity->w_val.i2_val);
+          ld->g_pid_d_v = floatToHalf(error_entity->w_val.d_val);
+
+          ld->s_pid_p = floatToHalf(error_entity->s_val.p);
+          ld->s_pid_i = floatToHalf(error_entity->s_val.i);
+          ld->s_pid_i2 = floatToHalf(error_entity->s_val.i2);
+          ld->s_pid_d = floatToHalf(error_entity->s_val.d);
+          ld->s_pid_p_v = floatToHalf(error_entity->s_val.p_val);
+          ld->s_pid_i_v = floatToHalf(error_entity->s_val.i_val);
+          ld->s_pid_i2_v = floatToHalf(error_entity->s_val.i2_val);
+          ld->s_pid_d_v = floatToHalf(error_entity->s_val.d_val);
+
           if (heap_caps_get_free_size(MALLOC_CAP_INTERNAL) > 10000) {
             log_vec.emplace_back(std::move(ld));
             idx_slalom_log++;
@@ -196,137 +228,7 @@ float LoggingTask::calc_sensor(float data, float a, float b, char motion_type) {
 }
 
 void LoggingTask::save(std::string file_name) {
-  return;
-  vTaskDelay(250.0 / portTICK_PERIOD_MS);
-  mount();
-  vTaskDelay(250.0 / portTICK_PERIOD_MS);
-  printf("usefile: %s\n", slalom_log_file.c_str());
-  f_slalom_log = fopen(slalom_log_file.c_str(), "wb");
-  if (f_slalom_log == NULL)
-    printf("slalom_file_load_failed\n");
-
-  const char *f1 = format1.c_str();
-  const char *f2 = format2.c_str();
-  const char *f3 = format3.c_str();
-  const char *f4 = format4.c_str();
-
-  int i = 0;
-  int c = 0;
-
-  for (const auto &ld : log_vec) {
-    fprintf(f_slalom_log, f1,          //
-            i++,                       //
-            halfToFloat(ld->img_v),    //
-            halfToFloat(ld->v_c),      //
-            halfToFloat(ld->v_c2),     //
-            halfToFloat(ld->v_l),      //
-            halfToFloat(ld->v_r),      //
-            (ld->v_l_enc),             //
-            (ld->v_r_enc),             //
-            halfToFloat(ld->accl),     //
-            halfToFloat(ld->accl_x));  // 8
-    fprintf(f_slalom_log, f2,          //
-            halfToFloat(ld->img_w),    //
-            halfToFloat(ld->w_lp),     //
-            halfToFloat(ld->alpha),    //
-            halfToFloat(ld->img_dist), //
-            halfToFloat(ld->dist),     //
-            halfToFloat(ld->img_ang),  //
-            halfToFloat(ld->ang),      //
-            halfToFloat(ld->ang_kf));  // 7
-
-    auto l90 = calc_sensor(halfToFloat(ld->left90_lp), param->sensor_gain.l90.a,
-                           param->sensor_gain.l90.b, ld->motion_type);
-    auto l45 = calc_sensor(halfToFloat(ld->left45_lp), param->sensor_gain.l45.a,
-                           param->sensor_gain.l45.b, ld->motion_type);
-    auto r45 =
-        calc_sensor(halfToFloat(ld->right45_lp), param->sensor_gain.r45.a,
-                    param->sensor_gain.r45.b, ld->motion_type);
-    auto r90 =
-        calc_sensor(halfToFloat(ld->right90_lp), param->sensor_gain.r90.a,
-                    param->sensor_gain.r90.b, ld->motion_type);
-
-    auto l90_far =
-        calc_sensor(halfToFloat(ld->left90_lp), param->sensor_gain.l90_far.a,
-                    param->sensor_gain.l90_far.b, ld->motion_type);
-    auto r90_far =
-        calc_sensor(halfToFloat(ld->right90_lp), param->sensor_gain.r90_far.a,
-                    param->sensor_gain.r90_far.b, ld->motion_type);
-    float front = 0;
-    if (l90 > 0 && r90 > 0) {
-      front = (l90 + r90) / 2;
-    } else if (l90 == 0 && r90 > 0) {
-      front = r90;
-    } else if (l90 > 0 && r90 == 0) {
-      front = l90;
-    } else {
-      front = 0;
-    }
-
-    float front_far = 0;
-
-    if (l90_far > 0 && r90_far > 0) {
-      front_far = (l90_far + r90_far) / 2;
-    } else if (l90_far > 0 && r90_far == 0) {
-      front_far = l90_far;
-    } else if (l90_far == 0 && r90_far > 0) {
-      front_far = r90_far;
-    } else {
-      front_far = 0;
-    }
-
-    auto dist = halfToFloat(ld->img_dist);
-    float dist_mod = (int)(dist / 90);
-    float tmp_dist = dist - 90 * dist_mod;
-
-    fprintf(f_slalom_log, f3,                                                 //
-            halfToFloat(ld->left90_lp),                                       //
-            halfToFloat(ld->left45_lp),                                       //
-            ((halfToFloat(ld->left90_lp) + halfToFloat(ld->right90_lp)) / 2), //
-            halfToFloat(ld->right45_lp),                                      //
-            halfToFloat(ld->right90_lp),                                      //
-            halfToFloat(ld->left45_2_lp),                                     //
-            halfToFloat(ld->right45_2_lp),                                    //
-            l90, l45, front, r45, r90,                                        //
-            l90_far, front_far, r90_far,                                      //
-            halfToFloat(ld->battery_lp),                                      //
-            halfToFloat(ld->duty_l),                                          //
-            halfToFloat(ld->duty_r),                                          //
-            (ld->motion_type)); // 16
-
-    fprintf(f_slalom_log, f4,                  //
-            halfToFloat(ld->duty_sensor_ctrl), //
-            tmp_dist,                          //
-            halfToFloat(ld->sen_log_l45),      //
-            halfToFloat(ld->sen_log_r45),      //
-            ld->motion_timestamp);             // 4
-    if (i > 10 && ld->motion_timestamp == 0) {
-      break;
-    }
-    c++;
-    if (c == 50) {
-      c = 0;
-      vTaskDelay(1.0 / portTICK_PERIOD_MS);
-    }
-    if (!gpio_get_level(SW1)) {
-      unsigned int d = 0;
-      while (!gpio_get_level(SW1)) {
-        d++;
-        vTaskDelay(10.0 / portTICK_PERIOD_MS);
-      }
-      if (d > 50) {
-        break;
-      }
-    }
-  }
-
-  if (f_slalom_log != NULL) {
-    fclose(f_slalom_log);
-    printf("close\n");
-  }
-  vTaskDelay(250.0 / portTICK_PERIOD_MS);
-  umount();
-  vTaskDelay(250.0 / portTICK_PERIOD_MS);
+  return; //
 }
 
 void LoggingTask::save_sysid(std::string file_name) {
@@ -392,12 +294,17 @@ void LoggingTask::dump_log(std::string file_name) {
          "battery,duty_l,"
          "duty_r,motion_state,duty_sen,dist_mod90,"
          "sen_dist_l45,sen_dist_r45,timestamp,sen_calc_time,pln_calc_time,pln_"
-         "calc_time2\n");
+         "calc_time2,m_pid_p,m_pid_i,m_pid_i2,m_pid_d,m_pid_p_v,m_pid_i_v,m_"
+         "pid_i2_v,m_pid_d_v,g_pid_p,g_pid_i,g_pid_i2,g_pid_d,g_pid_p_v,g_pid_"
+         "i_v,g_pid_i2_v,g_pid_d_v,s_pid_p,s_pid_i,s_pid_i2,s_pid_d,s_pid_p_v,"
+         "s_pid_i_v,s_pid_i2_v,s_pid_d_v\n");
   int c = 0;
   const char *f1 = format1.c_str();
   const char *f2 = format2.c_str();
   const char *f3 = format3.c_str();
   const char *f4 = format4.c_str();
+  const char *f5 = format5.c_str();
+  const char *f6 = format6.c_str();
 
   int i = 0;
 
@@ -493,6 +400,34 @@ void LoggingTask::dump_log(std::string file_name) {
            ld->pln_calc_time,                 //
            ld->pln_calc_time2);               // 4
 
+    printf(f5,                          //
+           halfToFloat(ld->m_pid_p),    //
+           halfToFloat(ld->m_pid_i),    //
+           halfToFloat(ld->m_pid_i2),   //
+           halfToFloat(ld->m_pid_d),    //
+           halfToFloat(ld->m_pid_p_v),  //
+           halfToFloat(ld->m_pid_i_v),  //
+           halfToFloat(ld->m_pid_i2_v), //
+           halfToFloat(ld->m_pid_d_v),  //
+           halfToFloat(ld->g_pid_p),    //
+           halfToFloat(ld->g_pid_i),    //
+           halfToFloat(ld->g_pid_i2),   //
+           halfToFloat(ld->g_pid_d));   //
+
+    printf(f6,                          //
+           halfToFloat(ld->g_pid_p_v),  //
+           halfToFloat(ld->g_pid_i_v),  //
+           halfToFloat(ld->g_pid_i2_v), //
+           halfToFloat(ld->g_pid_d_v),  //
+           halfToFloat(ld->s_pid_p),    //
+           halfToFloat(ld->s_pid_i),    //
+           halfToFloat(ld->s_pid_i2),   //
+           halfToFloat(ld->s_pid_d),    //
+           halfToFloat(ld->s_pid_p_v),  //
+           halfToFloat(ld->s_pid_i_v),  //
+           halfToFloat(ld->s_pid_i2_v), //
+           halfToFloat(ld->s_pid_d_v)); //
+           
     if (i > 10 && ld->motion_timestamp == 0) {
       break;
     }

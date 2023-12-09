@@ -153,6 +153,8 @@ std::shared_ptr<sensing_result_entity_t> sensing_entity =
     std::make_shared<sensing_result_entity_t>();
 std::shared_ptr<motion_tgt_val_t> tgt_val =
     std::make_shared<motion_tgt_val_t>();
+std::shared_ptr<pid_error_entity_t> error_entity =
+    std::make_shared<pid_error_entity_t>();
 std::shared_ptr<PlanningTask> pt = std::make_shared<PlanningTask>();
 std::shared_ptr<LoggingTask> lt = std::make_shared<LoggingTask>();
 std::shared_ptr<MainTask> mt = std::make_shared<MainTask>();
@@ -383,12 +385,14 @@ extern "C" void app_main() {
   pt->set_sensing_entity(sensing_entity);
   pt->set_input_param_entity(param);
   pt->set_tgt_val(tgt_val);
+  pt->set_error_entity(error_entity);
   pt->set_queue_handler(xQueue);
   pt->create_task(0);
 
   lt->set_sensing_entity(sensing_entity);
   lt->set_input_param_entity(param);
   lt->set_tgt_val(tgt_val);
+  lt->set_error_entity(error_entity);
   lt->create_task(1);
   pt->set_logging_task(lt);
   // vTaskDelay(1000.0 / portTICK_RATE_MS);
