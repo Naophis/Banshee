@@ -8,8 +8,8 @@ normal:
     # kireme_r: 2.25
     # kireme_l: 2.25
   exist:
-    right45: 46.5
-    left45: 46.5
+    right45: 4.5
+    left45: 4.5
     # left45: 120.5 #サーキット
     # right45: 48
     # left45: 48

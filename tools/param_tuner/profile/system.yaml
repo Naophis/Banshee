@@ -35,14 +35,15 @@ maze_size: 32
 give_up_time: 30
 debug: 0 #
 circuit_mode: 0
+hf_cl: 0 # half(0) or classic(1)
 # mode: 0 # メイン
 # mode: 1 # 最短スローム
 # mode: 2 # 直進
-mode: 3 # 超信地
+# mode: 3 # 超信地
 # mode: 5 # 探索スラローム sla_wall_ref_l/r
 # mode: 7 # front ctrl
 # mode: 9 # wall off
-# mode: 11 # vacume/suction test
+mode: 11 # vacume/suction test
 # mode: 12 # silent_keep
 # mode: 13 # keep_pos
 # mode: 14 # sensing
@@ -63,9 +64,9 @@ test: # テスト走行時に使用するパラメータ群
   alpha: 80
   ang: 360
   suction_active: 0
-  suction_duty: 2.5
+  suction_duty: 4.5
   # suction_duty_low: 2.75
-  suction_duty_low: 2.25
+  suction_duty_low: 4.25
   suction_gain: 250
   # suction_duty: 3.25
   file_idx: 21

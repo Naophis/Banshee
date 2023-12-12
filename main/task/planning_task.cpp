@@ -1454,12 +1454,13 @@ void PlanningTask::calc_tgt_duty() {
     vel_pid.step(&error_entity.v.error_p, &param_ro->motor_pid.p,
                  &param_ro->motor_pid.i, &param_ro->motor_pid.d, &reset, &dt,
                  &duty_c);
-    set_ctrl_val(error_entity.v_val, error_entity.v.error_p,
-                 error_entity.v.error_i, 0, error_entity.v.error_d, 0, 0, 0, 0,
-                 0, 0);
+    set_ctrl_val(
+        error_entity.v_val, error_entity.v.error_p, error_entity.v.error_i, 0,
+        error_entity.v.error_d, param_ro->motor_pid.p * error_entity.v.error_p,
+        vel_pid.simple_pid_controller_DW.Integrator_DSTATE, 0, 0, 0, 0);
   } else {
-    // if (tgt_val->motion_type == MotionType::PIVOT) {
-    if (tgt_val->motion_type == MotionType::NONE) {
+    if (tgt_val->motion_type == MotionType::PIVOT) {
+      // if (tgt_val->motion_type == MotionType::NONE) {
       vel_pid.step(&error_entity.v.error_p, &param_ro->motor_pid.p,
                    &param_ro->motor_pid.i, &param_ro->motor_pid.d, &reset_req,
                    &dt, &duty_c);
@@ -1777,9 +1778,9 @@ void PlanningTask::calc_tgt_duty() {
         set_ctrl_val(error_entity.w_val, error_entity.w.error_p,
                      error_entity.w.error_i, 0, error_entity.w.error_d,
                      param_ro->gyro_pid.p * error_entity.w.error_p,
-                     param_ro->gyro_pid.i * error_entity.w.error_i,
+                     param_ro->gyro_pid.b * error_entity.w.error_i,
                      param_ro->gyro_pid.b * 0,
-                     param_ro->gyro_pid.d * error_entity.w.error_d,
+                     param_ro->gyro_pid.c * error_entity.w.error_d,
                      error_entity.ang_log.gain_zz, error_entity.ang_log.gain_z);
 
       } else {
@@ -1895,7 +1896,8 @@ void PlanningTask::calc_tgt_duty() {
   //                  param_ro->angle_pid.p * error_entity.ang.error_p,
   //                  param_ro->angle_pid.i * error_entity.ang.error_i, 0,
   //                  param_ro->angle_pid.d * error_entity.ang.error_d,
-  //                  error_entity.ang_log.gain_zz, error_entity.ang_log.gain_z);
+  //                  error_entity.ang_log.gain_zz,
+  //                  error_entity.ang_log.gain_z);
 
   //   } else {
   //     duty_roll2 = param_ro->angle_pid.p * error_entity.ang.error_p +

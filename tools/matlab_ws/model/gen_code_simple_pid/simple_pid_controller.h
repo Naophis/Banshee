@@ -47,8 +47,8 @@ class Simple_PID_Controller final
   static void terminate();
   Simple_PID_Controller();
   ~Simple_PID_Controller();
- private:
   DW_simple_pid_controller_T simple_pid_controller_DW;
+ private:
   static P_simple_pid_controller_T simple_pid_controller_P;
   PrevZCX_simple_pid_controller_T simple_pid_controller_PrevZCX;
   RT_MODEL_simple_pid_controlle_T simple_pid_controller_M;
