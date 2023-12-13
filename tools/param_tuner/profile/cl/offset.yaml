@@ -1,0 +1,109 @@
+
+clear_angle: 5
+clear_dist_order: 80
+
+# 探索スラローム
+front_dist_offset: 93.0 # 探索時の前壁補正 大→短くなる
+# スラロームオフセット距離壁補正リファレンス値
+# sla_wall_ref_l: 44.0
+# sla_wall_ref_r: 49.5
+sla_wall_ref_l: 45.0
+sla_wall_ref_r: 45.0
+sla_max_offset_dist: 6
+
+# Orvalスラロームオフセット距離壁補正リファレンス値
+sla_wall_ref_l_orval: 45.0
+sla_wall_ref_r_orval: 45.0
+# orval_rad_offset_l: 5
+orval_rad_offset_l: 0
+orval_rad_offset_r: 0
+orval_offset_enable: 0
+
+dia45_offset_enable: 1
+
+# front_dist_offset2: 137.0
+
+front_dist_offset_pivot_th: 78
+front_dist_offset_pivot: 90
+
+front_dist_offset_dia_front: 139
+front_dist_offset_dia_45_th: 77
+# front_dist_offset_dia_right45: 74
+front_dist_offset_dia_right45: 54
+front_dist_offset_dia_left45: 50
+
+seach_timer: 450
+
+clear_dist_ragne_from: 26
+clear_dist_ragne_to: 50
+
+wall_off_hold_dist: 30
+
+# 探索壁あり判定
+ctrl_exist_wall_th_l: 50
+ctrl_exist_wall_th_r: 50
+
+# 壁切れ壁あり判定
+wall_off_exist_wall_th_l: 50
+wall_off_exist_wall_th_r: 50
+# 壁切れ In
+wall_off_hold_exist_dist_l: 58
+wall_off_hold_exist_dist_r: 58
+# 壁切れ Out
+wall_off_hold_noexist_th_l: 60
+wall_off_hold_noexist_th_r: 60
+# 壁切れ Out(最初からあるとき)
+wall_off_hold_noexist_th_l2: 60
+wall_off_hold_noexist_th_r2: 60
+# 壁切れ オフセット距離
+wall_off_hold_dist_str_l: -5.0
+wall_off_hold_dist_str_r: -4.0
+wall_off_hold_dist_str_l_exist: -6.75
+wall_off_hold_dist_str_r_exist: -4.50
+
+diff_dist_th_l: 5
+diff_dist_th_r: 5 
+wall_off_diff_check_dist: 10
+
+wall_off_wait_dist_dia: 45
+
+# 壁切れ：前壁補正
+front_dist_offset2: 137.0 #ref
+# 壁切れ：前壁補正
+front_dist_offset3: 130.0 #th
+# 壁切れ：前壁補正
+front_dist_offset4: 130.0 # both front sensors condition th
+wall_off_wait_dist: 40
+
+# 壁切れ In(斜め)
+wall_off_hold_exist_dist_dia_l: 45
+wall_off_hold_exist_dist_dia_r: 50
+# 壁切れ Out(斜め)
+wall_off_hold_noexist_dia_th_l: 50
+wall_off_hold_noexist_dia_th_r: 55
+# 壁切れ オフセット距離
+wall_off_hold_dist_dia_l2: -4.5
+wall_off_hold_dist_dia_r2: -2.5
+#斜めターン壁有り補正
+dia_turn_th_l: 47
+dia_turn_th_r: 47
+# 壁切れ オフセット距離(反対側の壁有り)
+wall_off_hold_dist_dia_l: -6.0
+wall_off_hold_dist_dia_r: -6.0
+#斜め壁切れ時のmax接近距離
+dia_wall_off_ref_l: 34.50
+dia_wall_off_ref_r: 37.5
+
+dia_offset_max_dist: 10
+
+#ターン後オフセット距離
+offset_after_turn_l: 24
+offset_after_turn_r: 24
+offset_after_turn_l2: 18
+offset_after_turn_r2: 18
+offset_after_turn_dia_l: 16
+offset_after_turn_dia_r: 16
+
+# constant
+cell: 180
+cell2: 180

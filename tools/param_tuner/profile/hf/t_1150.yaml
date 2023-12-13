@@ -1,0 +1,90 @@
+straight:
+  search:
+    v_max: 500
+    accl: 1000
+    decel: -1000
+    w_max: 5
+    w_end: 0.1
+    alpha: 10
+  fast_run:
+    v_max: 4500
+    accl: 24000
+    decel: -24000
+    w_max: 5
+    w_end: 0.1
+    alpha: 10
+  fast_run_dia:
+    v_max: 4500
+    accl: 17500
+    decel: -17500
+    w_max: 5
+    w_end: 0.1
+    alpha: 10
+orval:
+  v: 1150
+  ang: 180
+  pow_n: 4
+  rad: 52.5
+  rad2: 52.5
+  time: 0.09396875000000536
+  time2: 0.09396875000000536
+  front: { left: 8, right: 8 }
+  back: { left: 5, right: 5 }
+normal:
+  v: 300.000000
+  ang: 90.000000
+  rad: 26.000000
+  pow_n: 2.000000
+  time: 0.112813
+  front: { left: 4.94298864, right: 4.94298864 }
+  back: { left: 4.74724031, right: 4.74724031 }
+# check
+# 2023年 10月 25日 水曜日 00:21:45 JST
+large:
+  v: 1150
+  ang: 90
+  rad: 60
+  pow_n: 4
+  time: 0.05370312499999582
+  front: { left: 15.810651407145897, right: 15.810651407145897 }
+  back: { left: 34.23591866097094, right: 34.23591866097094 }
+dia45:
+  v: 1150
+  ang: 45
+  rad: 68
+  pow_n: 4
+  time: 0.03043749999999838
+  front: { left: 6.5027594156789235, right: 6.5027594156789235 }
+  back: { left: 38.39054947036277, right: 38.39054947036277 }
+dia45_2:
+  v: 1150
+  ang: 45
+  rad: 66
+  pow_n: 4
+  time: 0.02953124999999848
+  front: { left: 26.151693470629695, right: 26.151693470629695 }
+  back: { left: 19.957313942473718, right: 19.957313942473718 }
+dia135:
+  v: 1150
+  ang: 135
+  rad: 45
+  pow_n: 4
+  time: 0.06040624999999508
+  front: { left: 22.024800132933237, right: 22.024800132933237 }
+  back: { left: 38.33255877899759, right: 38.33255877899759 }
+dia135_2:
+  v: 1150
+  ang: 135
+  rad: 45
+  pow_n: 4
+  time: 0.06040624999999508
+  front: { left: 14.304020746511656, right: 14.304020746511656 }
+  back: { left: 46.05333816541902, right: 46.05333816541902 }
+dia90:
+  v: 1150
+  ang: 90
+  rad: 45
+  pow_n: 4
+  time: 0.0402812499999973
+  front: { left: 7.578872301649163, right: 7.578872301649163 }
+  back: { left: 23.559798077603958, right: 23.559798077603958 }

@@ -1,1 +1,1 @@
-node tools/param_tuner/tx_term.js $1
+node tools/param_tuner/tx_term.js hf

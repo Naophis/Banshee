@@ -1,0 +1,90 @@
+straight:
+  search:
+    v_max: 500
+    accl: 1000
+    decel: -1000
+    w_max: 5
+    w_end: 0.1
+    alpha: 10
+  fast_run:
+    v_max: 2500
+    accl: 17500
+    decel: -17500
+    w_max: 5
+    w_end: 0.1
+    alpha: 10
+  fast_run_dia:
+    v_max: 2000
+    accl: 17500
+    decel: -17500
+    w_max: 5
+    w_end: 0.1
+    alpha: 10
+orval:
+  v: 600
+  ang: 180
+  pow_n: 4
+  rad: 52.5
+  rad2: 52.5
+  time: 0.18009374999998518
+  time2: 0.18009374999998518
+  front: { left: 8, right: 8 }
+  back: { left: 5, right: 5 }
+normal:
+  v: 300.000000
+  ang: 90.000000
+  rad: 26.000000
+  pow_n: 2.000000
+  time: 0.112813
+  front: { left: 4.94298864, right: 4.94298864 }
+  back: { left: 4.74724031, right: 4.74724031 }
+# check
+# 2023年 10月 25日 水曜日 00:21:34 JST
+large:
+  v: 600
+  ang: 90
+  rad: 60
+  pow_n: 4
+  time: 0.10292187500000835
+  front: { left: 22.744615150920254, right: 22.744615150920254 }
+  back: { left: 27.639293882456748, right: 27.639293882456748 }
+dia45:
+  v: 600
+  ang: 45
+  rad: 68
+  pow_n: 4
+  time: 0.05832812499999531
+  front: { left: 13.298923697432457, right: 13.298923697432457 }
+  back: { left: 31.422896685304302, right: 31.422896685304302 }
+dia45_2:
+  v: 600
+  ang: 45
+  rad: 66
+  pow_n: 4
+  time: 0.0566093749999955
+  front: { left: 33.001994264609216, right: 33.001994264609216 }
+  back: { left: 13.572206103232475, right: 13.572206103232475 }
+dia135:
+  v: 600
+  ang: 135
+  rad: 45
+  pow_n: 4
+  time: 0.11578125000001264
+  front: { left: 26.881879002297087, right: 26.881879002297087 }
+  back: { left: 31.04688799773425, right: 31.04688799773425 }
+dia135_2:
+  v: 600
+  ang: 135
+  rad: 45
+  pow_n: 4
+  time: 0.11578125000001264
+  front: { left: 19.161099615875457, right: 19.161099615875457 }
+  back: { left: 38.7676673841556, right: 38.7676673841556 }
+dia90:
+  v: 600
+  ang: 90
+  rad: 45
+  pow_n: 4
+  time: 0.07718749999999976
+  front: { left: 14.404003759743944, right: 14.404003759743944 }
+  back: { left: 17.311929536060177, right: 17.311929536060177 }

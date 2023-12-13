@@ -139,6 +139,7 @@ private:
   vector<string> split(const string &s, char delim);
   void load_param();
   void load_hw_param();
+  void load_offset_param();
   void load_sensor_param();
   void load_sys_param();
   void load_turn_param_profiles(bool const_mode);

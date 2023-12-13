@@ -1,0 +1,90 @@
+straight:
+  search:
+    v_max: 500
+    accl: 1000
+    decel: -1000
+    w_max: 5
+    w_end: 0.1
+    alpha: 10
+  fast_run:
+    v_max: 4500
+    accl: 24000
+    decel: -24000
+    w_max: 5
+    w_end: 0.1
+    alpha: 10
+  fast_run_dia:
+    v_max: 2000
+    accl: 17500
+    decel: -17500
+    w_max: 5
+    w_end: 0.1
+    alpha: 10
+orval:
+  v: 950
+  ang: 180
+  pow_n: 4
+  rad: 52.5
+  rad2: 52.5
+  time: 0.11375000000001197
+  time2: 0.11375000000001197
+  front: { left: 8, right: 8 }
+  back: { left: 5, right: 5 }
+normal:
+  v: 300.000000
+  ang: 90.000000
+  rad: 26.000000
+  pow_n: 2.000000
+  time: 0.112813
+  front: { left: 4.94298864, right: 4.94298864 }
+  back: { left: 4.74724031, right: 4.74724031 }
+# check
+# 2023年 10月 25日 水曜日 00:21:40 JST
+large:
+  v: 950
+  ang: 90
+  rad: 60
+  pow_n: 4
+  time: 0.06499999999999569
+  front: { left: 18.856405761463506, right: 18.856405761463506 }
+  back: { left: 31.95230092076841, right: 31.95230092076841 }
+dia45:
+  v: 950
+  ang: 45
+  rad: 68
+  pow_n: 4
+  time: 0.03684374999999768
+  front: { left: 9.185242584716832, right: 9.185242584716832 }
+  back: { left: 35.568446589788124, right: 35.568446589788124 }
+dia45_2:
+  v: 950
+  ang: 45
+  rad: 66
+  pow_n: 4
+  time: 0.0357499999999978
+  front: { left: 28.905453037839383, right: 28.905453037839383 }
+  back: { left: 17.7849899439206, right: 17.7849899439206 }
+dia135:
+  v: 950
+  ang: 135
+  rad: 45
+  pow_n: 4
+  time: 0.0731249999999984
+  front: { left: 24.471318488536586, right: 24.471318488536586 }
+  back: { left: 35.43045633307037, right: 35.43045633307037 }
+dia135_2:
+  v: 950
+  ang: 135
+  rad: 45
+  pow_n: 4
+  time: 0.0731249999999984
+  front: { left: 16.750539102115187, right: 16.750539102115187 }
+  back: { left: 43.151235719491844, right: 43.151235719491844 }
+dia90:
+  v: 950
+  ang: 90
+  rad: 45
+  pow_n: 4
+  time: 0.048749999999996366
+  front: { left: 10.509625392956785, right: 10.509625392956785 }
+  back: { left: 21.13823899771686, right: 21.13823899771686 }

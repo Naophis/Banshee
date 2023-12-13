@@ -1,0 +1,90 @@
+straight:
+  search:
+    v_max: 500
+    accl: 1000
+    decel: -1000
+    w_max: 5
+    w_end: 0.1
+    alpha: 10
+  fast_run:
+    v_max: 4500
+    accl: 24000
+    decel: -24000
+    w_max: 5
+    w_end: 0.1
+    alpha: 10
+  fast_run_dia:
+    v_max: 2500
+    accl: 17500
+    decel: -17500
+    w_max: 5
+    w_end: 0.1
+    alpha: 10
+orval:
+  v: 1000
+  ang: 180
+  pow_n: 4
+  rad: 52.5
+  rad2: 52.5
+  time: 0.10806250000001007
+  time2: 0.10806250000001007
+  front: { left: 8, right: 8 }
+  back: { left: 5, right: 5 }
+normal:
+  v: 300.000000
+  ang: 90.000000
+  rad: 26.000000
+  pow_n: 2.000000
+  time: 0.112813
+  front: { left: 4.94298864, right: 4.94298864 }
+  back: { left: 4.74724031, right: 4.74724031 }
+# check
+# 2023年 10月 25日 水曜日 00:21:41 JST
+large:
+  v: 1000
+  ang: 90
+  rad: 60
+  pow_n: 4
+  time: 0.061749999999994934
+  front: { left: 18.13776874424893, right: 18.13776874424893 }
+  back: { left: 32.26574226419765, right: 32.26574226419765 }
+dia45:
+  v: 1000
+  ang: 45
+  rad: 68
+  pow_n: 4
+  time: 0.03499999999999788
+  front: { left: 8.542139209946253, right: 8.542139209946253 }
+  back: { left: 36.49678292437575, right: 36.49678292437575 }
+dia45_2:
+  v: 1000
+  ang: 45
+  rad: 66
+  pow_n: 4
+  time: 0.033968749999997994
+  front: { left: 28.278114198531764, right: 28.278114198531764 }
+  back: { left: 18.79186542764684, right: 18.79186542764684 }
+dia135:
+  v: 1000
+  ang: 135
+  rad: 45
+  pow_n: 4
+  time: 0.06946874999999718
+  front: { left: 23.94713501455023, right: 23.94713501455023 }
+  back: { left: 36.4839542310658, right: 36.4839542310658 }
+dia135_2:
+  v: 1000
+  ang: 135
+  rad: 45
+  pow_n: 4
+  time: 0.06946874999999718
+  front: { left: 16.226355628128733, right: 16.226355628128733 }
+  back: { left: 44.20473361748725, right: 44.20473361748725 }
+dia90:
+  v: 1000
+  ang: 90
+  rad: 45
+  pow_n: 4
+  time: 0.046312499999996634
+  front: { left: 9.820173025193682, right: 9.820173025193682 }
+  back: { left: 21.819759705777663, right: 21.819759705777663 }

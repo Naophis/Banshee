@@ -333,8 +333,6 @@ void MainTask::load_hw_param() {
   param->tire = getItem(root, "tire")->valuedouble;
   param->tire2 = getItem(root, "tire2")->valuedouble;
   param->log_size = getItem(root, "log_size")->valueint;
-  param->cell = getItem(root, "cell")->valuedouble;
-  param->cell2 = getItem(root, "cell2")->valuedouble;
   param->gear_a = getItem(root, "gear_a")->valuedouble;
   param->gear_b = getItem(root, "gear_b")->valuedouble;
   param->max_duty = getItem(root, "max_duty")->valuedouble;
@@ -360,21 +358,6 @@ void MainTask::load_hw_param() {
   param->offset_start_dist_search =
       getItem(root, "offset_start_dist_search")->valuedouble;
   param->sakiyomi_time = getItem(root, "sakiyomi_time")->valuedouble;
-  param->clear_angle = getItem(root, "clear_angle")->valuedouble;
-  param->clear_dist_order = getItem(root, "clear_dist_order")->valuedouble;
-  param->front_dist_offset = getItem(root, "front_dist_offset")->valuedouble;
-  param->front_dist_offset2 = getItem(root, "front_dist_offset2")->valuedouble;
-  param->front_dist_offset3 = getItem(root, "front_dist_offset3")->valuedouble;
-  param->front_dist_offset4 = getItem(root, "front_dist_offset4")->valuedouble;
-  param->clear_dist_ragne_from =
-      getItem(root, "clear_dist_ragne_from")->valuedouble;
-  param->clear_dist_ragne_to =
-      getItem(root, "clear_dist_ragne_to")->valuedouble;
-  param->led_light_delay_cnt =
-      getItem(root, "led_light_delay_cnt")->valuedouble;
-  param->led_light_delay_cnt2 =
-      getItem(root, "led_light_delay_cnt2")->valuedouble;
-  param->front_diff_th = getItem(root, "front_diff_th")->valuedouble;
 
   axel_degenerate_x = getItem(root, "axel_degenerate_x");
   axel_degenerate_y = getItem(root, "axel_degenerate_y");
@@ -400,133 +383,18 @@ void MainTask::load_hw_param() {
   param->fail_check.duty = getItem(root, "fail_duty_cnt")->valueint;
   param->fail_check.v = getItem(root, "fail_v_cnt")->valueint;
   param->fail_check.w = getItem(root, "fail_w_cnt")->valueint;
-  param->seach_timer = getItem(root, "seach_timer")->valueint;
   tgt_val->ego_in.ff_duty_low_th = param->ff_front_dury;
   tgt_val->ego_in.ff_duty_low_v_th = param->ff_v_th;
   param->front_ctrl_error_th =
       getItem(root, "front_ctrl_error_th")->valuedouble;
 
-  param->offset_after_turn_l2 =
-      getItem(root, "offset_after_turn_l2")->valuedouble;
-  param->offset_after_turn_r2 =
-      getItem(root, "offset_after_turn_r2")->valuedouble;
-  param->offset_after_turn_l =
-      getItem(root, "offset_after_turn_l")->valuedouble;
-  param->offset_after_turn_r =
-      getItem(root, "offset_after_turn_r")->valuedouble;
-
-  param->offset_after_turn_dia_l =
-      getItem(root, "offset_after_turn_dia_l")->valuedouble;
-  param->offset_after_turn_dia_r =
-      getItem(root, "offset_after_turn_dia_r")->valuedouble;
-
-  param->dia_turn_th_l = getItem(root, "dia_turn_th_l")->valuedouble;
-  param->dia_turn_th_r = getItem(root, "dia_turn_th_r")->valuedouble;
-
   param->logging_time =
       getItem(root, "logging_time")->valuedouble / portTICK_PERIOD_MS;
   param->set_param = true;
 
-  param->front_dist_offset_pivot_th =
-      getItem(root, "front_dist_offset_pivot_th")->valuedouble;
-  param->front_dist_offset_pivot =
-      getItem(root, "front_dist_offset_pivot")->valuedouble;
-
   param->search_log_enable = getItem(root, "search_log_enable")->valueint;
   param->test_log_enable = getItem(root, "test_log_enable")->valueint;
   param->fast_log_enable = getItem(root, "fast_log_enable")->valueint;
-
-  param->wall_off_hold_dist = getItem(root, "wall_off_hold_dist")->valuedouble;
-  param->wall_off_dist.left_str =
-      getItem(root, "wall_off_hold_dist_str_l")->valuedouble;
-  param->wall_off_dist.right_str =
-      getItem(root, "wall_off_hold_dist_str_r")->valuedouble;
-  param->wall_off_dist.left_str_exist =
-      getItem(root, "wall_off_hold_dist_str_l_exist")->valuedouble;
-  param->wall_off_dist.right_str_exist =
-      getItem(root, "wall_off_hold_dist_str_r_exist")->valuedouble;
-  param->wall_off_dist.diff_dist_th_l =
-      getItem(root, "diff_dist_th_l")->valuedouble;
-  param->wall_off_dist.diff_dist_th_r =
-      getItem(root, "diff_dist_th_r")->valuedouble;
-  param->wall_off_dist.diff_check_dist =
-      getItem(root, "wall_off_diff_check_dist")->valuedouble;
-
-  param->wall_off_wait_dist = getItem(root, "wall_off_wait_dist")->valuedouble;
-  param->wall_off_wait_dist_dia =
-      getItem(root, "wall_off_wait_dist_dia")->valuedouble;
-
-  param->wall_off_dist.left_dia =
-      getItem(root, "wall_off_hold_dist_dia_l")->valuedouble;
-  param->wall_off_dist.right_dia =
-      getItem(root, "wall_off_hold_dist_dia_r")->valuedouble;
-  param->wall_off_dist.left_dia2 =
-      getItem(root, "wall_off_hold_dist_dia_l2")->valuedouble;
-  param->wall_off_dist.right_dia2 =
-      getItem(root, "wall_off_hold_dist_dia_r2")->valuedouble;
-
-  param->wall_off_dist.exist_dist_l =
-      getItem(root, "wall_off_hold_exist_dist_l")->valuedouble;
-  param->wall_off_dist.exist_dist_r =
-      getItem(root, "wall_off_hold_exist_dist_r")->valuedouble;
-  param->wall_off_dist.wall_off_exist_wall_th_l =
-      getItem(root, "wall_off_exist_wall_th_l")->valuedouble;
-  param->wall_off_dist.wall_off_exist_wall_th_r =
-      getItem(root, "wall_off_exist_wall_th_r")->valuedouble;
-
-  param->wall_off_dist.ctrl_exist_wall_th_l =
-      getItem(root, "ctrl_exist_wall_th_l")->valuedouble;
-  param->wall_off_dist.ctrl_exist_wall_th_r =
-      getItem(root, "ctrl_exist_wall_th_r")->valuedouble;
-
-  param->wall_off_dist.noexist_th_l =
-      getItem(root, "wall_off_hold_noexist_th_l")->valuedouble;
-  param->wall_off_dist.noexist_th_r =
-      getItem(root, "wall_off_hold_noexist_th_r")->valuedouble;
-
-  param->wall_off_dist.noexist_th_l2 =
-      getItem(root, "wall_off_hold_noexist_th_l2")->valuedouble;
-  param->wall_off_dist.noexist_th_r2 =
-      getItem(root, "wall_off_hold_noexist_th_r2")->valuedouble;
-
-  param->wall_off_dist.exist_dia_th_l =
-      getItem(root, "wall_off_hold_exist_dist_dia_l")->valuedouble;
-  param->wall_off_dist.exist_dia_th_r =
-      getItem(root, "wall_off_hold_exist_dist_dia_r")->valuedouble;
-
-  param->wall_off_dist.noexist_dia_th_l =
-      getItem(root, "wall_off_hold_noexist_dia_th_l")->valuedouble;
-  param->wall_off_dist.noexist_dia_th_r =
-      getItem(root, "wall_off_hold_noexist_dia_th_r")->valuedouble;
-
-  param->dia_wall_off_ref_l = getItem(root, "dia_wall_off_ref_l")->valuedouble;
-  param->dia_wall_off_ref_r = getItem(root, "dia_wall_off_ref_r")->valuedouble;
-  param->dia_offset_max_dist =
-      getItem(root, "dia_offset_max_dist")->valuedouble;
-
-  param->sla_wall_ref_l = getItem(root, "sla_wall_ref_l")->valuedouble;
-  param->sla_wall_ref_r = getItem(root, "sla_wall_ref_r")->valuedouble;
-  param->sla_max_offset_dist =
-      getItem(root, "sla_max_offset_dist")->valuedouble;
-
-  param->sla_wall_ref_l_orval =
-      getItem(root, "sla_wall_ref_l_orval")->valuedouble;
-  param->sla_wall_ref_r_orval =
-      getItem(root, "sla_wall_ref_r_orval")->valuedouble;
-  param->orval_rad_offset_l = getItem(root, "orval_rad_offset_l")->valuedouble;
-  param->orval_rad_offset_r = getItem(root, "orval_rad_offset_r")->valuedouble;
-
-  param->orval_enable = getItem(root, "orval_offset_enable")->valueint;
-  param->dia45_offset_enable = getItem(root, "dia45_offset_enable")->valueint;
-
-  param->front_dist_offset_dia_front =
-      getItem(root, "front_dist_offset_dia_front")->valuedouble;
-  param->front_dist_offset_dia_45_th =
-      getItem(root, "front_dist_offset_dia_45_th")->valuedouble;
-  param->front_dist_offset_dia_right45 =
-      getItem(root, "front_dist_offset_dia_right45")->valuedouble;
-  param->front_dist_offset_dia_left45 =
-      getItem(root, "front_dist_offset_dia_left45")->valuedouble;
 
   param->FF_front = getItem(root, "FF_front")->valueint;
   param->FF_roll = getItem(root, "FF_roll")->valueint;
@@ -650,8 +518,173 @@ void MainTask::load_hw_param() {
   cJSON_Delete(root);
 }
 
+void MainTask::load_offset_param() {
+  string fileName = "/spiflash/offset.txt";
+
+  if (sys.hf_cl == 0) {
+    fileName = "/spiflash/offset.hf";
+  } else {
+    fileName = "/spiflash/offset.cl";
+  }
+
+  std::ifstream ifs(fileName);
+
+  if (!ifs) {
+    return;
+  }
+  std::string str;
+  std::string buf;
+  while (!ifs.eof()) {
+    std::getline(ifs, buf);
+    str += buf;
+  }
+
+  cJSON *root = cJSON_CreateObject();
+
+  param->cell = getItem(root, "cell")->valuedouble;
+  param->cell2 = getItem(root, "cell2")->valuedouble;
+  param->seach_timer = getItem(root, "seach_timer")->valueint;
+  param->clear_angle = getItem(root, "clear_angle")->valuedouble;
+  param->clear_dist_order = getItem(root, "clear_dist_order")->valuedouble;
+  param->front_dist_offset = getItem(root, "front_dist_offset")->valuedouble;
+  param->front_dist_offset2 = getItem(root, "front_dist_offset2")->valuedouble;
+  param->front_dist_offset3 = getItem(root, "front_dist_offset3")->valuedouble;
+  param->front_dist_offset4 = getItem(root, "front_dist_offset4")->valuedouble;
+  param->clear_dist_ragne_from =
+      getItem(root, "clear_dist_ragne_from")->valuedouble;
+  param->clear_dist_ragne_to =
+      getItem(root, "clear_dist_ragne_to")->valuedouble;
+  param->led_light_delay_cnt =
+      getItem(root, "led_light_delay_cnt")->valuedouble;
+  param->led_light_delay_cnt2 =
+      getItem(root, "led_light_delay_cnt2")->valuedouble;
+  param->front_diff_th = getItem(root, "front_diff_th")->valuedouble;
+
+  param->offset_after_turn_l2 =
+      getItem(root, "offset_after_turn_l2")->valuedouble;
+  param->offset_after_turn_r2 =
+      getItem(root, "offset_after_turn_r2")->valuedouble;
+  param->offset_after_turn_l =
+      getItem(root, "offset_after_turn_l")->valuedouble;
+  param->offset_after_turn_r =
+      getItem(root, "offset_after_turn_r")->valuedouble;
+
+  param->offset_after_turn_dia_l =
+      getItem(root, "offset_after_turn_dia_l")->valuedouble;
+  param->offset_after_turn_dia_r =
+      getItem(root, "offset_after_turn_dia_r")->valuedouble;
+
+  param->dia_turn_th_l = getItem(root, "dia_turn_th_l")->valuedouble;
+  param->dia_turn_th_r = getItem(root, "dia_turn_th_r")->valuedouble;
+
+  param->front_dist_offset_pivot_th =
+      getItem(root, "front_dist_offset_pivot_th")->valuedouble;
+  param->front_dist_offset_pivot =
+      getItem(root, "front_dist_offset_pivot")->valuedouble;
+
+  param->wall_off_hold_dist = getItem(root, "wall_off_hold_dist")->valuedouble;
+  param->wall_off_dist.left_str =
+      getItem(root, "wall_off_hold_dist_str_l")->valuedouble;
+  param->wall_off_dist.right_str =
+      getItem(root, "wall_off_hold_dist_str_r")->valuedouble;
+  param->wall_off_dist.left_str_exist =
+      getItem(root, "wall_off_hold_dist_str_l_exist")->valuedouble;
+  param->wall_off_dist.right_str_exist =
+      getItem(root, "wall_off_hold_dist_str_r_exist")->valuedouble;
+  param->wall_off_dist.diff_dist_th_l =
+      getItem(root, "diff_dist_th_l")->valuedouble;
+  param->wall_off_dist.diff_dist_th_r =
+      getItem(root, "diff_dist_th_r")->valuedouble;
+  param->wall_off_dist.diff_check_dist =
+      getItem(root, "wall_off_diff_check_dist")->valuedouble;
+
+  param->wall_off_wait_dist = getItem(root, "wall_off_wait_dist")->valuedouble;
+  param->wall_off_wait_dist_dia =
+      getItem(root, "wall_off_wait_dist_dia")->valuedouble;
+
+  param->wall_off_dist.left_dia =
+      getItem(root, "wall_off_hold_dist_dia_l")->valuedouble;
+  param->wall_off_dist.right_dia =
+      getItem(root, "wall_off_hold_dist_dia_r")->valuedouble;
+  param->wall_off_dist.left_dia2 =
+      getItem(root, "wall_off_hold_dist_dia_l2")->valuedouble;
+  param->wall_off_dist.right_dia2 =
+      getItem(root, "wall_off_hold_dist_dia_r2")->valuedouble;
+
+  param->wall_off_dist.exist_dist_l =
+      getItem(root, "wall_off_hold_exist_dist_l")->valuedouble;
+  param->wall_off_dist.exist_dist_r =
+      getItem(root, "wall_off_hold_exist_dist_r")->valuedouble;
+  param->wall_off_dist.wall_off_exist_wall_th_l =
+      getItem(root, "wall_off_exist_wall_th_l")->valuedouble;
+  param->wall_off_dist.wall_off_exist_wall_th_r =
+      getItem(root, "wall_off_exist_wall_th_r")->valuedouble;
+
+  param->wall_off_dist.ctrl_exist_wall_th_l =
+      getItem(root, "ctrl_exist_wall_th_l")->valuedouble;
+  param->wall_off_dist.ctrl_exist_wall_th_r =
+      getItem(root, "ctrl_exist_wall_th_r")->valuedouble;
+
+  param->wall_off_dist.noexist_th_l =
+      getItem(root, "wall_off_hold_noexist_th_l")->valuedouble;
+  param->wall_off_dist.noexist_th_r =
+      getItem(root, "wall_off_hold_noexist_th_r")->valuedouble;
+
+  param->wall_off_dist.noexist_th_l2 =
+      getItem(root, "wall_off_hold_noexist_th_l2")->valuedouble;
+  param->wall_off_dist.noexist_th_r2 =
+      getItem(root, "wall_off_hold_noexist_th_r2")->valuedouble;
+
+  param->wall_off_dist.exist_dia_th_l =
+      getItem(root, "wall_off_hold_exist_dist_dia_l")->valuedouble;
+  param->wall_off_dist.exist_dia_th_r =
+      getItem(root, "wall_off_hold_exist_dist_dia_r")->valuedouble;
+
+  param->wall_off_dist.noexist_dia_th_l =
+      getItem(root, "wall_off_hold_noexist_dia_th_l")->valuedouble;
+  param->wall_off_dist.noexist_dia_th_r =
+      getItem(root, "wall_off_hold_noexist_dia_th_r")->valuedouble;
+
+  param->dia_wall_off_ref_l = getItem(root, "dia_wall_off_ref_l")->valuedouble;
+  param->dia_wall_off_ref_r = getItem(root, "dia_wall_off_ref_r")->valuedouble;
+  param->dia_offset_max_dist =
+      getItem(root, "dia_offset_max_dist")->valuedouble;
+
+  param->sla_wall_ref_l = getItem(root, "sla_wall_ref_l")->valuedouble;
+  param->sla_wall_ref_r = getItem(root, "sla_wall_ref_r")->valuedouble;
+  param->sla_max_offset_dist =
+      getItem(root, "sla_max_offset_dist")->valuedouble;
+
+  param->sla_wall_ref_l_orval =
+      getItem(root, "sla_wall_ref_l_orval")->valuedouble;
+  param->sla_wall_ref_r_orval =
+      getItem(root, "sla_wall_ref_r_orval")->valuedouble;
+  param->orval_rad_offset_l = getItem(root, "orval_rad_offset_l")->valuedouble;
+  param->orval_rad_offset_r = getItem(root, "orval_rad_offset_r")->valuedouble;
+
+  param->orval_enable = getItem(root, "orval_offset_enable")->valueint;
+  param->dia45_offset_enable = getItem(root, "dia45_offset_enable")->valueint;
+
+  param->front_dist_offset_dia_front =
+      getItem(root, "front_dist_offset_dia_front")->valuedouble;
+  param->front_dist_offset_dia_45_th =
+      getItem(root, "front_dist_offset_dia_45_th")->valuedouble;
+  param->front_dist_offset_dia_right45 =
+      getItem(root, "front_dist_offset_dia_right45")->valuedouble;
+  param->front_dist_offset_dia_left45 =
+      getItem(root, "front_dist_offset_dia_left45")->valuedouble;
+  
+  cJSON_Delete(root);
+}
 void MainTask::load_sensor_param() {
   string fileName = "/spiflash/sensor.txt";
+
+  if (sys.hf_cl == 0) {
+    fileName = "/spiflash/sensor.hf";
+  } else {
+    fileName = "/spiflash/sensor.cl";
+  }
+
   std::ifstream ifs(fileName);
   if (!ifs) {
     return;
@@ -892,7 +925,11 @@ void MainTask::load_sys_param() {
     printf("%u %u\n", pt.x, pt.y);
   }
   sys.maze_size = getItem(root, "maze_size")->valueint;
+  printf("maze_size: %d\n", sys.maze_size);
+  sys.hf_cl = getItem(root, "hf_cl")->valueint;
+  printf("hl_cl: %d\n", sys.hf_cl);
   sys.user_mode = getItem(root, "mode")->valueint;
+  printf("user_mode: %d\n", sys.user_mode);
   sys.circuit_mode = getItem(root, "circuit_mode")->valueint;
   printf("circuit_mode: %d\n", sys.circuit_mode);
   test = getItem(root, "test");
@@ -935,6 +972,13 @@ void MainTask::load_sys_param() {
 
 void MainTask::load_turn_param_profiles(bool const_mode) {
   string fileName = "/spiflash/profiles.txt";
+
+  if (sys.hf_cl == 0) {
+    fileName = "/spiflash/profiles.hf";
+  } else {
+    fileName = "/spiflash/profiles.cl";
+  }
+
   std::ifstream ifs(fileName);
   if (!ifs) {
     return;
@@ -1161,9 +1205,9 @@ void MainTask::load_slalom_param() {}
 
 void MainTask::load_param() {
   if (!ui->button_state_hold()) {
+    load_sys_param();
     load_hw_param();
     load_sensor_param();
-    load_sys_param();
     load_turn_param_profiles(false);
     // load_slalom_param();
   }

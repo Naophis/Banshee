@@ -2,6 +2,7 @@ var fs = require("fs");
 const yaml = require("js-yaml");
 let SerialPort = require("serialport");
 const Readline = require("@serialport/parser-readline");
+const { argv } = require("process");
 let comport;
 let port;
 
@@ -20,7 +21,7 @@ async function f1(str) {
   var x = await resolveAfter2Seconds(str);
 }
 
-const callerFun = async () => {
+const callerFun = async (mode) => {
   async function write(str, result) {
     return new Promise((resolve) => {
       port.write(`${str}`, function () {
@@ -36,13 +37,11 @@ const callerFun = async () => {
   }
 
   while (true) {
-    const files = fs.readdirSync(__dirname + "/profile");
-    var list = [];
-    for (var i in files) {
-      if (files[i].match(/.yaml$/)) {
-        list.push(files[i]);
-      }
-    }
+    const files = fs.readdirSync(__dirname + `/profile/${mode}/`);
+    var list = ["system.yaml", "hardware.yaml"].concat(files.filter((file) => {
+      return file.match(/.yaml$/);
+    }));
+
     for (var i in list) {
       console.log(` ${i} : ${list[i]}`);
     }
@@ -54,10 +53,10 @@ const callerFun = async () => {
       console.log("all")
       for (const file of files) {
         if (file.match(/.yaml$/)) {
-          let txt = fs.readFileSync(`${__dirname}/profile/${file}`, {
+          let txt = fs.readFileSync(`${__dirname}/profile/${mode}/${file}`, {
             encoding: "utf-8",
           });
-          var file_name = file.replaceAll("yaml", "txt");
+          var file_name = file.replaceAll("yaml", mode);
           if (file === "maze.yaml") {
             var str = `${file_name}@${txt}`;
             write(str);
@@ -66,43 +65,72 @@ const callerFun = async () => {
             console.log(`${file}: finish22!!`);
           } else {
             var saveData = yaml.load(txt);
-            console.log(saveData)
+            // console.log(saveData)
             var str = `${file_name}@${JSON.stringify(saveData)}`;
             write(str);
             // console.log(saveData)
             await sleep2(800);
-            console.log(`${file}: finish!!`);
+            console.log(`${file}, ${file_name}: finish!!`);
           }
         }
+      }
+      for (const file of ["system.yaml", "hardware.yaml"]) {
+        let txt = fs.readFileSync(`${__dirname}/profile/${file}`, {
+          encoding: "utf-8",
+        });
+        var file_name = file.replaceAll("yaml", "txt");
+        var saveData = yaml.load(txt);
+        // console.log(saveData)
+        var str = `${file_name}@${JSON.stringify(saveData)}`;
+        write(str);
+        await sleep2(800);
+        console.log(`${file}, ${file_name}: finish!!`);
       }
     } else {
       if (idx > list.length) {
         console.log("out of index");
         continue;
       }
-      let txt = fs.readFileSync(`${__dirname}/profile/${list[idx]}`, {
-        encoding: "utf-8",
-      });
-      var file_name = list[idx].replaceAll("yaml", "txt");
-      if (file_name === "maze.txt") {
-        var str = `${file_name}@${txt}`;
-        write(str);
-        // console.log(saveData)
-        await sleep2(800);
-        console.log(`${file_name}: finish22!!`);
-      } else {
+      if (idx === 0 || idx === 1) {
+        let file = "system.yaml";
+        if (idx === 1) {
+          file = "hardware.yaml";
+        }
+        let txt = fs.readFileSync(`${__dirname}/profile/${list[idx]}`, {
+          encoding: "utf-8",
+        });
+        var file_name = file.replaceAll("yaml", "txt");
         var saveData = yaml.load(txt);
+        console.log(saveData)
         var str = `${file_name}@${JSON.stringify(saveData)}`;
         write(str);
-        // console.log(saveData)
-        await sleep2(600);
-        console.log(`${list[idx]}: finish!!`);
+        await sleep2(800);
+        console.log(`${file}, ${file_name}: finish!!`);
+      } else {
+        let txt = fs.readFileSync(`${__dirname}/profile/${mode}/${list[idx]}`, {
+          encoding: "utf-8",
+        });
+        var file_name = list[idx].replaceAll("yaml", mode);
+        if (file_name === "maze.txt") {
+          var str = `${file_name}@${txt}`;
+          write(str);
+          console.log(saveData)
+          await sleep2(800);
+          console.log(`${file_name}: finish22!!`);
+        } else {
+          var saveData = yaml.load(txt);
+          var str = `${file_name}@${JSON.stringify(saveData)}`;
+          write(str);
+          console.log(saveData)
+          await sleep2(600);
+          console.log(`${list[idx]}, ${file_name}: finish!!`);
+        }
       }
     }
   }
 };
 
-let ready = function () {
+let ready = function (mode) {
   port = new SerialPort(
     comport,
     {
@@ -114,7 +142,7 @@ let ready = function () {
         console.log("comport access dinied");
       } else {
         console.log("connect");
-        callerFun();
+        callerFun(mode);
       }
     }
   );
@@ -169,25 +197,31 @@ let ready = function () {
   });
 };
 
-SerialPort.list().then(
-  (ports) => {
-    for (let i in ports) {
-      const p = ports[i];
-      console.log(p.path, p.serialNumber);
-      if (
-        p.path.match(/usbserial/) ||
-        p.path.match(/COM/) ||
-        p.path.match(/ttyUSB/) ||
-        p.path.match(/ttyACM/)
-      ) {
-        if (p.serialNumber) {
-          comport = p.path;
-          console.log(`select: ${comport}`);
-          ready();
-          break;
+const main = (argv) => {
+
+  const mode = argv.length > 2 ? argv[2] : "_hf";
+
+  SerialPort.list().then(
+    (ports) => {
+      for (let i in ports) {
+        const p = ports[i];
+        console.log(p.path, p.serialNumber);
+        if (
+          p.path.match(/usbserial/) ||
+          p.path.match(/COM/) ||
+          p.path.match(/ttyUSB/) ||
+          p.path.match(/ttyACM/)
+        ) {
+          if (p.serialNumber) {
+            comport = p.path;
+            console.log(`select: ${comport}`);
+            ready(mode);
+            break;
+          }
         }
       }
-    }
-  },
-  (err) => console.error(err)
-);
+    },
+    (err) => console.error(err)
+  );
+};
+main(argv);

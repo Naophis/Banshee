@@ -659,6 +659,7 @@ typedef struct {
   int user_mode = 0;
   int circuit_mode = 0;
   test_mode_t test;
+  int hf_cl = 0;
 } system_t;
 
 typedef struct {
