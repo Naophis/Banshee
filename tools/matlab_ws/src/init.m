@@ -43,7 +43,7 @@ accl_param_n = single(16);
 slip_gain = 400;
 
 k1 = 0.5;
-k2 = 135;
+k2 = 100;
 
 mass = single(0.015);
 lm=single(0.000065);

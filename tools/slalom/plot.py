@@ -11,7 +11,7 @@ plot_col = 2
 
 
 class Plot:
-    def exe(self, type, tgt_v, show, mode=0, K=1, list_K_y=[], offset={}):
+    def exe(self, type, tgt_v, show, mode=0, K=1, list_K_y=[], offset={}, hf_cl=0):
 
         # fig = plt.figure(figsize=(5, 5), dpi=500)
         fig = plt.figure(dpi=200, tight_layout=True)
@@ -30,25 +30,30 @@ class Plot:
 
         tgt_ang1 = tgt_ang2 = tgt_ang3 = 0
         if type == "normal":
-            rad = 24
-            n = 2
-            tgt_ang = 90
-            end_pos = {"x": 45, "y": 45}
+            if hf_cl == 0:
+                rad = 24
+                n = 2
+                tgt_ang = 90
+                end_pos = {"x": 45, "y": 45}
+            elif hf_cl == 1:
+                rad = 48
+                n = 2
+                tgt_ang = 90
+                end_pos = {"x": 90, "y": 90}
             start_ang = 0
         elif type == "large":
-            rad = 57.5
-            n = 4
-            tgt_ang = 90
-            end_pos = {"x": 90, "y": 90}
-            start_ang = 0
-            if mode > 0:
-                rad = 120
+            if hf_cl == 0:
+                rad = 57.5
                 n = 4
                 tgt_ang = 90
-                end_pos = {"x": 180, "y": 180}
                 start_ang = 0
-            mode =0
-                
+                end_pos = {"x": 90, "y": 90}
+            elif hf_cl == 1:
+                rad = 57.5
+                n = 4
+                tgt_ang = 90
+                start_ang = 0
+                end_pos = {"x": 180, "y": 180}
         elif type == "orval":
             if mode == 1:
                 rad = 54
@@ -60,17 +65,23 @@ class Plot:
                 end_pos = {"x": 90, "y": 90}
                 start_ang = 0
             else:
-                # rad = 53.5
-                rad = 55.25
-                n = 4
-                tgt_ang = 180
-                end_pos = {"x": 0, "y": 180}
-                start_ang = 0
+                if hf_cl == 0:
+                    rad = 55.25
+                    n = 4
+                    tgt_ang = 180
+                    end_pos = {"x": 0, "y": 180}
+                    start_ang = 0
+                elif hf_cl == 1:
+                    rad = 55.25
+                    n = 4
+                    tgt_ang = 180
+                    end_pos = {"x": 0, "y": 360}
+                    start_ang = 0
+                
         elif type == "dia45":
             end_pos = {"x": 90, "y": 45}
             if mode > 0:
                 rad = 74
-                # rad = 80
                 n = mode
                 tgt_ang1 = 45.0 * 1 / 3
                 tgt_ang2 = 45.0 * 2 / 3
@@ -88,38 +99,75 @@ class Plot:
                 tgt_ang = 45
                 start_ang = 0
             else:
-                rad = 64
-                n = 4
                 tgt_ang1 = 45.0 * 1 / 3
                 tgt_ang2 = 45.0 * 2 / 3
                 tgt_ang3 = 45.0
                 tgt_ang = 45
                 start_ang = 0
+                
+                if hf_cl == 0:
+                    rad = 64
+                    n = 4
+                    end_pos = {"x": 90, "y": 45}
+                elif hf_cl == 1:
+                    rad = 64
+                    n = 4
+                    end_pos = {"x": 180, "y": 90}
 
         elif type == "dia135":
-            rad = 45
-            n = 4
-            tgt_ang = 135
-            end_pos = {"x": 45, "y": 90}
             start_ang = 0
+            
+            if hf_cl == 0:
+                rad = 45
+                n = 4
+                tgt_ang = 135
+                end_pos = {"x": 45, "y": 90}
+            elif hf_cl == 1:
+                rad = 45
+                n = 4
+                tgt_ang = 135
+                end_pos = {"x": 90, "y": 180}
+            
         elif type == "dia45_2":
-            rad = 72
-            n = 4
-            tgt_ang = 45
-            end_pos = {"x": 90, "y": 45}
             start_ang = 45
+            if hf_cl == 0:
+                rad = 72
+                n = 4
+                tgt_ang = 45
+                end_pos = {"x": 90, "y": 45}
+            elif hf_cl == 1:
+                rad = 72
+                n = 4
+                tgt_ang = 45
+                end_pos = {"x": 180, "y": 90}
+            
+            
+            
         elif type == "dia135_2":
-            rad = 43
-            n = 4
-            tgt_ang = 135
-            end_pos = {"x": -45, "y": 90}
             start_ang = 45
+            if hf_cl == 0:
+                rad = 43
+                n = 4
+                tgt_ang = 135
+                end_pos = {"x": -45, "y": 90}
+            elif hf_cl == 1:
+                rad = 43
+                n = 4
+                tgt_ang = 135
+                end_pos = {"x": -90, "y": 180}
         elif type == "dia90":
-            rad = 45
-            n = 4
-            tgt_ang = 90
-            end_pos = {"x": 0, "y": 90}
             start_ang = 0
+            if hf_cl == 0:
+                rad = 45
+                n = 4
+                tgt_ang = 90
+                end_pos = {"x": 0, "y": 90}
+            elif hf_cl == 1:
+                rad = 45
+                n = 4
+                tgt_ang = 90
+                end_pos = {"x": 0, "y": 180}
+            
         res = {}
         if mode > 0:
             sla = Slalom2(v, rad, n, tgt_ang1, tgt_ang2, tgt_ang3,
@@ -128,6 +176,10 @@ class Plot:
         else:
             sla = Slalom(v, rad, n, tgt_ang, end_pos,
                          slip_gain, type, K, list_K_y)
+            if hf_cl == 0:
+                sla.set_cell_size(90)
+            elif hf_cl == 1:
+                sla.set_cell_size(180)
             sla.calc_base_time()
             res = sla.calc(start_ang)
 
@@ -178,7 +230,6 @@ class Plot:
         trj.plot(range, [180, 180], ls="--", c=sub_line_color,
                  lw=subline_width, alpha=subline_alpha)
 
-
         trj.plot([0, 0], range, ls="--", c=sub_line_color,
                  lw=subline_width, alpha=subline_alpha)
         trj.plot([90, 90], range, ls="--", c=sub_line_color,
@@ -188,12 +239,14 @@ class Plot:
                  lw=subline_width, alpha=subline_alpha)
 
         # 前距離
-        trj.plot(res1["prev_path_x"], res1["prev_path_y"], ls="-", color="coral", lw=trj_width, alpha=trj_alpha)
+        trj.plot(res1["prev_path_x"], res1["prev_path_y"], ls="-",
+                 color="coral", lw=trj_width, alpha=trj_alpha)
         # メイン
         trj.plot(res["x"] + res1["turn_offset_x"], res["y"] + res1["turn_offset_y"], color="yellow", lw=trj_width,
                  alpha=trj_alpha)
         # # 後距離
-        trj.plot(res1["after_path_x2"], res1["after_path_y2"], ls="-", color="coral", lw=trj_width, alpha=trj_alpha)
+        trj.plot(res1["after_path_x2"], res1["after_path_y2"],
+                 ls="-", color="coral", lw=trj_width, alpha=trj_alpha)
         plW = plt.subplot2grid((plot_row, plot_col), (4, 1), rowspan=1)
         plW.plot(res["w"])
 
@@ -204,10 +257,12 @@ class Plot:
 
         res2 = sla.calc_offset_dist(start_pos_x, start_pos_y, type, offset)
 
-        trj.plot(res2["prev_path_x"], res2["prev_path_y"], ls="--", color="cyan", lw=1, alpha=trj_alpha)
+        trj.plot(res2["prev_path_x"], res2["prev_path_y"],
+                 ls="--", color="cyan", lw=1, alpha=trj_alpha)
         trj.plot(res["x"] + res2["turn_offset_x"], res["y"] + res2["turn_offset_y"], color="blue", lw=1,
                  alpha=trj_alpha, ls="--")
-        trj.plot(res2["after_path_x2"], res2["after_path_y2"], ls="--", color="cyan", lw=1, alpha=trj_alpha)
+        trj.plot(res2["after_path_x2"], res2["after_path_y2"],
+                 ls="--", color="cyan", lw=1, alpha=trj_alpha)
 
         # plV = plt.subplot2grid((plot_row, plot_col), (1, 0), rowspan=plot_col)
         plV = plt.subplot2grid((plot_row, plot_col), (0, 1), rowspan=1)
@@ -231,7 +286,7 @@ class Plot:
         print('  time: {}'.format(sla.base_time))
         if type == "orval":
             print('  time2: {}'.format(sla.base_time))
-            
+
         print('  front: {{ left: {}, right: {} }}'.format(
             res2["prev_dist"], res2["prev_dist"]))
         print('  back: {{ left: {}, right: {} }}'.format(

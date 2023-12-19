@@ -14,7 +14,7 @@ max_duty: 99.950
 min_duty: 0.01
 FF_front: 1
 FF_roll: 1
-FF_keV: 0 #FF制御on/off flag
+FF_keV: 1 #FF制御on/off flag
 # FF_front: 0
 # FF_roll: 0
 # FF_keV: 0
@@ -40,9 +40,9 @@ SuctionResolution: 120
 # Lm: 0.0004 # 大：横系の出力大
 
 # roll
-Ke: 0.0025 # 大：逆起電力大
+Ke: 0.00125 # 大：逆起電力大
 Km: 0.00325 # 大：縦系の出力小
-Lm: 0.0004 # 大：横系の出力大
+Lm: 0.000065 # 大：横系の出力大
 
 # Km: 0.0025
 # Resist: 2.93
@@ -113,10 +113,10 @@ motor_pid2:
   # d: 0.00
   # b: 2.75
   mode: 7
-  p: 0.095
-  i: 0.00895
+  p: 0.0285
+  i: 0.00225
   b: 0.0
-  d: 0.00135
+  d: 0.000125
 
   # p: 0.00275
   # i: 0.00195
@@ -196,11 +196,17 @@ gyro_pid:
   # d: 0.375
   # b: 0.0325
   # 通常 mode=3
+  # mode: 3
+  # p: 0.275
+  # i: 0.0875
+  # b: 0.0875
+  # d: 0.0
+  # c: 0.225
   mode: 3
-  p: 0.475
-  i: 0.095
-  b: 0.075
-  d: 0.0
+  p: 0.195
+  i: 0.0195
+  b: 0.0215
+  d: 0.195
   c: 0.225
   # p: 0.175
   # i: 0.0125
@@ -213,9 +219,10 @@ gyro_pid:
   # i: 0.0
   # b: 0.0
   # d: 0
+  # c: 0.0
 angle_pid:
-  p: 0.35
-  i: 0.0
+  p: 0.3125
+  i: 0.045
   d: 0.0
   mode: 1
   b: 0
@@ -225,9 +232,9 @@ str_agl_pid:
   # d: 1.25
   # p: 0.095 #search_mode
   # b: 0.095 #!searchm_mode
-  p: 0.125 #search_mode
-  b: 0.175 #!searchm_mode
-  d: 0.00475
+  p: 0.075 #search_mode
+  b: 0.075 #!searchm_mode
+  d: 0.0025
   # d: 0.00
   i: 0.0
   mode: 1
@@ -250,7 +257,7 @@ str_agl_dia_pid:
   b: 0
   c: 0
 sensor_pid:
-  p: 0.095 #search_mode
+  p: 0.175 #search_mode
   b: 0.175 #!searchm_mode
   # p: 0.00 #search_mode
   # b: 0.0 #!searchm_mode
@@ -278,8 +285,8 @@ sensor_pid_dia:
 gyro_param:
   # gyro_w_gain_right: 0.0024635
   # gyro_w_gain_left: 0.00246375
-  gyro_w_gain_right: 0.00245600
-  gyro_w_gain_left: 0.00245580
+  gyro_w_gain_right: 0.002467200
+  gyro_w_gain_left: 0.002467200
   lp_delay: 1
 accel_x_param:
   # gain: 315.56 # 16g

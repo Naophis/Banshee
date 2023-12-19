@@ -16,10 +16,10 @@
 # python main.py 1350 0 >> result.yaml
 # python main.py 1400 0 >> result.yaml
 # python main.py 1450 0 >> result.yaml
-python main.py 1500 0 >> result.yaml
-python main.py 1550 0 >> result.yaml
-python main.py 1600 0 >> result.yaml
-python main.py 1650 0 >> result.yaml
-python main.py 1700 0 >> result.yaml
+# python main.py 1500 0 >> result.yaml
+# python main.py 1550 0 >> result.yaml
+# python main.py 1600 0 >> result.yaml
+# python main.py 1650 0 >> result.yaml
+# python main.py 1700 0 >> result.yaml
 
-python main.py 1800 0 >> result.yaml
+# python main.py 1800 0 >> result.yaml

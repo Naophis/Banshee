@@ -416,13 +416,13 @@ void MainTask::load_hw_param() {
   param->str_ang_pid.c = getItem(str_agl_pid, "c")->valuedouble;
   param->str_ang_pid.mode = getItem(str_agl_pid, "mode")->valueint;
 
-  str_agl_pid = getItem(root, "str_agl_dia_pid");
-  param->str_ang_dia_pid.p = getItem(str_agl_pid, "p")->valuedouble;
-  param->str_ang_dia_pid.i = getItem(str_agl_pid, "i")->valuedouble;
-  param->str_ang_dia_pid.d = getItem(str_agl_pid, "d")->valuedouble;
-  param->str_ang_dia_pid.b = getItem(str_agl_pid, "b")->valuedouble;
-  param->str_ang_dia_pid.c = getItem(str_agl_pid, "c")->valuedouble;
-  param->str_ang_dia_pid.mode = getItem(str_agl_pid, "mode")->valueint;
+  str_agl_dia_pid = getItem(root, "str_agl_dia_pid");
+  param->str_ang_dia_pid.p = getItem(str_agl_dia_pid, "p")->valuedouble;
+  param->str_ang_dia_pid.i = getItem(str_agl_dia_pid, "i")->valuedouble;
+  param->str_ang_dia_pid.d = getItem(str_agl_dia_pid, "d")->valuedouble;
+  param->str_ang_dia_pid.b = getItem(str_agl_dia_pid, "b")->valuedouble;
+  param->str_ang_dia_pid.c = getItem(str_agl_dia_pid, "c")->valuedouble;
+  param->str_ang_dia_pid.mode = getItem(str_agl_dia_pid, "mode")->valueint;
 
   motor_pid2 = getItem(root, "motor_pid2");
   param->motor_pid2.p = getItem(motor_pid2, "p")->valuedouble;
@@ -673,7 +673,7 @@ void MainTask::load_offset_param() {
       getItem(root, "front_dist_offset_dia_right45")->valuedouble;
   param->front_dist_offset_dia_left45 =
       getItem(root, "front_dist_offset_dia_left45")->valuedouble;
-  
+
   cJSON_Delete(root);
 }
 void MainTask::load_sensor_param() {
@@ -1715,7 +1715,7 @@ void MainTask::test_run_sla() {
 
   ps.v_max = sys.test.v_max;
   ps.v_end = 20;
-  ps.dist = 45 + param->offset_start_dist + 90;
+  ps.dist = param->cell / 2 + param->offset_start_dist + param->cell;
   ps.accl = sys.test.accl;
   ps.decel = sys.test.decel;
   ps.sct = SensorCtrlType::Straight;
@@ -1953,7 +1953,7 @@ void MainTask::test_sla() {
 
   ps.v_max = sla_p.v;
   ps.v_end = sla_p.v;
-  ps.dist = 90 + param->offset_start_dist;
+  ps.dist = param->cell + param->offset_start_dist;
   if (sys.test.start_turn > 0) {
     ps.dist = param->offset_start_dist;
   }
@@ -1982,16 +1982,16 @@ void MainTask::test_sla() {
 
   ps.v_max = sla_p.v;
   ps.v_end = sys.test.end_v;
-  ps.dist = 90;
+  ps.dist = param->cell;
 
   if (sys.test.sla_return == 0) {
     if (static_cast<TurnType>(sys.test.sla_type) == TurnType::Dia45 ||
         static_cast<TurnType>(sys.test.sla_type) == TurnType::Dia135) {
-      ps.dist = 45 * ROOT2;
+      ps.dist = param->cell / 2 * ROOT2;
     }
   } else if (sys.test.sla_return == 1) {
     if (static_cast<TurnType>(sys.test.sla_type) == TurnType::Dia90) {
-      ps.dist = 45 * ROOT2;
+      ps.dist = param->cell / 2 * ROOT2;
     }
   }
   if (sys.test.ignore_opp_sen > 0) {
@@ -2086,7 +2086,7 @@ void MainTask::test_search_sla() {
 
   ps.v_max = str_p.v_max;
   ps.v_end = str_p.v_max;
-  ps.dist = 45 + param->offset_start_dist_search;
+  ps.dist = param->cell2 / 2 + param->offset_start_dist_search;
   ps.accl = str_p.accl;
   ps.decel = str_p.decel;
   ps.sct = SensorCtrlType::Straight;
@@ -2106,7 +2106,7 @@ void MainTask::test_search_sla() {
 
   ps.v_max = sla_p.v;
   ps.v_end = 20;
-  ps.dist = 45 - 5;
+  ps.dist = param->cell2 / 2 - 5;
   ps.accl = sys.test.accl;
   ps.decel = sys.test.decel;
   ps.sct = SensorCtrlType::NONE;
@@ -2202,7 +2202,7 @@ void MainTask::test_front_wall_offset() {
 
   ps.v_max = sys.test.v_max;
   ps.v_end = sys.test.v_max;
-  ps.dist = 90 + 45;
+  ps.dist = param->cell + param->cell2 / 2;
   ps.accl = sys.test.accl;
   ps.decel = sys.test.decel;
   ps.sct = SensorCtrlType::Straight;
@@ -2212,9 +2212,9 @@ void MainTask::test_front_wall_offset() {
   ps.dia_mode = false;
   mp->go_straight(ps);
 
-  ps.dist = 85;
-  if (sensing_result->ego.left90_mid_dist < 150 &&
-      sensing_result->ego.right90_mid_dist < 150) {
+  ps.dist = param->cell2 / 2 - 5;
+  if (sensing_result->ego.left90_mid_dist < param->sensor_range_mid_max &&
+      sensing_result->ego.right90_mid_dist < param->sensor_range_mid_max) {
     ps.dist -= (param->front_dist_offset2 - sensing_result->ego.front_mid_dist);
   }
 
@@ -2282,7 +2282,7 @@ void MainTask::test_dia_walloff() {
 
   ps.v_max = sys.test.v_max;
   ps.v_end = sys.test.v_max;
-  ps.dist = 90 + param->offset_start_dist;
+  ps.dist = param->cell + param->offset_start_dist;
   ps.accl = sys.test.accl;
   ps.decel = sys.test.decel;
   ps.sct = SensorCtrlType::Straight;
@@ -2300,7 +2300,7 @@ void MainTask::test_dia_walloff() {
   nm.is_turn = false;
   mp->slalom(sla_p, rorl, nm, false);
 
-  ps.dist = 45 * std::sqrt(2);
+  ps.dist = param->cell / 2 * std::sqrt(2);
   ps.dia_mode = true;
 
   mp->wall_off_dia(rorl2, ps);
@@ -2376,7 +2376,7 @@ void MainTask::test_sla_walloff() {
 
   ps.v_max = sys.test.v_max;
   ps.v_end = sys.test.v_max;
-  ps.dist = 45 + 45 + param->offset_start_dist;
+  ps.dist = param->cell + param->offset_start_dist;
   ps.accl = sys.test.accl;
   ps.decel = sys.test.decel;
   ps.sct = SensorCtrlType::Straight;
@@ -2386,7 +2386,7 @@ void MainTask::test_sla_walloff() {
   ps.dia_mode = false;
   mp->go_straight(ps);
 
-  ps.dist = 90 - 5;
+  ps.dist = param->cell2 - 5;
   mp->wall_off(rorl, ps);
   ps.v_max = sys.test.v_max;
   ps.v_end = 20;
@@ -2548,6 +2548,8 @@ void MainTask::read_maze_data() {
 
 void MainTask::path_run(int idx, int idx2) {
   load_slalom_param(idx, idx2);
+  param_set.cell_size = param->cell;
+  param_set.start_offset = param->offset_start_dist;
   if (sys.circuit_mode == 0) {
     const auto rorl = ui->select_direction2();
     if (rorl == TurnDirection::Right) {
@@ -2589,8 +2591,8 @@ void MainTask::path_run(int idx, int idx2) {
         // clear map
         while (!pc->path_set_map.empty()) {
           auto p2 = pc->path_set_map.top();
-          printf("type: %d, time: %f, turn: %d\n", p2.type, p2.time,
-                 p2.path_t.size());
+          // printf("type: %d, time: %f, turn: %d\n", p2.type, p2.time,
+          //        p2.path_t.size());
           p2.path_s.clear();
           p2.path_t.clear();
           pc->path_set_map.pop();

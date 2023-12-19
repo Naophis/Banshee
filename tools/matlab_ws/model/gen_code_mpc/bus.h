@@ -126,6 +126,10 @@ typedef struct {
   float ff_duty_r;
   float ff_duty_low_th;
   float ff_duty_low_v_th;
+  float ff_duty_front;
+  float ff_duty_roll;
+  float ff_duty_rpm_r;
+  float ff_duty_rpm_l;
 } t_ego;
 
 typedef struct {

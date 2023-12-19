@@ -56,10 +56,10 @@ MotionResult MotionPlanning::go_straight(param_straight_t &p,
   const auto left = param->sen_ref_p.normal.exist.left45;
   const auto right = param->sen_ref_p.normal.exist.right45;
   if (p.search_str_wide_ctrl_l) {
-    param->sen_ref_p.normal.exist.left45 = 60;
+    param->sen_ref_p.normal.exist.left45 = param->go_straight_wide_ctrl_th;
   }
   if (p.search_str_wide_ctrl_r) {
-    param->sen_ref_p.normal.exist.right45 = 60;
+    param->sen_ref_p.normal.exist.right45 = param->go_straight_wide_ctrl_th;
   }
 
   tgt_val->nmr.sct = p.sct;
@@ -362,10 +362,10 @@ MotionResult MotionPlanning::slalom(slalom_param2_t &sp, TurnDirection td,
     }
   } else if (sp.type == TurnType::Orval) {
     bool b = true;
-    if (40 < sensing_result->ego.left90_mid_dist &&
-        sensing_result->ego.left90_mid_dist < 150 &&
-        40 < sensing_result->ego.right90_mid_dist &&
-        sensing_result->ego.right90_mid_dist < 150) {
+    if (param->orval_front_ctrl_min < sensing_result->ego.left90_mid_dist &&
+        sensing_result->ego.left90_mid_dist < param->orval_front_ctrl_max &&
+        param->orval_front_ctrl_min < sensing_result->ego.right90_mid_dist &&
+        sensing_result->ego.right90_mid_dist < param->orval_front_ctrl_max) {
       ps_front.dist +=
           (sensing_result->ego.front_mid_dist - param->front_dist_offset2);
       // ps_front.dist = 0;
@@ -807,7 +807,7 @@ void MotionPlanning::exec_path_running(param_set_t &p_set) {
       ps.search_str_wide_ctrl_l = ps.search_str_wide_ctrl_r = false;
       ps.wall_ctrl_mode = WallCtrlMode::LEFT_ONLY;
 
-      ps.dist = !dia ? (dist * cell_size) : (dist * cell_size * ROOT2);
+      ps.dist = !dia ? (dist * param->cell) : (dist * param->cell * ROOT2);
       if (i == 0) {
         tgt_val->global_pos.ang = 0;
         if (dist == 0) { // 初手ターンの場合は距離合成して加速区間を増やす
@@ -830,7 +830,7 @@ void MotionPlanning::exec_path_running(param_set_t &p_set) {
         }
       }
       if (turn_type == TurnType::Finish) {
-        ps.dist -= 45;
+        ps.dist -= param->cell / 2;
         ps.v_end = p_set.map[TurnType::Large].v;
       }
       ps.motion_type = MotionType::STRAIGHT;
@@ -851,7 +851,7 @@ void MotionPlanning::exec_path_running(param_set_t &p_set) {
       float dist3 = 0;
       float dist4 = 0;
       if (exist_next_idx) {
-        dist3 = 0.5 * pc->path_s[i + 1] * cell_size;
+        dist3 = 0.5 * pc->path_s[i + 1] * param->cell;
         dist4 = 0.5 * pc->path_s[i + 1] - 1;
       }
       // スラロームの後距離の目標速度を指定
@@ -895,7 +895,7 @@ void MotionPlanning::exec_path_running(param_set_t &p_set) {
            ego.dir == Direction::SouthEast || ego.dir == Direction::SouthWest);
     }
   }
-  float dist = sensing_result->ego.front_dist - 45;
+  float dist = sensing_result->ego.front_dist - param->cell2 / 2;
   if (dist < 0) {
     dist = 1;
   }
@@ -978,9 +978,11 @@ void MotionPlanning::wall_off(TurnDirection td, param_straight_t &ps_front) {
           return;
         }
       }
-      if (40 < sensing_result->ego.left90_far_dist &&
+      if (param->wall_off_front_ctrl_min <
+              sensing_result->ego.left90_far_dist &&
           sensing_result->ego.left90_far_dist < param->front_dist_offset4 &&
-          40 < sensing_result->ego.right90_far_dist &&
+          param->wall_off_front_ctrl_min <
+              sensing_result->ego.right90_far_dist &&
           sensing_result->ego.right90_far_dist < param->front_dist_offset4) {
         // if (40 < sensing_result->ego.front_far_dist &&
         //     sensing_result->ego.front_far_dist < param->front_dist_offset4) {
@@ -1166,38 +1168,40 @@ void MotionPlanning::calc_dia135_offset(param_straight_t &front,
   bool valid_r = false;
   if (dir == TurnDirection::Left) {
     if (exec_wall_off) {
-      if (sensing_result->sen.l45.sensor_dist < 60) {
+      if (sensing_result->sen.l45.sensor_dist <
+          param->dia_turn_offset_calc_th) {
         offset_l = sensing_result->sen.l45.sensor_dist -
                    param->sen_ref_p.normal.ref.left45;
         valid_l = true;
       }
     } else {
-      if (sensing_result->ego.left45_dist < 60) {
+      if (sensing_result->ego.left45_dist < param->dia_turn_offset_calc_th) {
         offset_l = sensing_result->ego.left45_dist -
                    param->sen_ref_p.normal.ref.left45;
         valid_l = true;
       }
     }
-    if (sensing_result->ego.right45_dist < 60) {
+    if (sensing_result->ego.right45_dist < param->dia_turn_offset_calc_th) {
       offset_r = param->sen_ref_p.normal.ref.right45 -
                  sensing_result->ego.right45_dist;
       valid_r = true;
     }
   } else {
     if (exec_wall_off) {
-      if (sensing_result->sen.r45.sensor_dist < 60) {
+      if (sensing_result->sen.r45.sensor_dist <
+          param->dia_turn_offset_calc_th) {
         offset_r = sensing_result->sen.r45.sensor_dist -
                    param->sen_ref_p.normal.ref.right45;
         valid_r = true;
       }
     } else {
-      if (sensing_result->ego.right45_dist < 60) {
+      if (sensing_result->ego.right45_dist < param->dia_turn_offset_calc_th) {
         offset_r = sensing_result->ego.right45_dist -
                    param->sen_ref_p.normal.ref.right45;
         valid_r = true;
       }
     }
-    if (sensing_result->ego.left45_dist < 60) {
+    if (sensing_result->ego.left45_dist < param->dia_turn_offset_calc_th) {
       offset_l =
           param->sen_ref_p.normal.ref.left45 - sensing_result->ego.left45_dist;
       valid_l = true;
@@ -1224,38 +1228,40 @@ void MotionPlanning::calc_dia45_offset(param_straight_t &front,
   bool valid_r = false;
   if (dir == TurnDirection::Left) {
     if (exec_wall_off) {
-      if (sensing_result->sen.l45.sensor_dist < 60) {
+      if (sensing_result->sen.l45.sensor_dist <
+          param->dia_turn_offset_calc_th) {
         offset_l = sensing_result->sen.l45.sensor_dist -
                    param->sen_ref_p.normal.ref.left45;
         valid_l = true;
       }
     } else {
-      if (sensing_result->ego.left45_dist < 60) {
+      if (sensing_result->ego.left45_dist < param->dia_turn_offset_calc_th) {
         offset_l = sensing_result->ego.left45_dist -
                    param->sen_ref_p.normal.ref.left45;
         valid_l = true;
       }
     }
-    if (sensing_result->ego.right45_dist < 60) {
+    if (sensing_result->ego.right45_dist < param->dia_turn_offset_calc_th) {
       offset_r = param->sen_ref_p.normal.ref.right45 -
                  sensing_result->ego.right45_dist;
       valid_r = true;
     }
   } else {
     if (exec_wall_off) {
-      if (sensing_result->sen.r45.sensor_dist < 60) {
+      if (sensing_result->sen.r45.sensor_dist <
+          param->dia_turn_offset_calc_th) {
         offset_r = sensing_result->sen.r45.sensor_dist -
                    param->sen_ref_p.normal.ref.right45;
         valid_r = true;
       }
     } else {
-      if (sensing_result->ego.right45_dist < 60) {
+      if (sensing_result->ego.right45_dist < param->dia_turn_offset_calc_th) {
         offset_r = sensing_result->ego.right45_dist -
                    param->sen_ref_p.normal.ref.right45;
         valid_r = true;
       }
     }
-    if (sensing_result->ego.left45_dist < 60) {
+    if (sensing_result->ego.left45_dist < param->dia_turn_offset_calc_th) {
       offset_l =
           param->sen_ref_p.normal.ref.left45 - sensing_result->ego.left45_dist;
       valid_l = true;

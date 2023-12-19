@@ -66,6 +66,11 @@ typedef struct {
   float duty_suction_low = 0;
   float sen = 0;
   float sen_ang = 0;
+  
+  float ff_duty_front;
+  float ff_duty_roll;
+  float ff_duty_rpm_r;
+  float ff_duty_rpm_l;
 } duty_t;
 
 typedef struct {
@@ -441,6 +446,24 @@ typedef struct {
   float front_diff_th = 3;
   float ff_v_th = 3;
   float ff_front_dury = 3;
+
+  // hl or cl
+  float pivot_straight = 43;
+  float pivot_back_enable_front_th = 100;
+  float search_front_ctrl_th = 60;
+  float judge_pivot = 110;
+  float sensor_range_min = 20;
+  float sensor_range_max = 180;
+  float sensor_range_mid_max = 150;
+  float sensor_range_far_max = 150;
+  float dist_mod_num = 90;
+  float sen_ctrl_front_th = 45;
+  float sen_ctrl_front_diff_th = 40;
+  float orval_front_ctrl_min = 40;
+  float orval_front_ctrl_max = 150;
+  float wall_off_front_ctrl_min = 40;
+  float dia_turn_offset_calc_th = 60;
+  float go_straight_wide_ctrl_th = 60;
 } input_param_t;
 
 typedef struct {
@@ -720,6 +743,8 @@ typedef struct {
   bool suction = false;
   float suction_duty = 0;
   float suction_duty_low = 0;
+  float cell_size = 90;
+  float start_offset = 16;
 } param_set_t;
 
 typedef struct {
@@ -873,6 +898,12 @@ typedef struct {
   real16_T s_pid_i_v;
   real16_T s_pid_i2_v;
   real16_T s_pid_d_v;
+
+  
+  real16_T ff_duty_front;
+  real16_T ff_duty_roll;
+  real16_T ff_duty_rpm_r;
+  real16_T ff_duty_rpm_l;
 
 } log_data_t2;
 

@@ -137,6 +137,14 @@ void LoggingTask::task() {
           ld->duty_l = floatToHalf(sensing_result->ego.duty.duty_l);
           ld->duty_r = floatToHalf(sensing_result->ego.duty.duty_r);
 
+          ld->ff_duty_front =
+              floatToHalf(sensing_result->ego.duty.ff_duty_front);
+          ld->ff_duty_roll = floatToHalf(sensing_result->ego.duty.ff_duty_roll);
+          ld->ff_duty_rpm_r =
+              floatToHalf(sensing_result->ego.duty.ff_duty_rpm_r);
+          ld->ff_duty_rpm_l =
+              floatToHalf(sensing_result->ego.duty.ff_duty_rpm_l);
+
           ld->motion_type = static_cast<int>(tgt_val->motion_type);
 
           ld->duty_sensor_ctrl = floatToHalf(sensing_result->ego.duty.sen);
@@ -214,11 +222,11 @@ float LoggingTask::calc_sensor(float data, float a, float b, char motion_type) {
        motion_type == static_cast<char>(MotionType::PIVOT))) {
     return 0;
   }
-  if (data <= 50 || data >= 3800) {
+  if (data <= 1 || data >= 4005) {
     return 0;
   }
   auto res = a / std::log(data) - b;
-  if (res < 20 || res > 180) {
+  if (res < param->sensor_range_min || res > param->sensor_range_max) {
     return 0;
   }
   if (!isfinite(res)) {
@@ -297,7 +305,8 @@ void LoggingTask::dump_log(std::string file_name) {
          "calc_time2,m_pid_p,m_pid_i,m_pid_i2,m_pid_d,m_pid_p_v,m_pid_i_v,m_"
          "pid_i2_v,m_pid_d_v,g_pid_p,g_pid_i,g_pid_i2,g_pid_d,g_pid_p_v,g_pid_"
          "i_v,g_pid_i2_v,g_pid_d_v,s_pid_p,s_pid_i,s_pid_i2,s_pid_d,s_pid_p_v,"
-         "s_pid_i_v,s_pid_i2_v,s_pid_d_v\n");
+         "s_pid_i_v,s_pid_i2_v,s_pid_d_v,ff_duty_front,ff_duty_roll,ff_duty_"
+         "rpm_r,ff_duty_rpm_l\n");
   int c = 0;
   const char *f1 = format1.c_str();
   const char *f2 = format2.c_str();
@@ -305,6 +314,7 @@ void LoggingTask::dump_log(std::string file_name) {
   const char *f4 = format4.c_str();
   const char *f5 = format5.c_str();
   const char *f6 = format6.c_str();
+  const char *f7 = format7.c_str();
 
   int i = 0;
 
@@ -372,8 +382,8 @@ void LoggingTask::dump_log(std::string file_name) {
     }
 
     auto dist = halfToFloat(ld->img_dist);
-    float dist_mod = (int)(dist / 90);
-    float tmp_dist = dist - 90 * dist_mod;
+    float dist_mod = (int)(dist / param->dist_mod_num);
+    float tmp_dist = dist - param->dist_mod_num * dist_mod;
 
     printf(f3,                                                               //
            halfToFloat(ld->left90_lp),                                       //
@@ -427,7 +437,14 @@ void LoggingTask::dump_log(std::string file_name) {
            halfToFloat(ld->s_pid_i_v),  //
            halfToFloat(ld->s_pid_i2_v), //
            halfToFloat(ld->s_pid_d_v)); //
-           
+
+    printf(f7,                             //
+           halfToFloat(ld->ff_duty_front), //
+           halfToFloat(ld->ff_duty_roll),  //
+           halfToFloat(ld->ff_duty_rpm_r), //
+           halfToFloat(ld->ff_duty_rpm_l)  //
+    );
+
     if (i > 10 && ld->motion_timestamp == 0) {
       break;
     }

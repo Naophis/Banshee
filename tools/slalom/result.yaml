@@ -88,3 +88,63 @@ orval:
   time2: 0.07887500000000032
   front: { left: 0, right: 0 }
   back: { left: 0, right: 0 }
+orval:
+  v: 1500
+  ang: 180
+  pow_n: 4
+  rad: 55.25
+  rad2: 55.25
+  time: 0.0758124999999993
+  time2: 0.0758124999999993
+  front: { left: 0, right: 0 }
+  back: { left: 0, right: 0 }
+orval:
+  v: 1550
+  ang: 180
+  pow_n: 4
+  rad: 55.25
+  rad2: 55.25
+  time: 0.07337499999999848
+  time2: 0.07337499999999848
+  front: { left: 0, right: 0 }
+  back: { left: 0, right: 0 }
+orval:
+  v: 1600
+  ang: 180
+  pow_n: 4
+  rad: 55.25
+  rad2: 55.25
+  time: 0.07107812499999772
+  time2: 0.07107812499999772
+  front: { left: 0, right: 0 }
+  back: { left: 0, right: 0 }
+orval:
+  v: 1650
+  ang: 180
+  pow_n: 4
+  rad: 55.25
+  rad2: 55.25
+  time: 0.068921874999997
+  time2: 0.068921874999997
+  front: { left: 0, right: 0 }
+  back: { left: 0, right: 0 }
+orval:
+  v: 1700
+  ang: 180
+  pow_n: 4
+  rad: 55.25
+  rad2: 55.25
+  time: 0.06689062499999632
+  time2: 0.06689062499999632
+  front: { left: 0, right: 0 }
+  back: { left: 0, right: 0 }
+orval:
+  v: 1800
+  ang: 180
+  pow_n: 4
+  rad: 55.25
+  rad2: 55.25
+  time: 0.06318749999999508
+  time2: 0.06318749999999508
+  front: { left: 0, right: 0 }
+  back: { left: 0, right: 0 }

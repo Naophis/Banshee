@@ -62,6 +62,10 @@ class Slalom:
             self.Et = 0.763214618198974433973
         self.base_alpha = v / rad
 
+    def set_cell_size(self, size): 
+        self.cell_size = size
+        self.half_cell_size = size / 2
+
     def calc_base_time(self):
         c = 0
         t1 = 0

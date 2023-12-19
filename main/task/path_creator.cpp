@@ -715,7 +715,7 @@ float PathCreator::calc_goal_time(param_set_t &p_set) {
   bool fast_mode = false;
   bool start_turn = false;
   bool dia = false;
-  float cell_size = 90;
+  float cell_size = p_set.cell_size;
   float v_now = 0;
   float time = 0;
   float tmp_str_time = 0;
@@ -725,7 +725,7 @@ float PathCreator::calc_goal_time(param_set_t &p_set) {
   path_time_t.clear();
   path_time_total.clear();
   for (int i = 0; i < path_t.size(); i++) {
-    float dist = (0.5 * path_s[i] - 1) * 90;
+    float dist = (0.5 * path_s[i] - 1) * p_set.cell_size;
     auto turn_dir = tc.get_turn_dir(path_t[i]);
     auto turn_type = tc.get_turn_type(path_t[i], dia);
     start_turn = false;
@@ -745,10 +745,9 @@ float PathCreator::calc_goal_time(param_set_t &p_set) {
 
       if (i == 0) {
         if (dist == 0) { // 初手ターンの場合は距離合成して加速区間を増やす
-          dist = 10;
           start_turn = true;
         }
-        ps.dist += 18; // 初期加速距離を加算
+        ps.dist += p_set.start_offset; // 初期加速距離を加算
         auto tmp_v2 = 2 * ps.accl * ps.dist;
         if (ps.v_end * ps.v_end > tmp_v2) {
           ps.accl = (ps.v_end * ps.v_end) / (2 * ps.dist) + 1000;
@@ -756,7 +755,7 @@ float PathCreator::calc_goal_time(param_set_t &p_set) {
         }
       }
       if (turn_type == TurnType::Finish) {
-        ps.dist -= 45;
+        ps.dist -= p_set.cell_size / 2;
         ps.v_end = 500;
       }
       tmp_str_time =
