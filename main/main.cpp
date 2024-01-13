@@ -83,14 +83,12 @@ void init_gpio() {
   io_conf.pin_bit_mask |= 1ULL << LED_A1;
   io_conf.pin_bit_mask |= 1ULL << LED_EN;
 
-  io_conf.pin_bit_mask |= 1ULL << A_CW_CCW1;
-  io_conf.pin_bit_mask |= 1ULL << B_CW_CCW1;
-  // io_conf.pin_bit_mask |= 1ULL << A_CW_CCW2;
-  // io_conf.pin_bit_mask |= 1ULL << B_CW_CCW2;
+  io_conf.pin_bit_mask |= 1ULL << L_CW_CCW1;
+  io_conf.pin_bit_mask |= 1ULL << R_CW_CCW1;
   io_conf.pin_bit_mask |= 1ULL << SUCTION_PWM;
 
-  io_conf.pin_bit_mask |= 1ULL << A_PWM;
-  io_conf.pin_bit_mask |= 1ULL << B_PWM;
+  io_conf.pin_bit_mask |= 1ULL << Motor_L_PWM;
+  io_conf.pin_bit_mask |= 1ULL << Motor_R_PWM;
 
   // io_conf.pin_bit_mask |= 1ULL << LED1;
   // io_conf.pin_bit_mask |= 1ULL << LED2;
@@ -243,8 +241,8 @@ extern "C" void app_main() {
   mcpwm_init(MCPWM_UNIT_0, MCPWM_TIMER_0, &motor_pwm_conf);
   mcpwm_init(MCPWM_UNIT_0, MCPWM_TIMER_1, &motor_pwm_conf);
 
-  mcpwm_gpio_init(MCPWM_UNIT_0, MCPWM0A, B_PWM);
-  mcpwm_gpio_init(MCPWM_UNIT_0, MCPWM0B, B_PWM2);
+  mcpwm_gpio_init(MCPWM_UNIT_0, MCPWM0A, Motor_R_PWM);
+  mcpwm_gpio_init(MCPWM_UNIT_0, MCPWM0B, Motor_R_PWM2);
   mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A,
                       MCPWM_DUTY_MODE_0);
   mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B,
@@ -332,8 +330,8 @@ extern "C" void app_main() {
   // } else {
   //   printf("storage0: mount OK\n");
   // }
-  // gpio_set_level(A_CW_CCW1, 1);
-  // gpio_set_level(B_CW_CCW1, 1);
+  // gpio_set_level(L_CW_CCW1, 1);
+  // gpio_set_level(R_CW_CCW1, 1);
   gpio_set_level(SUCTION_PWM, 0);
   int c = 0;
   // mcpwm_gpio_init(MCPWM_UNIT_1, MCPWM2A, SUCTION_PWM);

@@ -2,8 +2,9 @@ dt: 0.001
 # tire: 13.60125
 # tire2: 13.60125
 
-tire: 13.595
-tire2: 13.595
+tire_tread: 38.0
+tire: 13.625
+tire2: 13.625
 # offset_start_dist: 21.0
 offset_start_dist_search: 21.0
 offset_start_dist: 14.0
@@ -15,44 +16,30 @@ min_duty: 0.01
 FF_front: 1
 FF_roll: 1
 FF_keV: 1 #FF制御on/off flag
-# FF_front: 0
-# FF_roll: 0
-# FF_keV: 0
-# MotorHz: 75000
-MotorHz: 97500
-SuctionHz: 50000
-MotorResolution: 120
-SuctionResolution: 120
-# MotorHz: 175000
-# SuctionHz: 10000
 
-# Ke: 0.00125 # 大：逆起電力大
-# Km: 0.0125 # 大：縦系の出力小
-# Lm: 0.0000375 # 大：縦系の出力大
+motor_driver_type: 2 # 1: EN1_PH1, 2: EN1_PH2, 3: TWO_PWM
+motor_r_cw_ccw_type: 1 # 1: duty > 0 -> true, 0: duty < 0 -> true
+motor_l_cw_ccw_type: 1 # 1: duty > 0 -> true, 0: duty < 0 -> true
+# debug for motor io direction
+motor_debug_mode: 0
+motor_debug_mode_duty_r: 10
+motor_debug_mode_duty_l: -10
 
-# Ke: 0.000125 # 大：逆起電力大
-# Km: 0.0785 # 大：縦系の出力小
-# Lm: 0.0004 # 大：横系の出力大
-
-# front
-# Ke: 0.0025 # 大：逆起電力大
-# Km: 0.00045 # 大：縦系の出力小
-# Lm: 0.0004 # 大：横系の出力大
+MotorHz: 95000
+SuctionHz: 25000
+MotorResolution: 80
+SuctionResolution: 40
 
 # roll
-Ke: 0.00125 # 大：逆起電力大
-Km: 0.00325 # 大：縦系の出力小
+Ke: 0.00175 # 大：逆起電力大
+Km: 0.00225 # 大：縦系の出力小
 Lm: 0.000065 # 大：横系の出力大
 
-# Km: 0.0025
-# Resist: 2.93
 Resist: 2.4
 Mass: 0.022
 
 slip_param_K: 0.5
-# slip_param_k2: 150
 slip_param_k2: 100
-# slip_param_k2: 5
 
 sakiyomi_time: 10
 
@@ -62,12 +49,12 @@ search_log_enable: 0
 test_log_enable: 1
 fast_log_enable: 1
 sen_log_size: 100
-log_size: 20000
+log_size: 12500
 
 front_ctrl_error_th: 1
 front_diff_th: 9
 
-ff_v_th: 200
+ff_v_th: 0
 ff_front_dury: 0.95
 
 # fail_safe
@@ -86,6 +73,35 @@ axel_degenerate_x: [0, 1, 2, 4, 6, 8, 10]
 # axel_degenerate_y: [1, 1, 0.5, 0.2, 0.2, 0.1, 0.1]
 axel_degenerate_y: [1, 1, 0.8, 0.75, 0.5, 0.2, 0.1]
 # axel_degenerate_y: [1, 1, 1, 1, 1, 1, 1]
+
+motor_pid_gain_limitter: 
+  mode: 0
+  p: 1
+  i: 1
+  d: 1
+  b: 1
+  c: 0
+motor2_pid_gain_limitter: 
+  mode: 1
+  p: 15
+  i: 15
+  d: 15
+  b: 15
+  c: 15
+motor3_pid_gain_limitter: 
+  mode: 1
+  p: 2
+  i: 2
+  d: 2
+  b: 2
+  c: 2
+gyro_pid_gain_limitter: 
+  mode: 1
+  p: 5
+  i: 5
+  d: 5
+  b: 5
+  c: 5
 
 motor_pid:
   # p: 0.00225
@@ -113,10 +129,16 @@ motor_pid2:
   # d: 0.00
   # b: 2.75
   mode: 7
-  p: 0.0285
-  i: 0.00225
-  b: 0.0
-  d: 0.000125
+  p: 0.0125
+  i: 0.0
+  b: 1.25
+  d: 0.00
+  # mode: 0
+  # p: 0.0225
+  # i: 1.125
+  # b: 0.00
+  # d: 0.0
+  # i: 1.85
 
   # p: 0.00275
   # i: 0.00195
@@ -165,6 +187,13 @@ motor_pid2:
   # i: 0.0
   # b: 0.0
   # d: 0.0
+motor_pid3:
+  mode: 0
+  p: 0.0125
+  i: 0.00125
+  b: 0.00
+  d: 0.00
+  c: 0
 dist_pid:
   p: 0.80
   i: 0.0015
@@ -204,10 +233,18 @@ gyro_pid:
   # c: 0.225
   mode: 3
   p: 0.195
-  i: 0.0195
-  b: 0.0215
+  i: 0.00
+  b: 0.0275
   d: 0.195
   c: 0.225
+
+  # p: 0.195
+  # i: 0.0195
+  # b: 0.0215
+  # d: 0.195
+  # c: 0.225
+
+
   # p: 0.175
   # i: 0.0125
   # b: 0.0195
@@ -285,8 +322,8 @@ sensor_pid_dia:
 gyro_param:
   # gyro_w_gain_right: 0.0024635
   # gyro_w_gain_left: 0.00246375
-  gyro_w_gain_right: 0.002467200
-  gyro_w_gain_left: 0.002467200
+  gyro_w_gain_right: 0.002466400
+  gyro_w_gain_left: 0.002466400
   lp_delay: 1
 accel_x_param:
   # gain: 315.56 # 16g

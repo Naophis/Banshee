@@ -266,10 +266,10 @@ MotionResult MotionPlanning::slalom(slalom_param2_t &sp, TurnDirection td,
     ps_front.v_max = next_motion.v_max;
     if (param->front_dist_offset_pivot_th <
             sensing_result->ego.left90_mid_dist &&
-        sensing_result->ego.left90_mid_dist < 110 &&
+        sensing_result->ego.left90_mid_dist < param->sla_front_ctrl_th &&
         param->front_dist_offset_pivot_th <
             sensing_result->ego.right90_mid_dist &&
-        sensing_result->ego.right90_mid_dist < 110) {
+        sensing_result->ego.right90_mid_dist < param->sla_front_ctrl_th) {
       auto diff =
           (sensing_result->ego.front_mid_dist - param->front_dist_offset);
       if (diff > param->normal_sla_offset) {
@@ -969,11 +969,12 @@ void MotionPlanning::wall_off(TurnDirection td, param_straight_t &ps_front) {
   vTaskDelay(1.0 / portTICK_RATE_MS);
   if (td == TurnDirection::Right) {
     while (true) {
+      //　見逃し対応
       if (std::abs(tgt_val->ego_in.dist) >=
           std::abs(param->wall_off_dist.diff_check_dist)) {
         if (sensing_result->ego.right45_dist_diff >
             param->wall_off_dist.diff_dist_th_r) {
-          ps_front.dist -= 8;
+          ps_front.dist -= param->wall_off_pass_through_offset_r;
           ps_front.dist = MAX(ps_front.dist, 0.1);
           return;
         }
@@ -1026,12 +1027,12 @@ void MotionPlanning::wall_off(TurnDirection td, param_straight_t &ps_front) {
     }
   } else {
     while (true) {
-
+      //　見逃し対応
       if (std::abs(tgt_val->ego_in.dist) >=
           std::abs(param->wall_off_dist.diff_check_dist)) {
         if (sensing_result->ego.left45_dist_diff >
             param->wall_off_dist.diff_dist_th_l) {
-          ps_front.dist -= 8;
+          ps_front.dist -= param->wall_off_pass_through_offset_l;
           ps_front.dist = MAX(ps_front.dist, 0.1);
           return;
         }

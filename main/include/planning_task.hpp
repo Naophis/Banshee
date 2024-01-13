@@ -95,8 +95,14 @@ public:
 
   std::shared_ptr<motion_tgt_val_t> tgt_val;
   std::shared_ptr<pid_error_entity_t> error_entity_ptr;
+  float ideal_v_r, ideal_v_l;
 
 private:
+  void limitter(float &kp, float &ki, float &kb, float &kd,
+                pid_param_t &limitter);
+
+  bool judge_motor_pwm(float duty, uint8_t type);
+  void change_pwm_freq(float duty_l, float duty_r);
   void copy_error_entity(pid_error_entity_t &in);
 
   void pid_gain_data(pid_error_t &in, pid_error_t &save);
@@ -191,6 +197,8 @@ private:
   mcpwm_config_t suction_pwm_conf;
   float duty_c = 0;
   float duty_c2 = 0;
+  float duty_enc_v_r = 0;
+  float duty_enc_v_l = 0;
   float duty_roll = 0;
   float duty_roll2 = 0;
   sen_log2_t sen_log;

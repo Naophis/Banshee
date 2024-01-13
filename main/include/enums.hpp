@@ -81,4 +81,11 @@ enum class WallCtrlMode : int {
   BOTH = 3,
 };
 
+enum class MotorDriveType : int {
+  NONE = 0,
+  EN1_PH1 = 1,
+  EN1_PH2 = 2,
+  TWO_PWM = 3,
+};
+
 #endif

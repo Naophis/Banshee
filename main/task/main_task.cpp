@@ -173,7 +173,7 @@ void MainTask::dump1() {
            sensing_result->gyro_list[0], sensing_result->gyro_list[1],
            sensing_result->gyro_list[2], sensing_result->gyro_list[3],
            sensing_result->gyro_list[4]);
-
+           
     const float tgt_gain =
         1000.0 /
         (sensing_result->accel_x.raw - tgt_val->accel_x_zero_p_offset) * 9.8;
@@ -181,6 +181,9 @@ void MainTask::dump1() {
 
     printf("duty: %3.3f, %3.3f\n", sensing_result->ego.duty.duty_l,
            sensing_result->ego.duty.duty_r);
+
+    printf("planning_time: %d\n", tgt_val->calc_time);
+    printf("sensing_time: %d\n", sensing_result->calc_time);
 
     if (ui->button_state()) {
       tgt_val->ego_in.ang = tgt_val->ego_in.dist = 0;
@@ -321,11 +324,13 @@ void MainTask::load_hw_param() {
 
   // printf("%s\n", str.c_str());
 
-  cJSON *root = cJSON_CreateObject(), *motor_pid, *motor_pid2, *gyro_pid,
-        *str_agl_pid, *str_agl_dia_pid, *gyro_param, *kalman_config,
+  cJSON *root = cJSON_CreateObject(), *motor_pid, *motor_pid2, *motor_pid3,
+        *gyro_pid, *str_agl_pid, *str_agl_dia_pid, *gyro_param, *kalman_config,
         *battery_param, *led_param, *angle_pid, *dist_pid, *sen_pid,
         *sen_pid_dia, *accel_x, *comp_v_param, *axel_degenerate_x,
-        *axel_degenerate_y, *led_blight;
+        *axel_degenerate_y, *led_blight, *gyro_pid_gain_limitter,
+        *motor_pid_gain_limitter, *motor2_pid_gain_limitter,
+        *motor3_pid_gain_limitter;
 
   root = cJSON_Parse(str.c_str());
 
@@ -342,6 +347,8 @@ void MainTask::load_hw_param() {
   param->Resist = getItem(root, "Resist")->valuedouble;
   param->Mass = getItem(root, "Mass")->valuedouble;
   param->Lm = getItem(root, "Lm")->valuedouble;
+  param->tire_tread = getItem(root, "tire_tread")->valuedouble;
+  
   const unsigned long motor_hz = getItem(root, "MotorHz")->valueint;
   const unsigned long suction_motor_hz = getItem(root, "SuctionHz")->valueint;
   const unsigned long motor_res = getItem(root, "MotorResolution")->valueint;
@@ -408,6 +415,62 @@ void MainTask::load_hw_param() {
   param->motor_pid.c = getItem(motor_pid, "c")->valuedouble;
   param->motor_pid.mode = getItem(motor_pid, "mode")->valueint;
 
+  motor_pid_gain_limitter = getItem(root, "motor_pid_gain_limitter");
+  param->motor_pid_gain_limitter.p =
+      getItem(motor_pid_gain_limitter, "p")->valuedouble;
+  param->motor_pid_gain_limitter.i =
+      getItem(motor_pid_gain_limitter, "i")->valuedouble;
+  param->motor_pid_gain_limitter.d =
+      getItem(motor_pid_gain_limitter, "d")->valuedouble;
+  param->motor_pid_gain_limitter.b =
+      getItem(motor_pid_gain_limitter, "b")->valuedouble;
+  param->motor_pid_gain_limitter.c =
+      getItem(motor_pid_gain_limitter, "c")->valuedouble;
+  param->motor_pid_gain_limitter.mode =
+      getItem(motor_pid_gain_limitter, "mode")->valueint;
+
+  motor2_pid_gain_limitter = getItem(root, "motor2_pid_gain_limitter");
+  param->motor2_pid_gain_limitter.p =
+      getItem(motor2_pid_gain_limitter, "p")->valuedouble;
+  param->motor2_pid_gain_limitter.i =
+      getItem(motor2_pid_gain_limitter, "i")->valuedouble;
+  param->motor2_pid_gain_limitter.d =
+      getItem(motor2_pid_gain_limitter, "d")->valuedouble;
+  param->motor2_pid_gain_limitter.b =
+      getItem(motor2_pid_gain_limitter, "b")->valuedouble;
+  param->motor2_pid_gain_limitter.c =
+      getItem(motor2_pid_gain_limitter, "c")->valuedouble;
+  param->motor2_pid_gain_limitter.mode =
+      getItem(motor2_pid_gain_limitter, "mode")->valueint;
+
+  motor3_pid_gain_limitter = getItem(root, "motor3_pid_gain_limitter");
+  param->motor3_pid_gain_limitter.p =
+      getItem(motor3_pid_gain_limitter, "p")->valuedouble;
+  param->motor3_pid_gain_limitter.i =
+      getItem(motor3_pid_gain_limitter, "i")->valuedouble;
+  param->motor3_pid_gain_limitter.d =
+      getItem(motor3_pid_gain_limitter, "d")->valuedouble;
+  param->motor3_pid_gain_limitter.b =
+      getItem(motor3_pid_gain_limitter, "b")->valuedouble;
+  param->motor3_pid_gain_limitter.c =
+      getItem(motor3_pid_gain_limitter, "c")->valuedouble;
+  param->motor3_pid_gain_limitter.mode =
+      getItem(motor3_pid_gain_limitter, "mode")->valueint;
+
+  gyro_pid_gain_limitter = getItem(root, "gyro_pid_gain_limitter");
+  param->gyro_pid_gain_limitter.p =
+      getItem(gyro_pid_gain_limitter, "p")->valuedouble;
+  param->gyro_pid_gain_limitter.i =
+      getItem(gyro_pid_gain_limitter, "i")->valuedouble;
+  param->gyro_pid_gain_limitter.d =
+      getItem(gyro_pid_gain_limitter, "d")->valuedouble;
+  param->gyro_pid_gain_limitter.b =
+      getItem(gyro_pid_gain_limitter, "b")->valuedouble;
+  param->gyro_pid_gain_limitter.c =
+      getItem(gyro_pid_gain_limitter, "c")->valuedouble;
+  param->gyro_pid_gain_limitter.mode =
+      getItem(gyro_pid_gain_limitter, "mode")->valueint;
+
   str_agl_pid = getItem(root, "str_agl_pid");
   param->str_ang_pid.p = getItem(str_agl_pid, "p")->valuedouble;
   param->str_ang_pid.i = getItem(str_agl_pid, "i")->valuedouble;
@@ -431,6 +494,14 @@ void MainTask::load_hw_param() {
   param->motor_pid2.b = getItem(motor_pid2, "b")->valuedouble;
   param->motor_pid2.c = getItem(motor_pid2, "c")->valuedouble;
   param->motor_pid2.mode = getItem(motor_pid2, "mode")->valueint;
+
+  motor_pid3 = getItem(root, "motor_pid3");
+  param->motor_pid3.p = getItem(motor_pid3, "p")->valuedouble;
+  param->motor_pid3.i = getItem(motor_pid3, "i")->valuedouble;
+  param->motor_pid3.d = getItem(motor_pid3, "d")->valuedouble;
+  param->motor_pid3.b = getItem(motor_pid3, "b")->valuedouble;
+  param->motor_pid3.c = getItem(motor_pid3, "c")->valuedouble;
+  param->motor_pid3.mode = getItem(motor_pid3, "mode")->valueint;
 
   sen_pid = getItem(root, "sensor_pid");
   param->sensor_pid.p = getItem(sen_pid, "p")->valuedouble;
@@ -493,6 +564,17 @@ void MainTask::load_hw_param() {
       getItem(comp_v_param, "acc_x_hp")->valuedouble;
   param->comp_param.gain = getItem(comp_v_param, "gain_v")->valuedouble;
   param->comp_param.enable = getItem(comp_v_param, "enable")->valueint;
+
+  param->motor_driver_type =
+      static_cast<MotorDriveType>(getItem(root, "motor_driver_type")->valueint);
+  param->motor_r_cw_ccw_type = getItem(root, "motor_r_cw_ccw_type")->valueint;
+  param->motor_l_cw_ccw_type = getItem(root, "motor_l_cw_ccw_type")->valueint;
+
+  param->motor_debug_mode = getItem(root, "motor_debug_mode")->valueint;
+  param->motor_debug_mode_duty_r =
+      getItem(root, "motor_debug_mode_duty_r")->valuedouble;
+  param->motor_debug_mode_duty_l =
+      getItem(root, "motor_debug_mode_duty_l")->valuedouble;
 
   pt->dynamics.mass = param->Mass;
   pt->dynamics.lm = param->Lm;

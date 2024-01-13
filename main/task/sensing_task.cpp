@@ -380,9 +380,8 @@ void SensingTask::task() {
 
     // cout << enc_r << ", " << enc_l << endl;
     end = esp_timer_get_time();
-    se->calc_time = end - start;
-    // printf("sen: %d, %d\n", (int16_t)(end - start), (int16_t)(end2 -
-    // start2)); vTaskDelay(xDelay);
+    se->calc_time = (int16_t)(end - start);
+    // printf("sen: %d, %d\n", (int16_t)(end - start), (int16_t)(end2 - start2));
     vTaskDelay(1.0 / portTICK_PERIOD_MS);
   }
 }

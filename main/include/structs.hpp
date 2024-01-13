@@ -66,7 +66,7 @@ typedef struct {
   float duty_suction_low = 0;
   float sen = 0;
   float sen_ang = 0;
-  
+
   float ff_duty_front;
   float ff_duty_roll;
   float ff_duty_rpm_r;
@@ -200,7 +200,7 @@ typedef struct {
   ego_entity_t ego;
   sen_logs_t sen;
   sen_dist_log_t sen_dist_log;
-  int32_t calc_time;
+  int16_t calc_time;
 } sensing_result_entity_t;
 
 typedef struct {
@@ -365,9 +365,14 @@ typedef struct {
   float cell = 90;
   float cell2 = 90;
   pid_param_t motor_pid;
+  pid_param_t motor_pid_gain_limitter;
   pid_param_t motor_pid2;
+  pid_param_t motor2_pid_gain_limitter;
+  pid_param_t motor_pid3;
+  pid_param_t motor3_pid_gain_limitter;
   pid_param_t dist_pid;
   pid_param_t gyro_pid;
+  pid_param_t gyro_pid_gain_limitter;
   pid_param_t str_ang_pid;
   pid_param_t str_ang_dia_pid;
   pid_param_t angle_pid;
@@ -381,7 +386,7 @@ typedef struct {
   MotionDirection motion_dir;
   sen_ref_param_t sen_ref_p;
   sensor_gain_t sensor_gain;
-  int sakiyomi_time = 1;
+  float sakiyomi_time = 1;
   float clear_angle = 0;
   float clear_dist_order = 0;
   float front_dist_offset = 0;
@@ -447,6 +452,13 @@ typedef struct {
   float ff_v_th = 3;
   float ff_front_dury = 3;
 
+  MotorDriveType motor_driver_type = MotorDriveType::EN1_PH1;
+  uint8_t motor_debug_mode = 0;
+  uint8_t motor_r_cw_ccw_type = 0;
+  uint8_t motor_l_cw_ccw_type = 0;
+  float motor_debug_mode_duty_r = 0;
+  float motor_debug_mode_duty_l = 0;
+
   // hl or cl
   float pivot_straight = 43;
   float pivot_back_enable_front_th = 100;
@@ -459,11 +471,15 @@ typedef struct {
   float dist_mod_num = 90;
   float sen_ctrl_front_th = 45;
   float sen_ctrl_front_diff_th = 40;
+  float sla_front_ctrl_th = 110;
   float orval_front_ctrl_min = 40;
   float orval_front_ctrl_max = 150;
   float wall_off_front_ctrl_min = 40;
   float dia_turn_offset_calc_th = 60;
   float go_straight_wide_ctrl_th = 60;
+  float wall_off_pass_through_offset_r = 8;
+  float wall_off_pass_through_offset_l = 8;
+  float tire_tread;
 } input_param_t;
 
 typedef struct {
@@ -495,11 +511,18 @@ typedef struct {
   pid_error_t v_kf;
   pid_error_t dist;
   pid_error_t w;
+  pid_error_t v_r;
+  pid_error_t v_l;
   pid_error_t w_kf;
   pid_error_t ang;
+
   gain_log_t v_log;
   gain_log_t dist_log;
   gain_log_t w_log;
+
+  gain_log_t v_r_log;
+  gain_log_t v_l_log;
+
   gain_log_t ang_log;
   gain_log_t sen_log;
   gain_log_t sen_log_dia;
@@ -899,7 +922,6 @@ typedef struct {
   real16_T s_pid_i2_v;
   real16_T s_pid_d_v;
 
-  
   real16_T ff_duty_front;
   real16_T ff_duty_roll;
   real16_T ff_duty_rpm_r;

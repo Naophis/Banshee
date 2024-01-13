@@ -30,6 +30,18 @@ typedef struct {
   unsigned int step : 4;
 } vector_map_t;
 
+enum class MotorDevice : int {
+  NONE = 0,
+  LEFT = 1,
+  RIGHT = 2,
+};
+
+enum class MotorCwCcwType : int {
+  NONE = 0,
+  MODE1 = 1,
+  MODE2 = 2,
+};
+
 enum class Direction : int {
   North = 1,
   East = 2,

@@ -52,27 +52,27 @@ mode: 3 # 超信地
 # mode: 21 # pivot turn n2
 
 test: # テスト走行時に使用するパラメータ群
-  v_max: 300
+  v_max: 350
   end_v: 10
-  accl: 2400
-  decel: -2400
+  accl: 2500
+  decel: -2500
   dist: 360  #直進全部
   # dist: 540 #直進全部　
   # dist: 180 # スラロームテスト
   dia: 0
   w_max: 8.5
   alpha: 80
-  ang: 3600
-  suction_active: 0
-  suction_duty: 4.5
+  ang: 720
+  suction_active: 
+  suction_duty: 6.5
   # suction_duty_low: 2.75
-  suction_duty_low: 4.25
+  suction_duty_low: 6.25
   suction_gain: 250
   # suction_duty: 3.25
-  file_idx: 21
+  file_idx: 15
   sla_dist: 90
   # sla_type: 3
-  sla_type: 2
+  sla_type: 3
   sla_type2: 6 #復路ターン種類
   sla_return: 0 # 往復フラグ
   # sla_type: 1 normal
