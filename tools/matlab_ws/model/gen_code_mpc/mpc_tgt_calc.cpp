@@ -94,7 +94,8 @@ real32_T rt_powf_snf(real32_T u0, real32_T u1)
     } else if (u0 < 0.0F && u1 > std::floor(u1)) {
       y = (rtNaNF);
     } else {
-      y = std::pow(u0, u1);
+      // y = std::pow(u0, u1);
+      y = fast_pow(u0, u1);
     }
   }
 
