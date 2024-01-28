@@ -89,7 +89,8 @@
         "ranges": "cpp",
         "scoped_allocator": "cpp",
         "syncstream": "cpp",
-        "*.ipp": "cpp"
+        "*.ipp": "cpp",
+        "alignedvector3": "cpp"
     },
     "idf.adapterTargetName": "esp32s3",
     "clang-format.executable": "/usr/bin/clang-format",

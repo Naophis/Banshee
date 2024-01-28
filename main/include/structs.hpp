@@ -486,6 +486,7 @@ typedef struct {
   float error_p;
   float error_i;
   float error_d;
+  float error_dd;
 } pid_error_t;
 
 typedef struct {
@@ -618,6 +619,7 @@ typedef struct {
   t_ego ego_in;
   int16_t calc_time;
   int16_t calc_time2;
+  int16_t calc_time_diff;
   global_ego_pos_t global_pos;
   int32_t motion_mode;
   MotionType motion_type;
@@ -894,6 +896,7 @@ typedef struct {
   int16_t sen_calc_time;
   int16_t pln_calc_time;
   int16_t pln_calc_time2;
+  int16_t pln_time_diff;
 
   real16_T m_pid_p;
   real16_T m_pid_i;

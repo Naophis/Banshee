@@ -24,8 +24,7 @@ def main_plot(fig, file, col_idx, str):
     sensor_raw = input_csv[input_csv.keys()[col_idx]]  # csvの何行目のデータを使うか
 
     param, cov = curve_fit(nonlinear_fit, sensor_raw, dist)
-    # print(param, cov)
-    print("{}: [{}, {}]" .format(str, param[0], param[1]))
+    print("{}: [{}, {}] #cov[{},{}]" .format(str, param[0], param[1],cov[0][0], cov[1][1]))
     min_x = sensor_raw.min()
     max_x = sensor_raw.max()
     x = np.linspace(min_x, max_x, 20)

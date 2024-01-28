@@ -70,6 +70,8 @@ public:
   }
   std::shared_ptr<MotionPlanning> mp;
 
+  bool ready = false;
+
 private:
   SearchResult sr;
   xTaskHandle handle = 0;

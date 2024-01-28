@@ -14,7 +14,7 @@ MainTask::MainTask() {
 MainTask::~MainTask() {}
 
 void MainTask::create_task(const BaseType_t xCoreID) {
-  xTaskCreatePinnedToCore(task_entry_point, "main_task", 8192, this, 2, &handle,
+  xTaskCreatePinnedToCore(task_entry_point, "main_task", 8192, this, 12, &handle,
                           xCoreID);
 }
 void MainTask::task_entry_point(void *task_instance) {
@@ -173,7 +173,7 @@ void MainTask::dump1() {
            sensing_result->gyro_list[0], sensing_result->gyro_list[1],
            sensing_result->gyro_list[2], sensing_result->gyro_list[3],
            sensing_result->gyro_list[4]);
-           
+
     const float tgt_gain =
         1000.0 /
         (sensing_result->accel_x.raw - tgt_val->accel_x_zero_p_offset) * 9.8;
@@ -183,6 +183,7 @@ void MainTask::dump1() {
            sensing_result->ego.duty.duty_r);
 
     printf("planning_time: %d\n", tgt_val->calc_time);
+    printf("planning_time_diff: %d\n", tgt_val->calc_time_diff);
     printf("sensing_time: %d\n", sensing_result->calc_time);
 
     if (ui->button_state()) {
@@ -348,7 +349,11 @@ void MainTask::load_hw_param() {
   param->Mass = getItem(root, "Mass")->valuedouble;
   param->Lm = getItem(root, "Lm")->valuedouble;
   param->tire_tread = getItem(root, "tire_tread")->valuedouble;
-  
+  param->led_light_delay_cnt =
+      getItem(root, "led_light_delay_cnt")->valuedouble;
+  param->led_light_delay_cnt2 =
+      getItem(root, "led_light_delay_cnt2")->valuedouble;
+
   const unsigned long motor_hz = getItem(root, "MotorHz")->valueint;
   const unsigned long suction_motor_hz = getItem(root, "SuctionHz")->valueint;
   const unsigned long motor_res = getItem(root, "MotorResolution")->valueint;
@@ -612,6 +617,7 @@ void MainTask::load_offset_param() {
   std::ifstream ifs(fileName);
 
   if (!ifs) {
+    printf("offset file not found\n");
     return;
   }
   std::string str;
@@ -622,7 +628,7 @@ void MainTask::load_offset_param() {
   }
 
   cJSON *root = cJSON_CreateObject();
-
+  root = cJSON_Parse(str.c_str());
   param->cell = getItem(root, "cell")->valuedouble;
   param->cell2 = getItem(root, "cell2")->valuedouble;
   param->seach_timer = getItem(root, "seach_timer")->valueint;
@@ -636,10 +642,6 @@ void MainTask::load_offset_param() {
       getItem(root, "clear_dist_ragne_from")->valuedouble;
   param->clear_dist_ragne_to =
       getItem(root, "clear_dist_ragne_to")->valuedouble;
-  param->led_light_delay_cnt =
-      getItem(root, "led_light_delay_cnt")->valuedouble;
-  param->led_light_delay_cnt2 =
-      getItem(root, "led_light_delay_cnt2")->valuedouble;
   param->front_diff_th = getItem(root, "front_diff_th")->valuedouble;
 
   param->offset_after_turn_l2 =
@@ -1291,6 +1293,7 @@ void MainTask::load_param() {
     load_hw_param();
     load_sensor_param();
     load_turn_param_profiles(false);
+    load_offset_param();
     // load_slalom_param();
   }
 }
@@ -1329,6 +1332,7 @@ void MainTask::rx_uart_json() {
 void MainTask::task() {
   mp->set_userinterface(ui);
   search_ctrl->set_userinterface(ui);
+  pt->ready = true;
   pt->motor_disable();
   pt->suction_disable();
   check_battery();

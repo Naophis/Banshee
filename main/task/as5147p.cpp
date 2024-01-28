@@ -75,7 +75,16 @@ uint32_t AS5147P::read2byte(const uint8_t address1, const uint8_t address2,
     ret = spi_device_polling_transmit(spi_r, &t); // Transmit!
   }
   assert(ret == ESP_OK);
-  return (uint32_t)((uint16_t)(t.rx_data[0]) << 8) | (uint16_t)(t.rx_data[1]);
+
+  return (int32_t)((uint16_t)(t.rx_data[0]) << 8) | (uint16_t)(t.rx_data[1]);
+
+  // uint16_t before = (uint16_t)((t.rx_data[0] << 8) | (t.rx_data[1]));
+  // uint16_t after = (uint16_t)(t.rx_data[0] << 6) | (t.rx_data[1] >> 2);
+
+  // printf("before: %d, after: %d\n", before, after);
+
+  // return after; //(uint32_t)((uint16_t)(t.rx_data[0]) << 8) |
+  //(uint16_t)(t.rx_data[1]);
 }
 
 int16_t AS5147P::read2byte_2(const uint8_t address1, const uint8_t address2) {

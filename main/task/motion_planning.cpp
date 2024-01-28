@@ -969,6 +969,10 @@ void MotionPlanning::wall_off(TurnDirection td, param_straight_t &ps_front) {
   vTaskDelay(1.0 / portTICK_RATE_MS);
   if (td == TurnDirection::Right) {
     while (true) {
+      if (sensing_result->ego.right45_dist <
+          param->wall_off_dist.exist_dist_r) {
+        break;
+      }
       //　見逃し対応
       if (std::abs(tgt_val->ego_in.dist) >=
           std::abs(param->wall_off_dist.diff_check_dist)) {
@@ -979,6 +983,7 @@ void MotionPlanning::wall_off(TurnDirection td, param_straight_t &ps_front) {
           return;
         }
       }
+
       if (param->wall_off_front_ctrl_min <
               sensing_result->ego.left90_far_dist &&
           sensing_result->ego.left90_far_dist < param->front_dist_offset4 &&
@@ -1027,6 +1032,9 @@ void MotionPlanning::wall_off(TurnDirection td, param_straight_t &ps_front) {
     }
   } else {
     while (true) {
+      if (sensing_result->ego.left45_dist < param->wall_off_dist.exist_dist_l) {
+        break;
+      }
       //　見逃し対応
       if (std::abs(tgt_val->ego_in.dist) >=
           std::abs(param->wall_off_dist.diff_check_dist)) {
@@ -1036,10 +1044,6 @@ void MotionPlanning::wall_off(TurnDirection td, param_straight_t &ps_front) {
           ps_front.dist = MAX(ps_front.dist, 0.1);
           return;
         }
-      }
-
-      if (sensing_result->ego.left45_dist < param->wall_off_dist.exist_dist_l) {
-        break;
       }
       if (40 < sensing_result->ego.left90_far_dist &&
           sensing_result->ego.left90_far_dist < param->front_dist_offset4 &&

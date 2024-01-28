@@ -32,6 +32,7 @@ public:
   void motor_disable();
   void motor_disable(bool reset_req);
   void suction_disable();
+  bool ready = false;
 
   void
   set_sensing_entity(std::shared_ptr<sensing_result_entity_t> &_sensing_result);

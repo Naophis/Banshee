@@ -52,13 +52,13 @@ constexpr gpio_num_t RTS = GPIO_NUM_15;
 constexpr gpio_num_t CTS = GPIO_NUM_16;
 
 constexpr gpio_num_t L_CW_CCW1 = GPIO_NUM_39;
-constexpr gpio_num_t L_CW_CCW2 = GPIO_NUM_38;
+constexpr gpio_num_t L_CW_CCW2 = GPIO_NUM_40;
 
 constexpr gpio_num_t R_CW_CCW1 = GPIO_NUM_41;
 constexpr gpio_num_t R_CW_CCW2 = GPIO_NUM_42;
 
-constexpr gpio_num_t Motor_L_PWM = GPIO_NUM_36;
-constexpr gpio_num_t Motor_L_PWM2 = GPIO_NUM_36;
+constexpr gpio_num_t Motor_L_PWM = GPIO_NUM_38;
+constexpr gpio_num_t Motor_L_PWM2 = GPIO_NUM_38;
 constexpr gpio_num_t Motor_R_PWM = GPIO_NUM_46;
 constexpr gpio_num_t Motor_R_PWM2 = GPIO_NUM_46;
 
@@ -111,7 +111,7 @@ constexpr uint16_t ENC_OPE_V_R_TH = 175;
 constexpr uint16_t LOG_SIZE = 1300;
 constexpr uint16_t LINE_BUF_SIZE = 1024;
 // constexpr float BATTERY_GAIN = 3.2075; // 2.97324;
-constexpr float BATTERY_GAIN = 3.386523442412779; // 2.97324;
+constexpr float BATTERY_GAIN = 3.317057486323464; // 2.97324;
 
 constexpr uint8_t LEDC_HIGH_SPEED_MODE = 0;
 constexpr float LOW_BATTERY_TH = 11.7;
@@ -152,9 +152,11 @@ static const std::string
     format3("%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0."
             "3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,"
             "%0.3f,%d,");
-static const std::string format4("%0.3f,%0.3f,%0.3f,%0.3f,%d,%d,%d,%d,");
-static const std::string format5("%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,");
-static const std::string format6("%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,");
+static const std::string format4("%0.3f,%0.3f,%0.3f,%0.3f,%d,%d,%d,%d,%d,");
+static const std::string format5(
+    "%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,");
+static const std::string format6(
+    "%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,");
 static const std::string format7("%0.3f,%0.3f,%0.3f,%0.3f\n");
 static const std::string
     formatsysid("%d,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f\n");
