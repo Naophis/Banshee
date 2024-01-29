@@ -3,8 +3,8 @@ dt: 0.001
 # tire2: 13.60125
 
 tire_tread: 38.0
-tire: 13.645
-tire2: 13.645
+tire: 13.75
+tire2: 13.75
 # offset_start_dist: 21.0
 offset_start_dist_search: 15.0
 offset_start_dist: 8.0
@@ -47,11 +47,11 @@ sakiyomi_time: 10
 
 #ログON_OFF
 logging_time: 1.0
-search_log_enable: 0
+search_log_enable: 1
 test_log_enable: 1
 fast_log_enable: 1
 sen_log_size: 100
-log_size: 12500
+log_size: 2500
 
 front_ctrl_error_th: 1
 
@@ -59,7 +59,7 @@ ff_v_th: 0
 ff_front_dury: 0.95
 
 # fail_safe
-fail_duty_cnt: 1500
+fail_duty_cnt: 150
 fail_v_cnt: 35000
 fail_w_cnt: 2500
 
@@ -77,11 +77,11 @@ axel_degenerate_y: [1, 1, 0.8, 0.75, 0.5, 0.2, 0.1]
 
 motor_pid_gain_limitter: 
   mode: 0
-  p: 1
-  i: 1
-  d: 1
-  b: 1
-  c: 0
+  p: 15
+  i: 15
+  d: 15
+  b: 15
+  c: 15
 motor2_pid_gain_limitter: 
   mode: 1
   p: 15
@@ -91,18 +91,18 @@ motor2_pid_gain_limitter:
   c: 15
 motor3_pid_gain_limitter: 
   mode: 1
-  p: 2
-  i: 2
-  d: 2
-  b: 2
-  c: 2
+  p: 15
+  i: 15
+  d: 15
+  b: 15
+  c: 15
 gyro_pid_gain_limitter: 
   mode: 1
-  p: 5
-  i: 5
-  d: 5
-  b: 5
-  c: 5
+  p: 15
+  i: 15
+  d: 15
+  b: 15
+  c: 15
 
 motor_pid:
   p: 0.00325
@@ -119,10 +119,10 @@ motor_pid:
   mode: 1
 motor_pid2:
   mode: 8
-  p: 0.00325
-  i: 0.00275
+  p: 0.00345
+  i: 0.00295
   b: 0.00
-  d: 0.000125
+  d: 0.00025
   c: 0
   # p: 0.0
   # i: 0.0
@@ -167,22 +167,22 @@ dist_pid:
   # i: 0.0
   # d: 0.0
 angle_pid:
-  p: 2.55
+  p: 0.755
   # i: 0.045
   # p: 0.195
-  i: 0.075
-  d: -0.25
+  i: 0.0
+  d: -0.0275
   mode: 1
-  b: 0
+  b: 10
   c: 0
 str_agl_pid:
   # p: 0.095
   # d: 1.25
   # p: 0.095 #search_mode
   # b: 0.095 #!searchm_mode
-  p: 0.125 #search_mode
-  b: 0.075 #!searchm_mode
-  d: 0.0025
+  p: 0.175 #search_mode
+  b: 0.125 #!searchm_mode
+  d: 0.0035
   # d: 0.00
   i: 0.0
   mode: 1

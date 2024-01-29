@@ -24,7 +24,7 @@ dia45_offset_enable: 1
 
 # front_dist_offset2: 137.0
 
-front_dist_offset_pivot_th: 60
+front_dist_offset_pivot_th: 78
 front_dist_offset_pivot: 90
 
 front_dist_offset_dia_front: 139

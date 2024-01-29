@@ -53,9 +53,13 @@ constexpr gpio_num_t CTS = GPIO_NUM_16;
 
 constexpr gpio_num_t L_CW_CCW1 = GPIO_NUM_39;
 constexpr gpio_num_t L_CW_CCW2 = GPIO_NUM_40;
-
 constexpr gpio_num_t R_CW_CCW1 = GPIO_NUM_41;
 constexpr gpio_num_t R_CW_CCW2 = GPIO_NUM_42;
+
+constexpr uint32_t L_CW_CCW1_BIT = BIT(GPIO_NUM_39 - 32);
+constexpr uint32_t L_CW_CCW2_BIT = BIT(GPIO_NUM_40 - 32);
+constexpr uint32_t R_CW_CCW1_BIT = BIT(GPIO_NUM_41 - 32);
+constexpr uint32_t R_CW_CCW2_BIT = BIT(GPIO_NUM_42 - 32);
 
 constexpr gpio_num_t Motor_L_PWM = GPIO_NUM_38;
 constexpr gpio_num_t Motor_L_PWM2 = GPIO_NUM_38;
@@ -144,8 +148,8 @@ static const std::string maze_log_file("/spiflash/maze.txt");
 static const std::string maze_log_kata_file("/spiflash/maze_kata.log");
 static const std::string maze_log_return_file("/spiflash/maze_return.log");
 
-static const std::string
-    format1("%d,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%d,%d,%0.3f,%0.3f,");
+static const std::string format1("%d,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%d,%d,%0.3f,"
+                                 "%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,");
 static const std::string
     format2("%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,");
 static const std::string

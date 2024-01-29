@@ -14,8 +14,8 @@ MainTask::MainTask() {
 MainTask::~MainTask() {}
 
 void MainTask::create_task(const BaseType_t xCoreID) {
-  xTaskCreatePinnedToCore(task_entry_point, "main_task", 8192, this, 12, &handle,
-                          xCoreID);
+  xTaskCreatePinnedToCore(task_entry_point, "main_task", 8192, this, 12,
+                          &handle, xCoreID);
 }
 void MainTask::task_entry_point(void *task_instance) {
   static_cast<MainTask *>(task_instance)->task();
@@ -1671,7 +1671,7 @@ void MainTask::test_run() {
   if (param->test_log_enable > 0) {
     lt->start_slalom_log();
   }
-  pt->search_mode = true;
+  pt->search_mode = false;
   ps.v_max = sys.test.v_max;
   ps.v_end = 20;
   ps.dist = sys.test.dist - 5;
@@ -2633,6 +2633,7 @@ void MainTask::read_maze_data() {
 }
 
 void MainTask::path_run(int idx, int idx2) {
+  pt->search_mode = false;
   load_slalom_param(idx, idx2);
   param_set.cell_size = param->cell;
   param_set.start_offset = param->offset_start_dist;

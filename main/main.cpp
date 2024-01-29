@@ -312,7 +312,7 @@ extern "C" void app_main() {
   // heap_caps_free(array);
 
   QueueHandle_t xQueue;
-  xQueue = xQueueCreate(1, sizeof(motion_tgt_val_t *));
+  xQueue = xQueueCreate(4, sizeof(motion_tgt_val_t *));
 
   // esp_vfs_fat_mount_config_t mount_config;
   // mount_config.max_files = 8;

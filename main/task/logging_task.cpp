@@ -294,7 +294,8 @@ void LoggingTask::dump_log(std::string file_name) {
   char line_buf[LINE_BUF_SIZE];
   printf("start___\n"); // csvファイル作成トリガー
   vTaskDelay(xDelay2);
-  printf("index,ideal_v,v_c,v_c2,v_l,v_r,v_l_enc,v_r_enc,accl,accl_x,"
+  printf("index,ideal_v,v_c,v_c2,v_l,v_r,v_l_enc,v_r_enc,v_l_enc_theta,v_r_enc_"
+         "theta,v_l_enc_sin,v_r_enc_sin,accl,accl_x,"
          "ideal_w,w_lp,alpha,ideal_dist,dist,dist_kf,"
          "ideal_ang,ang,ang_kf,left90,left45,front,right45,right90,left45_2,"
          "right45_2,"
@@ -303,7 +304,8 @@ void LoggingTask::dump_log(std::string file_name) {
          "battery,duty_l,"
          "duty_r,motion_state,duty_sen,dist_mod90,"
          "sen_dist_l45,sen_dist_r45,timestamp,sen_calc_time,pln_calc_time,pln_"
-         "calc_time2,pln_time_diff,m_pid_p,m_pid_i,m_pid_i2,m_pid_d,m_pid_p_v,m_pid_i_v,m_"
+         "calc_time2,pln_time_diff,m_pid_p,m_pid_i,m_pid_i2,m_pid_d,m_pid_p_v,"
+         "m_pid_i_v,m_"
          "pid_i2_v,m_pid_d_v,g_pid_p,g_pid_i,g_pid_i2,g_pid_d,g_pid_p_v,g_pid_"
          "i_v,g_pid_i2_v,g_pid_d_v,s_pid_p,s_pid_i,s_pid_i2,s_pid_d,s_pid_p_v,"
          "s_pid_i_v,s_pid_i2_v,s_pid_d_v,ff_duty_front,ff_duty_roll,ff_duty_"
@@ -316,31 +318,35 @@ void LoggingTask::dump_log(std::string file_name) {
   const char *f5 = format5.c_str();
   const char *f6 = format6.c_str();
   const char *f7 = format7.c_str();
-
+  const float PI = 3.141592653589793238;
   int i = 0;
 
   for (const auto &ld : log_vec) {
-    printf(f1,                        //
-           i++,                       //
-           halfToFloat(ld->img_v),    //
-           halfToFloat(ld->v_c),      //
-           halfToFloat(ld->v_c2),     //
-           halfToFloat(ld->v_l),      //
-           halfToFloat(ld->v_r),      //
-           (ld->v_l_enc),             //
-           (ld->v_r_enc),             //
-           halfToFloat(ld->accl),     //
-           halfToFloat(ld->accl_x));  // 8
-    printf(f2,                        //
-           halfToFloat(ld->img_w),    //
-           halfToFloat(ld->w_lp),     //
-           halfToFloat(ld->alpha),    //
-           halfToFloat(ld->img_dist), //
-           halfToFloat(ld->dist),     //
-           halfToFloat(ld->dist_kf),  //
-           halfToFloat(ld->img_ang),  //
-           halfToFloat(ld->ang),      //
-           halfToFloat(ld->ang_kf));  // 7
+    printf(f1,                                                  //
+           i++,                                                 //
+           halfToFloat(ld->img_v),                              //
+           halfToFloat(ld->v_c),                                //
+           halfToFloat(ld->v_c2),                               //
+           halfToFloat(ld->v_l),                                //
+           halfToFloat(ld->v_r),                                //
+           (ld->v_l_enc),                                       //
+           (ld->v_r_enc),                                       //
+           (1.0 * PI * ld->v_l_enc / ENC_RESOLUTION),           //
+           (1.0 * PI * ld->v_r_enc / ENC_RESOLUTION),           //
+           (std::sin(2.0 * PI * ld->v_l_enc / ENC_RESOLUTION)), //
+           (std::sin(2.0 * PI * ld->v_r_enc / ENC_RESOLUTION)), //
+           halfToFloat(ld->accl),                               //
+           halfToFloat(ld->accl_x));                            // 8
+    printf(f2,                                                  //
+           halfToFloat(ld->img_w),                              //
+           halfToFloat(ld->w_lp),                               //
+           halfToFloat(ld->alpha),                              //
+           halfToFloat(ld->img_dist),                           //
+           halfToFloat(ld->dist),                               //
+           halfToFloat(ld->dist_kf),                            //
+           halfToFloat(ld->img_ang),                            //
+           halfToFloat(ld->ang),                                //
+           halfToFloat(ld->ang_kf));                            // 7
 
     auto l90 = calc_sensor(halfToFloat(ld->left90_lp), param->sensor_gain.l90.a,
                            param->sensor_gain.l90.b, ld->motion_type);

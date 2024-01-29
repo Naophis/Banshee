@@ -52,9 +52,9 @@ MotionResult SearchController::go_straight_wrapper(param_set_t &p_set,
   }
   p.v_end = p_set.str_map[st].v_max;
   if (st == StraightType::FastRunDia) {
-    p.v_end = p_set.str_map[StraightType::Search].v_max;
+    // p.v_end = p_set.str_map[StraightType::Search].v_max;
+    p.v_end = p_set.map[TurnType::Normal].v;
   }
-  // p.v_end = p_set.map[TurnType::Normal].v;
   p.accl = p_set.str_map[st].accl;
   p.decel = p_set.str_map[st].decel;
 
