@@ -13,7 +13,7 @@ PlanningTask::PlanningTask() {}
 
 PlanningTask::~PlanningTask() {}
 void PlanningTask::create_task(const BaseType_t xCoreID) {
-  xTaskCreatePinnedToCore(task_entry_point, "planning_task", 8192 * 2, this, 9,
+  xTaskCreatePinnedToCore(task_entry_point, "planning_task", 8192 * 3, this, 9,
                           &handle, xCoreID);
   motor_qh_enable = xQueueCreate(4, sizeof(motor_req_t *));
   suction_qh_enable = xQueueCreate(4, sizeof(motor_req_t *));
@@ -26,6 +26,12 @@ void PlanningTask::motor_enable_main() {
   motor_en = true;
   mcpwm_start(MCPWM_UNIT_0, MCPWM_TIMER_0);
   mcpwm_start(MCPWM_UNIT_0, MCPWM_TIMER_1);
+  mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A, 0);
+  mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_A, 0);
+  mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A,
+                      MCPWM_DUTY_MODE_0);
+  mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_A,
+                      MCPWM_DUTY_MODE_0);
 }
 void PlanningTask::set_gpio_state(gpio_num_t gpio_num, int state) {
   const int num = (int)gpio_num;
@@ -94,7 +100,7 @@ float PlanningTask::interp1d(vector<float> &vx, vector<float> &vy, float x,
 
 void PlanningTask::motor_disable_main() {
   motor_en = false;
-
+  gain_cnt = 0;
   mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B, 0);
   mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B,
                       MCPWM_DUTY_MODE_0);
@@ -248,7 +254,8 @@ void PlanningTask::buzzer(ledc_channel_config_t &buzzer_ch,
     duty = 50;
     buzzer_time_cnt++;
     buzzer = true;
-  } else if (buzzer_time_cnt >= tgt_val->buzzer.time) {
+  } else if (buzzer_time_cnt >= tgt_val->buzzer.time &&
+             buzzer_time_cnt < tgt_val->buzzer.time + 10) {
     duty = 0;
     buzzer_time_cnt++;
     buzzer = true;
@@ -318,6 +325,8 @@ void PlanningTask::task() {
   int64_t end = 0;
   int64_t start_calc_mpc = 0;
   int64_t end_calc_mpc = 0;
+  int64_t start_que_rec = 0;
+  int64_t end_que_rec = 0;
   // int64_t start2;
   // int64_t end2;
   // int64_t start2;
@@ -453,8 +462,7 @@ void PlanningTask::task() {
       tgt_val->tgt_in.axel_degenerate_gain = axel_degenerate_gain;
     }
 
-    start_calc_mpc = esp_timer_get_time();
-    if (!first_req) {
+    if (first_req) {
       mpc_tgt_calc.step(&tgt_val->tgt_in, &tgt_val->ego_in,
                         tgt_val->motion_mode, mpc_step, &mpc_next_ego,
                         &dynamics);
@@ -479,26 +487,24 @@ void PlanningTask::task() {
     calc_tgt_duty(); // 15 ~ 20 usec
 
     check_fail_safe(); // 7 ~ 9 usec
-
-    // システム同定用
-    if (tgt_val->motion_type == MotionType::SYS_ID_PARA ||
-        tgt_val->motion_type == MotionType::SYS_ID_ROLL) {
-      tgt_duty.duty_l =
-          -tgt_val->nmr.sys_id.left_v / sensing_result->ego.battery_lp * 100;
-      tgt_duty.duty_r =
-          tgt_val->nmr.sys_id.right_v / sensing_result->ego.battery_lp * 100;
-    }
+    start_que_rec = esp_timer_get_time();
 
     // 22 ~ 25 usec
     set_next_duty(tgt_duty.duty_l, tgt_duty.duty_r, tgt_duty.duty_suction);
 
+    end_que_rec = esp_timer_get_time();
     buzzer(buzzer_ch, buzzer_timer);
     global_msec_timer++;
 
     end = esp_timer_get_time();
     tgt_val->calc_time = end - start;
+
+    // tgt_val->calc_time2 = end_que_rec - start_que_rec;
+
     // tgt_val->calc_time2 = end_calc_mpc - start_calc_mpc;
-    tgt_val->calc_time2 = end_duty_cal - start_duty_cal;
+    // tgt_val->calc_time2 = end_que_rec - start_que_rec;
+
+    // tgt_val->calc_time2 = end_duty_cal - start_duty_cal;
 
     // printf("pln: %d, %d\n", (int16_t)(end - start), (int16_t)(end2 -
     // start2));
@@ -1127,80 +1133,89 @@ void PlanningTask::change_pwm_freq(float duty_l, float duty_r) {
   }
   float duty_r_abs = duty_r > 0 ? duty_r : -duty_r;
   float duty_l_abs = duty_l > 0 ? duty_l : -duty_l;
-  if (param_ro->motor_driver_type == MotorDriveType::TWO_PWM) {
-    if (judge_motor_pwm(duty_l, param_ro->motor_l_cw_ccw_type)) {
-      mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A, duty_l_abs);
-      mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A,
-                          MCPWM_DUTY_MODE_0);
-      mcpwm_set_signal_low(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B);
-      mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B, 0);
-      mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B,
-                          MCPWM_DUTY_MODE_0);
-    } else {
-      mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A, 0);
-      mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A,
-                          MCPWM_DUTY_MODE_0);
-      mcpwm_set_signal_low(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A);
-      mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B, duty_l_abs);
-      mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B,
-                          MCPWM_DUTY_MODE_0);
-    }
-    if (judge_motor_pwm(duty_r, param_ro->motor_r_cw_ccw_type)) {
-      mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_A, duty_r_abs);
-      mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_A,
-                          MCPWM_DUTY_MODE_0);
-      mcpwm_set_signal_low(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_B);
-      mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_B, 0);
-      mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_B,
-                          MCPWM_DUTY_MODE_0);
-    } else {
-      mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_A, 0);
-      mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_A,
-                          MCPWM_DUTY_MODE_0);
-      mcpwm_set_signal_low(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_A);
-      mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_B, duty_r_abs);
-      mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_B,
-                          MCPWM_DUTY_MODE_0);
-    }
-  } else if (param_ro->motor_driver_type == MotorDriveType::EN1_PH1) {
-    if (judge_motor_pwm(duty_l, param_ro->motor_l_cw_ccw_type)) {
-      set_gpio_state(L_CW_CCW1, true);
-    } else {
-      set_gpio_state(L_CW_CCW1, false);
-    }
-    if (judge_motor_pwm(duty_r, param_ro->motor_r_cw_ccw_type)) {
-      set_gpio_state(R_CW_CCW1, true);
-    } else {
-      set_gpio_state(R_CW_CCW1, false);
-    }
-    mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A, duty_l_abs);
-    mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A,
-                        MCPWM_DUTY_MODE_0);
-    mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_A, duty_r_abs);
-    mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_A,
-                        MCPWM_DUTY_MODE_0);
-  } else if (param_ro->motor_driver_type == MotorDriveType::EN1_PH2) {
-    if (judge_motor_pwm(duty_l, param_ro->motor_l_cw_ccw_type)) {
-      set_gpio_state(L_CW_CCW1, true);
-      set_gpio_state(L_CW_CCW2, false);
-    } else {
-      set_gpio_state(L_CW_CCW1, false);
-      set_gpio_state(L_CW_CCW2, true);
-    }
-    if (judge_motor_pwm(duty_r, param_ro->motor_r_cw_ccw_type)) {
-      set_gpio_state(R_CW_CCW1, true);
-      set_gpio_state(R_CW_CCW2, false);
-    } else {
-      set_gpio_state(R_CW_CCW1, false);
-      set_gpio_state(R_CW_CCW2, true);
-    }
-    mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A, duty_l_abs);
-    mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A,
-                        MCPWM_DUTY_MODE_0);
-    mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_A, duty_r_abs);
-    mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_A,
-                        MCPWM_DUTY_MODE_0);
+  // if (param_ro->motor_driver_type == MotorDriveType::TWO_PWM) {
+  //   if (judge_motor_pwm(duty_l, param_ro->motor_l_cw_ccw_type)) {
+  //     mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A, duty_l_abs);
+  //     mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A,
+  //                         MCPWM_DUTY_MODE_0);
+  //     mcpwm_set_signal_low(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B);
+  //     mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B, 0);
+  //     mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B,
+  //                         MCPWM_DUTY_MODE_0);
+  //   } else {
+  //     mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A, 0);
+  //     mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A,
+  //                         MCPWM_DUTY_MODE_0);
+  //     mcpwm_set_signal_low(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A);
+  //     mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B, duty_l_abs);
+  //     mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B,
+  //                         MCPWM_DUTY_MODE_0);
+  //   }
+  //   if (judge_motor_pwm(duty_r, param_ro->motor_r_cw_ccw_type)) {
+  //     mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_A, duty_r_abs);
+  //     mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_A,
+  //                         MCPWM_DUTY_MODE_0);
+  //     mcpwm_set_signal_low(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_B);
+  //     mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_B, 0);
+  //     mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_B,
+  //                         MCPWM_DUTY_MODE_0);
+  //   } else {
+  //     mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_A, 0);
+  //     mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_A,
+  //                         MCPWM_DUTY_MODE_0);
+  //     mcpwm_set_signal_low(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_A);
+  //     mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_B, duty_r_abs);
+  //     mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_B,
+  //                         MCPWM_DUTY_MODE_0);
+  //   }
+  // } else if (param_ro->motor_driver_type == MotorDriveType::EN1_PH1) {
+  //   if (judge_motor_pwm(duty_l, param_ro->motor_l_cw_ccw_type)) {
+  //     set_gpio_state(L_CW_CCW1, true);
+  //   } else {
+  //     set_gpio_state(L_CW_CCW1, false);
+  //   }
+  //   if (judge_motor_pwm(duty_r, param_ro->motor_r_cw_ccw_type)) {
+  //     set_gpio_state(R_CW_CCW1, true);
+  //   } else {
+  //     set_gpio_state(R_CW_CCW1, false);
+  //   }
+  //   mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A, duty_l_abs);
+  //   mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A,
+  //                       MCPWM_DUTY_MODE_0);
+  //   mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_A, duty_r_abs);
+  //   mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_A,
+  //                       MCPWM_DUTY_MODE_0);
+  // } else if (param_ro->motor_driver_type == MotorDriveType::EN1_PH2) {
+  uint32_t high = 0;
+  uint32_t low = 0;
+
+  if (judge_motor_pwm(duty_l, param_ro->motor_l_cw_ccw_type)) {
+    high |= L_CW_CCW1_BIT;
+    low |= L_CW_CCW2_BIT;
+  } else {
+    high |= L_CW_CCW2_BIT;
+    low |= L_CW_CCW1_BIT;
   }
+  if (judge_motor_pwm(duty_r, param_ro->motor_r_cw_ccw_type)) {
+    high |= R_CW_CCW1_BIT;
+    low |= R_CW_CCW2_BIT;
+  } else {
+    high |= R_CW_CCW2_BIT;
+    low |= R_CW_CCW1_BIT;
+  }
+
+  GPIO.out1_w1ts.val = high;
+  GPIO.out1_w1tc.val = low;
+  auto start_que_rec = esp_timer_get_time();
+
+  // MCPWM[MCPWM_UNIT_0]->timer[MCPWM_TIMER_0].cmpr_value[MCPWM_OPR_A].cmpr_val = duty_l_abs;
+  // MCPWM[MCPWM_UNIT_0]->timer[MCPWM_TIMER_1].cmpr_value[MCPWM_OPR_A].cmpr_val = duty_r_abs;
+
+  mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A, duty_l_abs);
+  mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_A, duty_r_abs);
+  auto end_que_rec = esp_timer_get_time();
+  tgt_val->calc_time2 = end_que_rec - start_que_rec;
+  // }
 }
 
 void PlanningTask::set_next_duty(float duty_l, float duty_r,
@@ -1231,19 +1246,7 @@ void PlanningTask::set_next_duty(float duty_l, float duty_r,
     if (duty_suction_in > 100) {
       duty_suction_in = 100;
     }
-
-    mcpwm_set_signal_low(MCPWM_UNIT_1, MCPWM_TIMER_2, MCPWM_OPR_A);
     mcpwm_set_duty(MCPWM_UNIT_1, MCPWM_TIMER_2, MCPWM_OPR_A, duty_suction_in);
-    mcpwm_set_duty_type(MCPWM_UNIT_1, MCPWM_TIMER_2, MCPWM_OPR_A,
-                        MCPWM_DUTY_MODE_0);
-
-    // ledc_set_duty(suction_ch.speed_mode, suction_ch.channel,
-    // duty_suction_in); ledc_update_duty(suction_ch.speed_mode,
-    // suction_ch.channel);
-  } else {
-    gain_cnt = 0;
-    // ledc_set_duty(suction_ch.speed_mode, suction_ch.channel, 0);
-    // ledc_update_duty(suction_ch.speed_mode, suction_ch.channel);
   }
 }
 
@@ -1307,6 +1310,11 @@ void PlanningTask::calc_tgt_duty() {
 
   float duty_sen = 0;
   float sen_ang = 0;
+
+  error_entity.s_val.p = error_entity.s_val.i = error_entity.s_val.d = 0;
+  error_entity.s_val.p_val = error_entity.s_val.i_val =
+      error_entity.s_val.d_val = 0;
+  error_entity.s_val.z = error_entity.s_val.zz = 0;
   if (tgt_val->nmr.sct == SensorCtrlType::Straight) {
     duty_sen = calc_sensor_pid();
     // if (search_mode) {
@@ -1392,7 +1400,7 @@ void PlanningTask::calc_tgt_duty() {
 
     // error_entity.v.error_i = 0;
     // error_entity.w.error_i = 0;
-    if (sensing_result->ego.front_dist < 90) {
+    if (sensing_result->ego.front_dist < param_ro->cell) {
       error_entity.dist.error_p = sensing_result->ego.front_dist -
                                   param_ro->sen_ref_p.search_exist.front_ctrl;
       error_entity.ang.error_p =
@@ -1506,16 +1514,12 @@ void PlanningTask::calc_tgt_duty() {
   // reset
   error_entity.v_val.p = error_entity.v_val.i = error_entity.v_val.d = 0;
   error_entity.w_val.p = error_entity.w_val.i = error_entity.w_val.d = 0;
-  error_entity.s_val.p = error_entity.s_val.i = error_entity.s_val.d = 0;
   error_entity.v_val.p_val = error_entity.v_val.i_val =
       error_entity.v_val.d_val = 0;
   error_entity.w_val.p_val = error_entity.w_val.i_val =
       error_entity.w_val.d_val = 0;
-  error_entity.s_val.p_val = error_entity.s_val.i_val =
-      error_entity.s_val.d_val = 0;
   error_entity.v_val.z = error_entity.v_val.zz = 0;
   error_entity.w_val.z = error_entity.w_val.zz = 0;
-  error_entity.s_val.z = error_entity.s_val.zz = 0;
 
   if (tgt_val->motion_type == MotionType::FRONT_CTRL || !motor_en) {
     vel_pid.step(&error_entity.v.error_p, &param_ro->motor_pid.p,
@@ -1917,8 +1921,9 @@ void PlanningTask::calc_tgt_duty() {
         auto kd_gain = param_ro->gyro_pid.d * error_entity.w_kf.error_d;
         limitter(kp_gain, ki_gain, kb_gain, kd_gain,
                  param_ro->gyro_pid_gain_limitter);
-        duty_roll = kp_gain + ki_gain + kb_gain + kc_gain + kd_gain;
-        // (error_entity.ang_log.gain_z - error_entity.ang_log.gain_zz) * dt;
+        duty_roll =
+            kp_gain + ki_gain + kb_gain + kc_gain + kd_gain +
+            (error_entity.ang_log.gain_z - error_entity.ang_log.gain_zz) * dt;
 
         error_entity.ang_log.gain_zz = error_entity.ang_log.gain_z;
         error_entity.ang_log.gain_z = duty_roll;
