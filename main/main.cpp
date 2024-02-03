@@ -161,204 +161,17 @@ std::shared_ptr<sensing_result_entity_t> get_sensing_entity() {
   return sensing_entity;
 }
 
-extern "C" void app_main3() {
-  // init_gpio();
-  // init_uart();
-  // adc2_config_channel_atten(BATTERY, ADC_ATTEN_DB_11);
-
-  // const esp_timer_create_args_t timer_200ms_args = {
-  //     .callback = &timer_200ms_callback, .name = "timer_100ms"};
-
-  // const esp_timer_create_args_t timer_10ms_args = {
-  //     .callback = &timer_10ms_callback, .name = "timer_10ms"};
-
-  // ESP_ERROR_CHECK(esp_timer_create(&timer_200ms_args, &timer_1000us));
-  // ESP_ERROR_CHECK(esp_timer_create(&timer_10ms_args, &timer_100us));
-
-  // ESP_ERROR_CHECK(esp_timer_start_periodic(timer_1000us, 250)); // 1m second
-  // while (1) {
-  //   vTaskDelay(pdMS_TO_TICKS(1000));
-  // }
-}
-// ESP_ERROR_CHECK(esp_timer_start_periodic(adc_timer, 1000000)); // 1000m
-// second ESP_ERROR_CHECK(esp_timer_start_periodic(adc_timer, 100000)); //
-// 100m second ESP_ERROR_CHECK(esp_timer_start_periodic(adc_timer, 10000)); //
-// 10m second
-
-// static void multiply2Matrices()
-// {
-//     Eigen::MatrixXf M(2, 2);
-//     Eigen::MatrixXf V(2, 2);
-//     for (int i = 0; i <= 1; i++) {
-//         for (int j = 0; j <= 1; j++) {
-//             M(i, j) = 1;
-//             V(i, j) = 2;
-//         }
-//     }
-//     Eigen::MatrixXf Result = M * V;
-//     std::cout << "MatrixXf Result = " << std::endl << Result << std::endl;
-// }
-
-// static void runSVD()
-// {
-//     Eigen::MatrixXf C;
-//     C.setRandom(27, 18);
-//     Eigen::JacobiSVD<Eigen::MatrixXf> svd(C, Eigen::ComputeThinU |
-//     Eigen::ComputeThinV); Eigen::MatrixXf Cp = svd.matrixU() *
-//     svd.singularValues().asDiagonal() * svd.matrixV().transpose();
-//     Eigen::MatrixXf diff = Cp - C;
-//     std::cout << "SDV matrix U: " << std::endl << svd.matrixU() << std::endl;
-//     std::cout << "SDV singularValues: " << std::endl <<
-//     svd.singularValues().transpose() << std::endl; std::cout << "SDV matrix
-//     V: " << std::endl << svd.matrixV() << std::endl; std::cout << "diff:\n"
-//     << diff.array().abs().sum() << "\n";
-// }
-
-// extern "C" void app_main() {
-//     std::cout << "Eigen example." << std::endl;
-//     multiply2Matrices();
-//     runSVD();
-//     std::cout << "Example finished!" << std::endl;
-// }
-
 extern "C" void app_main() {
   // Adachi adachi;
 
   init_gpio();
   init_uart();
-  /*
-  constexpr unsigned long hz = 75000 / 1;
-  const int res = 10;
-  const unsigned long int resolution = ((unsigned long int)res) * 100'000L;
-  mcpwm_group_set_resolution(MCPWM_UNIT_0, resolution);
-  mcpwm_config_t motor_pwm_conf;
-  memset(&motor_pwm_conf, 0, sizeof(motor_pwm_conf));
-  motor_pwm_conf.frequency = hz; // PWM周波数= 10kHz,
-  motor_pwm_conf.cmpr_a = 0; // デューティサイクルの初期値（0%）
-  motor_pwm_conf.cmpr_b = 0; // デューティサイクルの初期値（0%）
-  motor_pwm_conf.counter_mode = MCPWM_UP_COUNTER;
-  motor_pwm_conf.duty_mode = MCPWM_DUTY_MODE_0; // アクティブハイ
-  mcpwm_init(MCPWM_UNIT_0, MCPWM_TIMER_0, &motor_pwm_conf);
-  mcpwm_init(MCPWM_UNIT_0, MCPWM_TIMER_1, &motor_pwm_conf);
-
-  mcpwm_gpio_init(MCPWM_UNIT_0, MCPWM0A, Motor_R_PWM);
-  mcpwm_gpio_init(MCPWM_UNIT_0, MCPWM0B, Motor_R_PWM2);
-  mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A,
-                      MCPWM_DUTY_MODE_0);
-  mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B,
-                      MCPWM_DUTY_MODE_0);
-
-  mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A, 0);
-  mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B, 0);
-
-  mcpwm_set_signal_low(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A);
-  mcpwm_set_signal_low(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B);
-  const auto DUTY_CYCLE = 20;
-
-  printf("\n");
-  while (true) {
-    const auto state = gpio_get_level(SW1);
-
-    printf("aaa\n");
-    if (state) {
-
-      mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A, DUTY_CYCLE);
-      mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A,
-                          MCPWM_DUTY_MODE_0);
-      mcpwm_set_signal_low(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B);
-      mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B, 0);
-      mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B,
-                          MCPWM_DUTY_MODE_0);
-    } else {
-      mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A, 0);
-      mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A,
-                          MCPWM_DUTY_MODE_0);
-      mcpwm_set_signal_low(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A);
-      mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B, DUTY_CYCLE);
-      mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B,
-                          MCPWM_DUTY_MODE_0);
-    }
-
-    vTaskDelay(10.0 / portTICK_RATE_MS);
-  }
-
-  */
-  // adc2_config_channel_atten(BATTERY, ADC_ATTEN_DB_11);
-
-  // const int arraySize = 100;
-  // // esp_err_t ret = heap_caps_init();
-  // int *array =
-  //     (int *)heap_caps_malloc(arraySize * sizeof(int), MALLOC_CAP_SPIRAM);
-  // // 確保した配列を使用する
-
-  // if (array == NULL) {
-  //   while (true) {
-  //     vTaskDelay(5000.0 / portTICK_RATE_MS);
-  //   }
-  //   printf("Memory allocation failed!\n");
-  //   return;
-  // }
-
-  // for (int i = 0; i < arraySize; i++) {
-  //   array[i] = i;
-  // }
-  // std::vector<int> vec(array, array + arraySize);
-  // vec.push_back(42);
-  // for (const auto v : vec) {
-  //   printf("%d\n", v);
-  // }
-
-  // // 確保したメモリを解放する
-  // heap_caps_free(array);
 
   QueueHandle_t xQueue;
   xQueue = xQueueCreate(4, sizeof(motion_tgt_val_t *));
 
-  // esp_vfs_fat_mount_config_t mount_config;
-  // mount_config.max_files = 8;
-  // mount_config.format_if_mount_failed = true;
-  // mount_config.allocation_unit_size = CONFIG_WL_SECTOR_SIZE;
-  // const char *base_path = "/spiflash";
-  // wl_handle_t s_wl_handle = WL_INVALID_HANDLE;
-
-  // printf("storage0: try mount\n");
-  // esp_err_t err = esp_vfs_fat_spiflash_mount_rw_wl(base_path, "storage0",
-  //                                            &mount_config, &s_wl_handle);
-  // if (err != ESP_OK) {
-  //   printf("storage0: Failed to mount FATFS (%s)\n", esp_err_to_name(err));
-  //   return;
-  // } else {
-  //   printf("storage0: mount OK\n");
-  // }
-  // gpio_set_level(L_CW_CCW1, 1);
-  // gpio_set_level(R_CW_CCW1, 1);
   gpio_set_level(SUCTION_PWM, 0);
   int c = 0;
-  // mcpwm_gpio_init(MCPWM_UNIT_1, MCPWM2A, SUCTION_PWM);
-  // mcpwm_config_t suction_pwm_conf;
-  // memset(&suction_pwm_conf, 0, sizeof(suction_pwm_conf));
-  // suction_pwm_conf.frequency = 200000; // PWM周波数= 10kHz,
-  // suction_pwm_conf.cmpr_a = 0; // デューティサイクルの初期値（0%）
-  // suction_pwm_conf.cmpr_b = 0; // デューティサイクルの初期値（0%）
-  // suction_pwm_conf.counter_mode = MCPWM_UP_COUNTER;
-  // suction_pwm_conf.duty_mode = MCPWM_DUTY_MODE_0; // アクティブハイ
-  // suction_pwm_conf.cmpr_a = 0; // デューティサイクルの初期値（0%）
-  // mcpwm_init(MCPWM_UNIT_1, MCPWM_TIMER_2, &suction_pwm_conf);
-
-  // while (true) {
-  //   printf("hello, world %d\n", c++);
-
-  //   mcpwm_set_signal_low(MCPWM_UNIT_1, MCPWM_TIMER_2, MCPWM_OPR_B);
-  //   float duty = 40.0 * c / 1000;
-  //   if (duty > 40) {
-  //     duty = 40;
-  //   }
-  //   mcpwm_set_duty(MCPWM_UNIT_1, MCPWM_TIMER_2, MCPWM_OPR_A, duty);
-  //   mcpwm_set_duty_type(MCPWM_UNIT_1, MCPWM_TIMER_2, MCPWM_OPR_A,
-  //                       MCPWM_DUTY_MODE_0);
-
-  //   vTaskDelay(10.0 / portTICK_RATE_MS);
-  // }
 
   gpio_set_level(SUCTION_PWM, 0);
   param->tire = 12.0;
@@ -393,15 +206,6 @@ extern "C" void app_main() {
   lt->set_error_entity(error_entity);
   lt->create_task(1);
   pt->set_logging_task(lt);
-  // vTaskDelay(1000.0 / portTICK_RATE_MS);
-  // int i = 0;
-  // for (const auto &v : lt->log_vec) {
-  //   printf("%d, %p %p %p\n", i++, &v, &v->img_v, &v->v_l);
-  // }
-
-  // while (true) {
-  //   vTaskDelay(5000.0 / portTICK_RATE_MS);
-  // }
 
   mt->set_sensing_entity(sensing_entity);
   mt->set_input_param_entity(param);
@@ -410,15 +214,7 @@ extern "C" void app_main() {
   mt->set_logging_task(lt);
   mt->set_queue_handler(xQueue);
   mt->create_task(1);
-  
 
-  // /* Set the GPIO as a push/pull output */
-
-  // gpio_set_level(LED1, 0);
-  // gpio_set_level(LED2, 0);
-  // gpio_set_level(LED3, 0);
-  // gpio_set_level(LED4, 0);
-  // gpio_set_level(LED5, 0);
   esp_task_wdt_reset();
   esp_task_wdt_add(xTaskGetIdleTaskHandleForCPU(0));
   esp_task_wdt_add(xTaskGetIdleTaskHandleForCPU(1));
@@ -429,28 +225,6 @@ extern "C" void app_main() {
   writeBuffer[1] = 0x00;
   while (1) {
     vTaskDelay(5000.0 / portTICK_RATE_MS);
-    // writeBuffer[0] = (i << 5) | 0x18;
-    // writeBuffer[0] = (i << 5) | 0x1f;
-
-    // printf("%c[2J", ESC);   /* 画面消去 */
-    // printf("%c[0;0H", ESC); /* 戦闘戻す*/
-    // printf("%d, %d\n", st.sensing_result->led_sen.left90.raw,
-    //        st.sensing_result->led_sen.right90.raw);
-    // printf("%d %x\n", i, i << 5);
-    // printf("%d %x\n", i, (i << 5) | 0x1F);
-    // i2c_master_write_to_device(0, 0x9A, writeBuffer, 2, 1 /
-    // portTICK_RATE_MS); printf("%x, %x\n", (i << 5) | 0x18, (0x04 << 5) |
-    // 0x18); printf("battery: %f\n", st.sensing_result->battery.data);
-    // printf("gyro: %d\n", st.sensing_result->gyro.raw);
-    // SCCB_Write(0x9A, writeBuffer[0], writeBuffer[0]);
-    // i++;
-    // if (i > 6) {
-    //   i = 1;
-    // }
-    // i--;
-    // if (i < 1) {
-    //   i = 6;
-    // }
     if (mt->ui->button_state()) {
       printf("time_stamp: %d\n", tgt_val->nmr.timstamp);
       printf("motion_type: %d\n", static_cast<int>(tgt_val->motion_type));
