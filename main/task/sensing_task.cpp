@@ -151,19 +151,19 @@ void SensingTask::timer_200us_callback_main() {
 void SensingTask::timer_250us_callback_main() {}
 
 void SensingTask::create_task(const BaseType_t xCoreID) {
-  xTaskCreatePinnedToCore(task_entry_point, "sensing_task", 8192, this, 11,
+  xTaskCreatePinnedToCore(task_entry_point, "sensing_task", 8192 * 2, this, 3,
                           &handle, xCoreID);
-  const esp_timer_create_args_t timer_200us_args = {
-      .callback = &SensingTask::timer_200us_callback,
-      .arg = this,
-      .name = "timer_100us"};
-  esp_timer_create(&timer_200us_args, &timer_200us);
+  // const esp_timer_create_args_t timer_200us_args = {
+  //     .callback = &SensingTask::timer_200us_callback,
+  //     .arg = this,
+  //     .name = "timer_100us"};
+  // esp_timer_create(&timer_200us_args, &timer_200us);
 
-  const esp_timer_create_args_t timer_10us_args = {
-      .callback = &SensingTask::timer_10us_callback,
-      .arg = this,
-      .name = "timer_10us"};
-  esp_timer_create(&timer_10us_args, &timer_10us);
+  // const esp_timer_create_args_t timer_10us_args = {
+  //     .callback = &SensingTask::timer_10us_callback,
+  //     .arg = this,
+  //     .name = "timer_10us"};
+  // esp_timer_create(&timer_10us_args, &timer_10us);
 }
 void SensingTask::set_input_param_entity(
     std::shared_ptr<input_param_t> &_param) {
@@ -226,13 +226,16 @@ void SensingTask::task() {
   // esp_timer_start_periodic(timer_200us, 200);
   // esp_timer_start_periodic(timer_250us, 250);
 
-  int64_t start;
-  int64_t end;
-  int64_t start2;
-  int64_t end2;
+  int64_t start = 0;
+  int64_t end = 0;
+  int64_t start2 = 0;
+  int64_t end2 = 0;
+  int64_t start_before = 0;
   while (1) {
-    start = esp_timer_get_time();
 
+    start_before = start;
+    start = esp_timer_get_time();
+    se->calc_time = (int16_t)(start - start_before);
     gyro_if.req_read2byte_itr(0x26);
     start2 = esp_timer_get_time();
     adc2_get_raw(BATTERY, width, &sensing_result->battery.raw);
@@ -368,14 +371,12 @@ void SensingTask::task() {
     se->gyro.raw = se->gyro_list[4];
     se->gyro.data = (float)(se->gyro_list[4]);
     // int32_t enc_r = (enc_if.read2byte(0x00, 0x00, true) & 0xFFFF) >> 2;
-    // int32_t enc_r = (enc_if.read2byte(0x00, 0x00, true));
     int32_t enc_r = enc_if.read2byte(0x3F, 0xFF, true) & 0x3FFF;
 
     se->encoder.right_old = se->encoder.right;
     se->encoder.right = enc_r;
 
     // int32_t enc_l = (enc_if.read2byte(0x00, 0x00, false) & 0xFFFF) >> 2;
-    // int32_t enc_l = (enc_if.read2byte(0x00, 0x00, false));
     int32_t enc_l = enc_if.read2byte(0x3F, 0xFF, false) & 0x3FFF;
     se->encoder.left_old = se->encoder.left;
     se->encoder.left = enc_l;
@@ -385,8 +386,9 @@ void SensingTask::task() {
 
     // cout << enc_r << ", " << enc_l << endl;
     end = esp_timer_get_time();
-    se->calc_time = (int16_t)(end - start);
-    // printf("sen: %d, %d\n", (int16_t)(end - start), (int16_t)(end2 - start2));
+    se->calc_time2 = (int16_t)(end - start);
+    // printf("sen: %d, %d\n", (int16_t)(end - start), (int16_t)(end2 -
+    // start2));
     vTaskDelay(1.0 / portTICK_PERIOD_MS);
   }
 }

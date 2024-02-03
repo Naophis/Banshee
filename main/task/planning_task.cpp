@@ -13,7 +13,7 @@ PlanningTask::PlanningTask() {}
 
 PlanningTask::~PlanningTask() {}
 void PlanningTask::create_task(const BaseType_t xCoreID) {
-  xTaskCreatePinnedToCore(task_entry_point, "planning_task", 8192 * 3, this, 9,
+  xTaskCreatePinnedToCore(task_entry_point, "planning_task", 8192 * 4, this, 2,
                           &handle, xCoreID);
   motor_qh_enable = xQueueCreate(4, sizeof(motor_req_t *));
   suction_qh_enable = xQueueCreate(4, sizeof(motor_req_t *));
@@ -243,6 +243,9 @@ void PlanningTask::buzzer(ledc_channel_config_t &buzzer_ch,
                           ledc_timer_config_t &buzzer_timer) {
   int duty = 0;
   bool buzzer = false;
+  if (motor_en || suction_en) {
+    return;
+  }
   if (buzzer_timestamp != tgt_val->buzzer.timstamp) {
     buzzer_time_cnt = 0;
     buzzer_timestamp = tgt_val->buzzer.timstamp;
@@ -421,7 +424,6 @@ void PlanningTask::task() {
       }
     }
     // 自己位置更新
-
     int64_t start_duty_cal = esp_timer_get_time();
     update_ego_motion(); // 30 usec
     int64_t end_duty_cal = esp_timer_get_time();
@@ -462,12 +464,14 @@ void PlanningTask::task() {
       tgt_val->tgt_in.axel_degenerate_gain = axel_degenerate_gain;
     }
 
+    start_calc_mpc = esp_timer_get_time();
     if (first_req) {
       mpc_tgt_calc.step(&tgt_val->tgt_in, &tgt_val->ego_in,
                         tgt_val->motion_mode, mpc_step, &mpc_next_ego,
                         &dynamics);
     }
     end_calc_mpc = esp_timer_get_time();
+    // check 3
 
     if (tgt_val->motion_type == MotionType::STRAIGHT ||
         tgt_val->motion_type == MotionType::SLA_FRONT_STR ||
@@ -487,18 +491,17 @@ void PlanningTask::task() {
     calc_tgt_duty(); // 15 ~ 20 usec
 
     check_fail_safe(); // 7 ~ 9 usec
-    start_que_rec = esp_timer_get_time();
 
+    // chekc 4
     // 22 ~ 25 usec
     set_next_duty(tgt_duty.duty_l, tgt_duty.duty_r, tgt_duty.duty_suction);
 
-    end_que_rec = esp_timer_get_time();
     buzzer(buzzer_ch, buzzer_timer);
     global_msec_timer++;
 
     end = esp_timer_get_time();
-    tgt_val->calc_time = end - start;
-
+    tgt_val->calc_time = (int16_t)(end - start);
+    // sensing_result->calc_time = (int16_t)(end_calc_mpc - start_calc_mpc);
     // tgt_val->calc_time2 = end_que_rec - start_que_rec;
 
     // tgt_val->calc_time2 = end_calc_mpc - start_calc_mpc;
@@ -667,8 +670,10 @@ float PlanningTask::check_sen_error() {
   // }
 
   //前壁が近すぎるときはエスケープ
-  if (!(sensing_result->ego.left90_mid_dist <
+  if (!(10 < sensing_result->ego.left90_mid_dist &&
+        sensing_result->ego.left90_mid_dist <
             param_ro->sen_ref_p.normal.exist.front &&
+        10 < sensing_result->ego.right90_mid_dist &&
         sensing_result->ego.right90_mid_dist <
             param_ro->sen_ref_p.normal.exist.front)) {
     if (std::abs(sensing_result->ego.right45_dist -
@@ -697,8 +702,10 @@ float PlanningTask::check_sen_error() {
     error_entity.sen_log.gain_zz = 0;
     error_entity.sen_log.gain_z = 0;
 
-    if (!(sensing_result->ego.left90_mid_dist <
+    if (!(10 < sensing_result->ego.left90_mid_dist &&
+          sensing_result->ego.left90_mid_dist <
               param_ro->sen_ref_p.normal.exist.front &&
+          10 < sensing_result->ego.right90_mid_dist &&
           sensing_result->ego.right90_mid_dist <
               param_ro->sen_ref_p.normal.exist.front)) {
       if (sensing_result->ego.right45_dist >
@@ -1206,22 +1213,25 @@ void PlanningTask::change_pwm_freq(float duty_l, float duty_r) {
 
   GPIO.out1_w1ts.val = high;
   GPIO.out1_w1tc.val = low;
-  auto start_que_rec = esp_timer_get_time();
+  // auto start_que_rec = esp_timer_get_time();
 
   // MCPWM[MCPWM_UNIT_0]->timer[MCPWM_TIMER_0].cmpr_value[MCPWM_OPR_A].cmpr_val = duty_l_abs;
   // MCPWM[MCPWM_UNIT_0]->timer[MCPWM_TIMER_1].cmpr_value[MCPWM_OPR_A].cmpr_val = duty_r_abs;
 
   mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A, duty_l_abs);
   mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_A, duty_r_abs);
-  auto end_que_rec = esp_timer_get_time();
-  tgt_val->calc_time2 = end_que_rec - start_que_rec;
+  // auto end_que_rec = esp_timer_get_time();
+  // tgt_val->calc_time2 = end_que_rec - start_que_rec;
   // }
 }
 
 void PlanningTask::set_next_duty(float duty_l, float duty_r,
                                  float duty_suction) {
   if (motor_en) {
+    auto start_que_rec = esp_timer_get_time();
     change_pwm_freq(duty_l, duty_r);
+    auto end_que_rec = esp_timer_get_time();
+    tgt_val->calc_time2 = end_que_rec - start_que_rec;
   }
   if (suction_en) {
     float duty_suction_in = 0;
@@ -1246,7 +1256,10 @@ void PlanningTask::set_next_duty(float duty_l, float duty_r,
     if (duty_suction_in > 100) {
       duty_suction_in = 100;
     }
+    // mcpwm_set_signal_low(MCPWM_UNIT_1, MCPWM_TIMER_2, MCPWM_OPR_A);
     mcpwm_set_duty(MCPWM_UNIT_1, MCPWM_TIMER_2, MCPWM_OPR_A, duty_suction_in);
+    // mcpwm_set_duty_type(MCPWM_UNIT_1, MCPWM_TIMER_2, MCPWM_OPR_A,
+    //                     MCPWM_DUTY_MODE_0);
   }
 }
 
@@ -1921,9 +1934,9 @@ void PlanningTask::calc_tgt_duty() {
         auto kd_gain = param_ro->gyro_pid.d * error_entity.w_kf.error_d;
         limitter(kp_gain, ki_gain, kb_gain, kd_gain,
                  param_ro->gyro_pid_gain_limitter);
-        duty_roll =
-            kp_gain + ki_gain + kb_gain + kc_gain + kd_gain +
-            (error_entity.ang_log.gain_z - error_entity.ang_log.gain_zz) * dt;
+        duty_roll = kp_gain + ki_gain + kb_gain + kc_gain + kd_gain;
+        // +  (error_entity.ang_log.gain_z -
+        // error_entity.ang_log.gain_zz) * dt;
 
         error_entity.ang_log.gain_zz = error_entity.ang_log.gain_z;
         error_entity.ang_log.gain_z = duty_roll;
@@ -2373,6 +2386,13 @@ void PlanningTask::cp_request() {
   motion_req_timestamp = receive_req->nmr.timstamp;
 
   tgt_val->tgt_in.v_max = receive_req->nmr.v_max;
+
+  if (receive_req->nmr.motion_type == MotionType::STRAIGHT) {
+    if (tgt_val->ego_in.v > receive_req->nmr.v_max) {
+      tgt_val->tgt_in.v_max = tgt_val->ego_in.v;
+    }
+  }
+
   tgt_val->tgt_in.end_v = receive_req->nmr.v_end;
   tgt_val->tgt_in.accl = receive_req->nmr.accl;
   tgt_val->tgt_in.decel = receive_req->nmr.decel;

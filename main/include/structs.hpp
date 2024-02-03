@@ -201,6 +201,7 @@ typedef struct {
   sen_logs_t sen;
   sen_dist_log_t sen_dist_log;
   int16_t calc_time;
+  int16_t calc_time2;
 } sensing_result_entity_t;
 
 typedef struct {
@@ -362,8 +363,13 @@ typedef struct {
   int FF_keV = 0;
   float offset_start_dist = 0;
   float offset_start_dist_search = 0;
+  float pivot_back_offset = 0;
   float cell = 90;
   float cell2 = 90;
+  float pivot_angle_180 = 180;
+  float pivot_angle_90 = 90;
+  float wall_off_front_move_dist_th = 90;
+  float wall_off_front_move_dia_dist_th = 90;
   pid_param_t motor_pid;
   pid_param_t motor_pid_gain_limitter;
   pid_param_t motor_pid2;
@@ -390,6 +396,7 @@ typedef struct {
   float clear_angle = 0;
   float clear_dist_order = 0;
   float front_dist_offset = 0;
+  float front_dist_offset0 = 0;
   float front_dist_offset2 = 0;
   float front_dist_offset3 = 0;
   float front_dist_offset4 = 0;
@@ -422,6 +429,8 @@ typedef struct {
   int fast_log_enable = 0;
   float front_dist_offset_pivot_th = 0;
   float front_dist_offset_pivot = 0;
+  float pivot_back_dist0 = 0;
+  float pivot_back_dist1 = 0;
   int sen_log_size = 100;
   int led_light_delay_cnt = 1000;
   int led_light_delay_cnt2 = 1000;
@@ -566,41 +575,41 @@ typedef struct {
 } fail_safe_state_t;
 
 typedef struct {
-  float right_v;
-  float left_v;
+  volatile float right_v;
+  volatile float left_v;
 } sys_id_t;
 
 typedef struct {
-  float v_max;
-  float v_end;
-  float accl;
-  float decel;
-  float dist;
-  float w_max;
-  float w_end;
-  float alpha;
-  float ang;
-  float sla_alpha;
-  float sla_time;
-  float sla_pow_n;
-  float sla_rad;
-  RUN_MODE2 motion_mode;
-  MotionType motion_type;
+  volatile float v_max;
+  volatile float v_end;
+  volatile float accl;
+  volatile float decel;
+  volatile float dist;
+  volatile float w_max;
+  volatile float w_end;
+  volatile float alpha;
+  volatile float ang;
+  volatile float sla_alpha;
+  volatile float sla_time;
+  volatile float sla_pow_n;
+  volatile float sla_rad;
+  volatile RUN_MODE2 motion_mode;
+  volatile MotionType motion_type;
 
-  int timstamp = 0;
+  volatile int timstamp = 0;
   MotionDirection motion_dir;
-  bool dia_mode = false;
+  volatile bool dia_mode = false;
   SensorCtrlType sct;
   sys_id_t sys_id;
-  bool tgt_reset_req = false;
-  bool ego_reset_req = false;
+  volatile bool tgt_reset_req = false;
+  volatile bool ego_reset_req = false;
 } new_motion_req_t;
 
 typedef struct {
-  float img_dist;
-  float img_ang;
-  float dist;
-  float ang;
+  volatile float img_dist;
+  volatile float img_ang;
+  volatile float dist;
+  volatile float ang;
 } global_ego_pos_t;
 
 typedef struct {
@@ -617,19 +626,19 @@ typedef struct {
 typedef struct {
   t_tgt tgt_in;
   t_ego ego_in;
-  int16_t calc_time;
-  int16_t calc_time2;
-  int16_t calc_time_diff;
-  global_ego_pos_t global_pos;
-  int32_t motion_mode;
+  volatile int16_t calc_time;
+  volatile int16_t calc_time2;
+  volatile int16_t calc_time_diff;
+  volatile global_ego_pos_t global_pos;
+  volatile int32_t motion_mode;
   MotionType motion_type;
   MotionDirection motion_dir;
-  bool dia_mode = false;
+  volatile bool dia_mode = false;
   planning_req_t pl_req;
   fail_safe_state_t fss;
-  float gyro_zero_p_offset = 0;
-  float accel_x_zero_p_offset = 0;
-  float accel_y_zero_p_offset = 0;
+  volatile float gyro_zero_p_offset = 0;
+  volatile float accel_x_zero_p_offset = 0;
+  volatile float accel_y_zero_p_offset = 0;
   buzzer_t buzzer;
   new_motion_req_t nmr;
   pos_t p;
@@ -639,30 +648,29 @@ typedef struct {
 } motion_tgt_val_t;
 
 typedef struct {
-  float v_max = 0;
-  float v_end = 0;
-  float accl = 0;
-  float decel = 0;
-  float dist = 0;
+  volatile float v_max = 0;
+  volatile float v_end = 0;
+  volatile float accl = 0;
+  volatile float decel = 0;
+  volatile float dist = 0;
   MotionType motion_type = MotionType::NONE;
   SensorCtrlType sct = SensorCtrlType::NONE;
   WallOffReq wall_off_req = WallOffReq::NONE;
   WallCtrlMode wall_ctrl_mode = WallCtrlMode::NONE;
-  float wall_off_dist_r = 0;
-  float wall_off_dist_l = 0;
-  bool dia_mode = false;
-  bool skil_wall_off = false;
-  bool search_str_wide_ctrl_r = false;
-  bool search_str_wide_ctrl_l = false;
+  volatile float wall_off_dist_r = 0;
+  volatile float wall_off_dist_l = 0;
+  volatile bool dia_mode = false;
+  volatile bool skil_wall_off = false;
+  volatile bool search_str_wide_ctrl_r = false;
+  volatile bool search_str_wide_ctrl_l = false;
 } param_straight_t;
 
 typedef struct {
-  float w_max = 0;
-  float w_end = 0;
-  float alpha = 0;
-  float ang = 0;
+  volatile float w_max = 0;
+  volatile float w_end = 0;
+  volatile float alpha = 0;
+  volatile float ang = 0;
   TurnDirection RorL = TurnDirection::None;
-
 } param_roll_t;
 
 typedef struct {
@@ -894,6 +902,7 @@ typedef struct {
   real16_T sen_log_l45;
   real16_T sen_log_r45;
   int16_t sen_calc_time;
+  int16_t sen_calc_time2;
   int16_t pln_calc_time;
   int16_t pln_calc_time2;
   int16_t pln_time_diff;

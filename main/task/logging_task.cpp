@@ -2,7 +2,7 @@
 
 void LoggingTask::create_task(const BaseType_t xCoreID) {
   qh = xQueueCreate(4, sizeof(motion_tgt_val_t *));
-  xTaskCreatePinnedToCore(task_entry_point, "logging_task", 8192, this, 5,
+  xTaskCreatePinnedToCore(task_entry_point, "logging_task", 8192, this, 1,
                           &handle, xCoreID);
 }
 
@@ -154,6 +154,7 @@ void LoggingTask::task() {
 
           ld->motion_timestamp = tgt_val->nmr.timstamp;
           ld->sen_calc_time = sensing_result->calc_time;
+          ld->sen_calc_time2 = sensing_result->calc_time2;
           ld->pln_calc_time = tgt_val->calc_time;
           ld->pln_calc_time2 = tgt_val->calc_time2;
           ld->pln_time_diff = tgt_val->calc_time_diff;
@@ -303,7 +304,8 @@ void LoggingTask::dump_log(std::string file_name) {
          "front_d,right45_d,right90_d,left90_far_d,front_far_d,right90_far_d,"
          "battery,duty_l,"
          "duty_r,motion_state,duty_sen,dist_mod90,"
-         "sen_dist_l45,sen_dist_r45,timestamp,sen_calc_time,pln_calc_time,pln_"
+         "sen_dist_l45,sen_dist_r45,timestamp,sen_calc_time,sen_calc_time2,pln_"
+         "calc_time,pln_"
          "calc_time2,pln_time_diff,m_pid_p,m_pid_i,m_pid_i2,m_pid_d,m_pid_p_v,"
          "m_pid_i_v,m_"
          "pid_i2_v,m_pid_d_v,g_pid_p,g_pid_i,g_pid_i2,g_pid_d,g_pid_p_v,g_pid_"
@@ -414,6 +416,7 @@ void LoggingTask::dump_log(std::string file_name) {
            halfToFloat(ld->sen_log_r45),      //
            ld->motion_timestamp,              //
            ld->sen_calc_time,                 //
+           ld->sen_calc_time2,                //
            ld->pln_calc_time,                 //
            ld->pln_calc_time2,                //
            ld->pln_time_diff);                // 4

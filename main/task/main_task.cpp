@@ -14,7 +14,7 @@ MainTask::MainTask() {
 MainTask::~MainTask() {}
 
 void MainTask::create_task(const BaseType_t xCoreID) {
-  xTaskCreatePinnedToCore(task_entry_point, "main_task", 8192, this, 12,
+  xTaskCreatePinnedToCore(task_entry_point, "main_task", 8192 * 3, this, 2,
                           &handle, xCoreID);
 }
 void MainTask::task_entry_point(void *task_instance) {
@@ -634,7 +634,23 @@ void MainTask::load_offset_param() {
   param->seach_timer = getItem(root, "seach_timer")->valueint;
   param->clear_angle = getItem(root, "clear_angle")->valuedouble;
   param->clear_dist_order = getItem(root, "clear_dist_order")->valuedouble;
+  param->pivot_back_dist0 = getItem(root, "pivot_back_dist0")->valuedouble;
+  param->pivot_back_dist1 = getItem(root, "pivot_back_dist1")->valuedouble;
+  param->sla_front_ctrl_th = getItem(root, "sla_front_ctrl_th")->valuedouble;
+
+  param->wall_off_front_move_dist_th =
+      getItem(root, "wall_off_front_move_dist_th")->valuedouble;
+  param->wall_off_front_move_dia_dist_th =
+      getItem(root, "wall_off_front_move_dia_dist_th")->valuedouble;
+
+  param->pivot_angle_90 =
+      m_PI * (getItem(root, "pivot_angle_90")->valuedouble / 180);
+  param->pivot_angle_180 =
+      m_PI * (getItem(root, "pivot_angle_180")->valuedouble / 180);
+
+  param->pivot_back_offset = getItem(root, "pivot_back_offset")->valuedouble;
   param->front_dist_offset = getItem(root, "front_dist_offset")->valuedouble;
+  param->front_dist_offset0 = getItem(root, "front_dist_offset0")->valuedouble;
   param->front_dist_offset2 = getItem(root, "front_dist_offset2")->valuedouble;
   param->front_dist_offset3 = getItem(root, "front_dist_offset3")->valuedouble;
   param->front_dist_offset4 = getItem(root, "front_dist_offset4")->valuedouble;
@@ -661,6 +677,8 @@ void MainTask::load_offset_param() {
   param->dia_turn_th_l = getItem(root, "dia_turn_th_l")->valuedouble;
   param->dia_turn_th_r = getItem(root, "dia_turn_th_r")->valuedouble;
 
+  param->pivot_back_enable_front_th =
+      getItem(root, "pivot_back_enable_front_th")->valuedouble;
   param->front_dist_offset_pivot_th =
       getItem(root, "front_dist_offset_pivot_th")->valuedouble;
   param->front_dist_offset_pivot =
@@ -1017,6 +1035,8 @@ void MainTask::load_sys_param() {
   sys.circuit_mode = getItem(root, "circuit_mode")->valueint;
   printf("circuit_mode: %d\n", sys.circuit_mode);
   test = getItem(root, "test");
+
+  test_search_mode = getItem(test, "search_mode")->valueint;
 
   sys.test.v_max = getItem(test, "v_max")->valuedouble;
   sys.test.dia = getItem(test, "dia")->valuedouble;
@@ -1671,7 +1691,8 @@ void MainTask::test_run() {
   if (param->test_log_enable > 0) {
     lt->start_slalom_log();
   }
-  pt->search_mode = false;
+  pt->search_mode = test_search_mode > 0;
+
   ps.v_max = sys.test.v_max;
   ps.v_end = 20;
   ps.dist = sys.test.dist - 5;

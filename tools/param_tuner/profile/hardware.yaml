@@ -3,11 +3,11 @@ dt: 0.001
 # tire2: 13.60125
 
 tire_tread: 38.0
-tire: 13.75
-tire2: 13.75
+tire: 13.735
+tire2: 13.735
 # offset_start_dist: 21.0
 offset_start_dist_search: 15.0
-offset_start_dist: 8.0
+offset_start_dist: 6.0
 gear_a: 37
 gear_b: 9
 # max_duty: 99.9
@@ -25,7 +25,7 @@ motor_debug_mode: 0
 motor_debug_mode_duty_r: 10
 motor_debug_mode_duty_l: -10
 
-MotorHz: 37500
+MotorHz: 32500
 SuctionHz: 25000
 MotorResolution: 40
 SuctionResolution: 40
@@ -36,9 +36,10 @@ Ke: 0.00185 # 大：逆起電力大
 Km: 0.00115 # 大：縦系の出力小
 # Km: 0.000750 # 大：縦系の出力小
 Lm: 0.0000175 # 大：横系の出力大
+# Lm: 0.0004 # 大：横系の出力大
 
 Resist: 2.4
-Mass: 0.022
+Mass: 0.030
 
 slip_param_K: 0.5
 slip_param_k2: 100
@@ -51,7 +52,7 @@ search_log_enable: 1
 test_log_enable: 1
 fast_log_enable: 1
 sen_log_size: 100
-log_size: 2500
+log_size: 12500
 
 front_ctrl_error_th: 1
 
@@ -118,11 +119,38 @@ motor_pid:
   # c: 0
   mode: 1
 motor_pid2:
-  mode: 8
-  p: 0.00345
-  i: 0.00295
-  b: 0.00
-  d: 0.00025
+  #AS5147P 
+  mode: 7
+  # p: 0.00345
+  # i: 0.00295
+  # b: 0.00
+  # d: 0.00025
+  # p: 0.00275
+  # i: 0.00195
+  # b: 0.00195
+  # d: 0.00275
+  # p: 0.00345
+  # i: 0.00295
+  # b: 0.00
+  # d: 0.00025
+
+
+  p: 0.00275
+  i: 0.00195
+  b: 0.00195
+  d: 0.00275
+
+
+  # MA730
+  # mode: 7
+  # p: 0.0325
+  # i: 0.00125
+  # b: 0.00
+  # d: 0.00
+  # p: 0.00275
+  # i: 0.00195
+  # b: 0.00195
+  # d: 0.00275
   c: 0
   # p: 0.0
   # i: 0.0
@@ -150,6 +178,12 @@ gyro_pid:
   d: 0.195
   c: 0.0
 
+  # p: 0.395
+  # i: 0.0
+  # b: 0.00215
+  # d: 0.195
+  # c: 0.0
+
   # p: 0.0
   # i: 0.0
   # d: 0.0
@@ -157,9 +191,9 @@ gyro_pid:
   # c: 0.0
 
 dist_pid:
-  p: 2.25
-  i: 0.0075
-  d: -0.0075
+  p: 0.80
+  i: 0.0015
+  d: -0.0125
   b: 0
   c: 0
   mode: 1
@@ -171,8 +205,8 @@ angle_pid:
   # i: 0.045
   # p: 0.195
   i: 0.0
-  d: -0.0275
-  mode: 1
+  d: -0.085
+  mode: 2
   b: 10
   c: 0
 str_agl_pid:
@@ -231,10 +265,12 @@ sensor_pid_dia:
   c: 0
   mode: 0
 gyro_param:
-  # gyro_w_gain_right: 0.0024635
-  # gyro_w_gain_left: 0.00246375
-  gyro_w_gain_right: 0.002476400
-  gyro_w_gain_left: 0.002476400
+  # Green
+  # gyro_w_gain_right: 0.002476800
+  # gyro_w_gain_left: 0.002476800
+  # Gray
+  gyro_w_gain_right: 0.002456800
+  gyro_w_gain_left: 0.002456800
   lp_delay: 1
 accel_x_param:
   # gain: 315.56 # 16g

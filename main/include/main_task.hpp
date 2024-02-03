@@ -73,6 +73,7 @@ public:
   bool ready = false;
 
 private:
+  int test_search_mode = 0;
   SearchResult sr;
   xTaskHandle handle = 0;
   TaskHandle_t notify_handle = xTaskGetCurrentTaskHandle();

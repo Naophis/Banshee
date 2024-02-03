@@ -995,11 +995,12 @@ unsigned int MazeSolverBaseLgc::searchGoalPosition(
   point_t pt;
   pt.x = 0;
   pt.y = 0;
-  search_log.clear();
-  search_log.shrink_to_fit();
+  // search_log.clear();
+  // search_log.shrink_to_fit();
 
   unsigned int cnt = updateVectorMap(isSearch, subgoal_list);
 
+  vTaskDelay(1.0 / portTICK_RATE_MS);
   while (true) {
     now_dir = next_dir;
     dirLog[2] = dirLog[1];
@@ -1009,7 +1010,7 @@ unsigned int MazeSolverBaseLgc::searchGoalPosition(
     next_dir = Direction::Undefined;
     pt.x = x;
     pt.y = y;
-    search_log.emplace_back(pt);
+    // search_log.emplace_back(pt);
 
     if (arrival_goal_position(x, y))
       break;

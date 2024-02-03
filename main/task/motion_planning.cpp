@@ -73,6 +73,17 @@ MotionResult MotionPlanning::go_straight(param_straight_t &p,
   if (search_mode) {
     adachi->update();
   }
+
+  if (p.motion_type == MotionType::PIVOT_PRE ||
+      p.motion_type == MotionType::PIVOT_PRE2 ||
+      p.motion_type == MotionType::SLA_FRONT_STR ||
+      p.motion_type == MotionType::SLA_BACK_STR ||
+      p.motion_type == MotionType::BACK_STRAIGHT) {
+    if (std::abs(p.dist) > 5) {
+      vTaskDelay(2.0 / portTICK_RATE_MS);
+    }
+  }
+
   unsigned int cnt = 0;
   while (1) {
     vTaskDelay(1.0 / portTICK_RATE_MS);
@@ -524,6 +535,7 @@ MotionResult MotionPlanning::slalom(slalom_param2_t &sp, TurnDirection td,
   xQueueSendToFront(*qh, &tgt_val, 1);
   vTaskDelay(1.0 / portTICK_RATE_MS);
   if (search_mode) {
+    vTaskDelay(1.0 / portTICK_RATE_MS);
     adachi->update();
   }
   while (1) {
@@ -964,17 +976,20 @@ void MotionPlanning::wall_off(TurnDirection td, param_straight_t &ps_front) {
   tgt_val->nmr.dia_mode = ps_front.dia_mode;
   tgt_val->nmr.sct = SensorCtrlType::Straight;
   tgt_val->nmr.timstamp++;
+  float tmp_dist_before = tgt_val->global_pos.dist;
+  float tmp_dist_after = tmp_dist_before;
   xQueueReset(*qh);
   xQueueSendToFront(*qh, &tgt_val, 1);
   vTaskDelay(1.0 / portTICK_RATE_MS);
   if (td == TurnDirection::Right) {
     while (true) {
+      tmp_dist_after = tgt_val->global_pos.dist;
       if (sensing_result->ego.right45_dist <
           param->wall_off_dist.exist_dist_r) {
         break;
       }
       //　見逃し対応
-      if (std::abs(tgt_val->ego_in.dist) >=
+      if (std::abs(tmp_dist_after - tmp_dist_before) >=
           std::abs(param->wall_off_dist.diff_check_dist)) {
         if (sensing_result->ego.right45_dist_diff >
             param->wall_off_dist.diff_dist_th_r) {
@@ -984,23 +999,30 @@ void MotionPlanning::wall_off(TurnDirection td, param_straight_t &ps_front) {
         }
       }
 
-      if (param->wall_off_front_ctrl_min <
-              sensing_result->ego.left90_far_dist &&
-          sensing_result->ego.left90_far_dist < param->front_dist_offset4 &&
-          param->wall_off_front_ctrl_min <
-              sensing_result->ego.right90_far_dist &&
-          sensing_result->ego.right90_far_dist < param->front_dist_offset4) {
-        // if (40 < sensing_result->ego.front_far_dist &&
-        //     sensing_result->ego.front_far_dist < param->front_dist_offset4) {
-        if (sensing_result->ego.front_far_dist < param->front_dist_offset3) {
-          ps_front.dist -=
-              (param->front_dist_offset2 - sensing_result->ego.front_far_dist);
+      if (std::abs(tmp_dist_after - tmp_dist_before) >=
+          std::abs(param->wall_off_front_move_dist_th)) {
+        if (param->wall_off_front_ctrl_min <
+                sensing_result->ego.left90_far_dist &&
+            sensing_result->ego.left90_far_dist < param->front_dist_offset4 &&
+            param->wall_off_front_ctrl_min <
+                sensing_result->ego.right90_far_dist &&
+            sensing_result->ego.right90_far_dist < param->front_dist_offset4) {
+          if (sensing_result->ego.front_far_dist < param->front_dist_offset3) {
+            ps_front.dist -= (param->front_dist_offset2 -
+                              sensing_result->ego.front_far_dist);
+            ps_front.dist = MAX(ps_front.dist, 0.1);
+            return;
+          }
+        }
+      }
+
+      if (std::abs(tmp_dist_after - tmp_dist_before) >=
+          std::abs(param->wall_off_front_move_dist_th)) {
+        if (std::abs(tgt_val->ego_in.dist) >= std::abs(tgt_val->nmr.dist)) {
+          ps_front.dist -= param->wall_off_pass_through_offset_r;
           ps_front.dist = MAX(ps_front.dist, 0.1);
           return;
         }
-      }
-      if (std::abs(tgt_val->ego_in.dist) >= std::abs(tgt_val->nmr.dist)) {
-        return;
       }
       vTaskDelay(1.0 / portTICK_RATE_MS);
     }
@@ -1032,11 +1054,12 @@ void MotionPlanning::wall_off(TurnDirection td, param_straight_t &ps_front) {
     }
   } else {
     while (true) {
+      tmp_dist_after = tgt_val->global_pos.dist;
       if (sensing_result->ego.left45_dist < param->wall_off_dist.exist_dist_l) {
         break;
       }
       //　見逃し対応
-      if (std::abs(tgt_val->ego_in.dist) >=
+      if (std::abs(tmp_dist_after - tmp_dist_before) >=
           std::abs(param->wall_off_dist.diff_check_dist)) {
         if (sensing_result->ego.left45_dist_diff >
             param->wall_off_dist.diff_dist_th_l) {
@@ -1045,21 +1068,27 @@ void MotionPlanning::wall_off(TurnDirection td, param_straight_t &ps_front) {
           return;
         }
       }
-      if (40 < sensing_result->ego.left90_far_dist &&
-          sensing_result->ego.left90_far_dist < param->front_dist_offset4 &&
-          40 < sensing_result->ego.right90_far_dist &&
-          sensing_result->ego.right90_far_dist < param->front_dist_offset4) {
-        // if (40 < sensing_result->ego.front_far_dist &&
-        //     sensing_result->ego.front_far_dist < param->front_dist_offset4) {
-        if (sensing_result->ego.front_far_dist < param->front_dist_offset3) {
-          ps_front.dist -=
-              (param->front_dist_offset2 - sensing_result->ego.front_far_dist);
+      if (std::abs(tmp_dist_after - tmp_dist_before) >=
+          std::abs(param->wall_off_front_move_dist_th)) {
+        if (40 < sensing_result->ego.left90_far_dist &&
+            sensing_result->ego.left90_far_dist < param->front_dist_offset4 &&
+            40 < sensing_result->ego.right90_far_dist &&
+            sensing_result->ego.right90_far_dist < param->front_dist_offset4) {
+          if (sensing_result->ego.front_far_dist < param->front_dist_offset3) {
+            ps_front.dist -= (param->front_dist_offset2 -
+                              sensing_result->ego.front_far_dist);
+            ps_front.dist = MAX(ps_front.dist, 0.1);
+            return;
+          }
+        }
+      }
+      if (std::abs(tmp_dist_after - tmp_dist_before) >=
+          std::abs(param->wall_off_front_move_dist_th)) {
+        if (std::abs(tgt_val->ego_in.dist) >= std::abs(tgt_val->nmr.dist)) {
+          ps_front.dist -= param->wall_off_pass_through_offset_r;
           ps_front.dist = MAX(ps_front.dist, 0.1);
           return;
         }
-      }
-      if (std::abs(tgt_val->ego_in.dist) >= std::abs(tgt_val->nmr.dist)) {
-        return;
       }
       vTaskDelay(1.0 / portTICK_RATE_MS);
     }
