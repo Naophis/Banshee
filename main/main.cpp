@@ -49,7 +49,6 @@
 #include <eigen3/Eigen/Eigen>
 
 // #include <Eigen/Core>
-SensingTask st;
 
 void init_uart() {
   uart_config_t uart_config;
@@ -109,43 +108,7 @@ void init_gpio() {
   gpio_set_level(SUCTION_PWM, 0);
   // gpio_set_direction((gpio_num_t)GPIO_OUTPUT_IO_8,
 }
-int gyro_mode = 0;
-ICM20689 gyro_if;
-LSM6DSR gyro_if2;
-AS5147P enc_if;
-void timer_isr(void *parameters) {
-  timer_group_clr_intr_status_in_isr(TIMER_GROUP_0, TIMER_0);
-  timer_group_enable_alarm_in_isr(TIMER_GROUP_0, TIMER_0);
-  if (st.is_ready()) {
-    gyro_mode++;
-    if (gyro_mode == 1 || gyro_mode == 3) {
-      gyro_if.req_read2byte_itr(0x47);
-    } else if (gyro_mode == 2 || gyro_mode == 4) {
-      st.gyro_q.push_back(gyro_if.read_2byte_itr());
-    }
-    if (st.gyro_q.size() > GY_DQ_SIZE) {
-      st.gyro_q.pop_front();
-    }
-    if (gyro_mode == 4) {
-      gyro_mode = 0;
-    }
-  }
-}
-void hwtimer_init(void) {
-  timer_config_t config;
-  config.alarm_en = TIMER_ALARM_EN;
-  config.counter_en = TIMER_PAUSE;
-  config.clk_src = TIMER_SRC_CLK_APB;
-  config.auto_reload = TIMER_AUTORELOAD_EN;
-  config.counter_dir = TIMER_COUNT_UP;
-  config.divider = 8; // 80Mhz / divider
-  timer_init(TIMER_GROUP_0, TIMER_0, &config);
-  timer_set_alarm_value(TIMER_GROUP_0, TIMER_0, GY_CYCLE);
-  timer_isr_register(TIMER_GROUP_0, TIMER_0, timer_isr, NULL, 0, NULL);
-  timer_enable_intr(TIMER_GROUP_0, TIMER_0);
-  timer_set_counter_value(TIMER_GROUP_0, TIMER_0, 0);
-  timer_start(TIMER_GROUP_0, TIMER_0);
-}
+
 std::shared_ptr<input_param_t> param = std::make_shared<input_param_t>();
 std::shared_ptr<sensing_result_entity_t> sensing_entity =
     std::make_shared<sensing_result_entity_t>();
@@ -156,6 +119,7 @@ std::shared_ptr<pid_error_entity_t> error_entity =
 std::shared_ptr<PlanningTask> pt = std::make_shared<PlanningTask>();
 std::shared_ptr<LoggingTask> lt = std::make_shared<LoggingTask>();
 std::shared_ptr<MainTask> mt = std::make_shared<MainTask>();
+SensingTask st;
 
 std::shared_ptr<sensing_result_entity_t> get_sensing_entity() {
   return sensing_entity;
