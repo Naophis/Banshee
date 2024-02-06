@@ -52,9 +52,9 @@ MotionResult SearchController::go_straight_wrapper(param_set_t &p_set,
   }
   p.v_end = p_set.str_map[st].v_max;
   if (st == StraightType::FastRunDia) {
-    // p.v_end = p_set.str_map[StraightType::Search].v_max;
-    p.v_end = p_set.map[TurnType::Normal].v;
+    p.v_end = p_set.str_map[StraightType::Search].v_max;
   }
+
   p.accl = p_set.str_map[st].accl;
   p.decel = p_set.str_map[st].decel;
 
@@ -290,7 +290,7 @@ MotionResult SearchController::pivot(param_set_t &p_set, float diff) {
   //   return MotionResult::ERROR;
 
   if (back_enable) {
-    ui->coin(100);
+    // ui->coin(100);
     vTaskDelay(5.0 / portTICK_RATE_MS);
     pt->motor_enable();
     mp->reset_tgt_data();
@@ -335,15 +335,17 @@ MotionResult SearchController::pivot(param_set_t &p_set, float diff) {
 
   if (adachi != nullptr) {
     adachi->update();
-    vTaskDelay(1.0 / portTICK_RATE_MS);
   }
 
   vTaskDelay(5.0 / portTICK_RATE_MS);
   mp->reset_tgt_data();
   mp->reset_ego_data();
   pt->motor_enable();
-  p.v_max = p_set.str_map[StraightType::Search].v_max;
-  p.v_end = p_set.str_map[StraightType::Search].v_max;
+  // p.v_max = p_set.str_map[StraightType::Search].v_max;
+  // p.v_end = p_set.str_map[StraightType::Search].v_max;
+
+  p.v_max = p.v_end = p_set.map[TurnType::Normal].v;
+
   p.accl = p_set.str_map[StraightType::Search].accl;
   p.decel = p_set.str_map[StraightType::Search].decel;
   if (back_enable) {

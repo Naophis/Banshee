@@ -13,7 +13,7 @@ PlanningTask::PlanningTask() {}
 
 PlanningTask::~PlanningTask() {}
 void PlanningTask::create_task(const BaseType_t xCoreID) {
-  xTaskCreatePinnedToCore(task_entry_point, "planning_task", 8192 * 4, this, 2,
+  xTaskCreatePinnedToCore(task_entry_point, "planning_task", 8192 * 4, this, 4,
                           &handle, xCoreID);
   motor_qh_enable = xQueueCreate(4, sizeof(motor_req_t *));
   suction_qh_enable = xQueueCreate(4, sizeof(motor_req_t *));
@@ -324,6 +324,7 @@ void PlanningTask::set_suction_motor_hz(unsigned long hz, int res) {
 
 void PlanningTask::task() {
   int64_t start = 0;
+  int64_t start2 = 0;
   int64_t start_before = 0;
   int64_t end = 0;
   int64_t start_calc_mpc = 0;
@@ -399,9 +400,12 @@ void PlanningTask::task() {
     start_before = start;
     start = esp_timer_get_time();
     tgt_val->calc_time_diff = start - start_before;
+
     if (!ready) {
       vTaskDelay(xDelay);
     }
+
+    // sensing
     if (xQueueReceive(motor_qh_enable, &motor_enable_send_msg, 0) == pdTRUE) {
       if (motor_req_timestamp != motor_enable_send_msg.timestamp) {
         if (motor_enable_send_msg.enable) {
@@ -423,6 +427,7 @@ void PlanningTask::task() {
         suction_req_timestamp = suction_enable_send_msg.timestamp;
       }
     }
+
     // 自己位置更新
     int64_t start_duty_cal = esp_timer_get_time();
     update_ego_motion(); // 30 usec
@@ -432,10 +437,15 @@ void PlanningTask::task() {
     mpc_step = 1;
     tgt_val->tgt_in.time_step2 = param_ro->sakiyomi_time;
 
-    if (xQueueReceive(*qh, &receive_req, 0) == pdTRUE) {
+    auto res = xQueueReceive(*qh, &receive_req, 0);
+
+    if (res == pdTRUE) {
       cp_request();
       first_req = true;
     }
+
+    sn->task(search_mode, mode_select, res == pdTRUE);
+    start2 = esp_timer_get_time();
 
     // 物理量ベース計算
     float axel_degenerate_gain = 1;
@@ -500,19 +510,8 @@ void PlanningTask::task() {
     global_msec_timer++;
 
     end = esp_timer_get_time();
-    tgt_val->calc_time = (int16_t)(end - start);
-    // sensing_result->calc_time = (int16_t)(end_calc_mpc - start_calc_mpc);
-    // tgt_val->calc_time2 = end_que_rec - start_que_rec;
-
-    // tgt_val->calc_time2 = end_calc_mpc - start_calc_mpc;
-    // tgt_val->calc_time2 = end_que_rec - start_que_rec;
-
-    // tgt_val->calc_time2 = end_duty_cal - start_duty_cal;
-
-    // printf("pln: %d, %d\n", (int16_t)(end - start), (int16_t)(end2 -
-    // start2));
+    tgt_val->calc_time = (int16_t)(end - start2);
     vTaskDelay(xDelay);
-    // vTaskDelay(5.0 / portTICK_PERIOD_MS);
   }
 }
 
@@ -1215,8 +1214,10 @@ void PlanningTask::change_pwm_freq(float duty_l, float duty_r) {
   GPIO.out1_w1tc.val = low;
   // auto start_que_rec = esp_timer_get_time();
 
-  // MCPWM[MCPWM_UNIT_0]->timer[MCPWM_TIMER_0].cmpr_value[MCPWM_OPR_A].cmpr_val = duty_l_abs;
-  // MCPWM[MCPWM_UNIT_0]->timer[MCPWM_TIMER_1].cmpr_value[MCPWM_OPR_A].cmpr_val = duty_r_abs;
+  // MCPWM[MCPWM_UNIT_0]->timer[MCPWM_TIMER_0].cmpr_value[MCPWM_OPR_A].cmpr_val
+  // = duty_l_abs;
+  // MCPWM[MCPWM_UNIT_0]->timer[MCPWM_TIMER_1].cmpr_value[MCPWM_OPR_A].cmpr_val
+  // = duty_r_abs;
 
   mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_A, duty_l_abs);
   mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_A, duty_r_abs);
@@ -2387,7 +2388,8 @@ void PlanningTask::cp_request() {
 
   tgt_val->tgt_in.v_max = receive_req->nmr.v_max;
 
-  if (receive_req->nmr.motion_type == MotionType::STRAIGHT) {
+  if (receive_req->nmr.motion_type == MotionType::STRAIGHT ||
+      receive_req->nmr.motion_type == MotionType::SLA_FRONT_STR) {
     if (tgt_val->ego_in.v > receive_req->nmr.v_max) {
       tgt_val->tgt_in.v_max = tgt_val->ego_in.v;
     }

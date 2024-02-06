@@ -1238,11 +1238,15 @@ void MainTask::load_slas(
         getItem(getItem(root, p.second.c_str()), "rad")->valuedouble;
     turn_map[p.first].time =
         getItem(getItem(root, p.second.c_str()), "time")->valuedouble;
+    printf("   - rad: %f\n", turn_map[p.first].rad);
+    printf("   - time: %f\n", turn_map[p.first].time);
     if (p.first == TurnType::Orval) {
       turn_map[p.first].rad2 =
           getItem(getItem(root, p.second.c_str()), "rad2")->valuedouble;
       turn_map[p.first].time2 =
           getItem(getItem(root, p.second.c_str()), "time2")->valuedouble;
+    printf("   - rad2: %f\n", turn_map[p.first].rad2);
+    printf("   - time2: %f\n", turn_map[p.first].time2);
     }
 
     turn_map[p.first].pow_n =

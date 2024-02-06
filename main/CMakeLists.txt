@@ -21,6 +21,7 @@ set(COMPONENT_SRCS
     "task/main_task.cpp"
     "task/icm20689.cpp"
     "task/lsm6dsr.cpp"
+    "task/sensing.cpp"
     "task/sensing_task.cpp"
     "task/as5147p.cpp"
     "task/kalman_filter.cpp"

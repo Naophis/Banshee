@@ -10,19 +10,19 @@ import sys
 p = Plot()
 po = PlotOrval()
 
-v = 500
+v = 300
 dia45_mode = 0
 
-hf_cl = 1
-show = True
-# show = False
+hf_cl = 0
+# show = True
+show = False
 if len(sys.argv) > 1:
     v = int(sys.argv[1])
     dia45_mode = int(sys.argv[2])
     hf_cl = int(sys.argv[3])
     show = False
 
-K = 150
+K = 200
 list_K_y = [0.5]
 # K = 13540
 # show = False

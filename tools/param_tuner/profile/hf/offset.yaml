@@ -7,7 +7,7 @@ pivot_angle_180: 180.25
 
 # 探索スラローム
 sla_front_ctrl_th: 135.0 # 探索時前壁補正条件しきい値
-front_dist_offset: 102.50 # 探索時の前壁補正 大→短くなる
+front_dist_offset: 103.750 # 探索時の前壁補正 大→短くなる
 
 front_dist_offset0: 94.0 # pivot時の前壁補正ref
 pivot_back_enable_front_th: 120 # バック判断のための壁有無しきい値
@@ -69,8 +69,8 @@ wall_off_hold_noexist_th_r2: 60
 # 壁切れ オフセット距離
 wall_off_hold_dist_str_l: -1.0
 wall_off_hold_dist_str_r: -1.25
-wall_off_hold_dist_str_l_exist: -2.5
-wall_off_hold_dist_str_r_exist: -2.0
+wall_off_hold_dist_str_l_exist: -1.5
+wall_off_hold_dist_str_r_exist: -1.0
 
 wall_off_front_move_dist_th: 2
 wall_off_front_move_dia_dist_th: 2
@@ -96,18 +96,17 @@ wall_off_hold_exist_dist_dia_r: 50
 wall_off_hold_noexist_dia_th_l: 50
 wall_off_hold_noexist_dia_th_r: 55
 # 壁切れ オフセット距離
-wall_off_hold_dist_dia_l2: -0.5
-wall_off_hold_dist_dia_r2: -0.5
+wall_off_hold_dist_dia_l2: 3.5
+wall_off_hold_dist_dia_r2: 3.5
 #斜めターン壁有り補正
-dia_turn_th_l: 52
-dia_turn_th_r: 52
+dia_turn_th_l: 50
+dia_turn_th_r: 50
 # 壁切れ オフセット距離(反対側の壁有り)
-wall_off_hold_dist_dia_l: 3.0
-wall_off_hold_dist_dia_r: 3.0
+wall_off_hold_dist_dia_l: 0.0
+wall_off_hold_dist_dia_r: 0.0
 #斜め壁切れ時のmax接近距離
-dia_wall_off_ref_l: 27.0
-dia_wall_off_ref_r: 22.25
-
+dia_wall_off_ref_l: 26.0
+dia_wall_off_ref_r: 26.0
 dia_offset_max_dist: 10
 
 #ターン後オフセット距離

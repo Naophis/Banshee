@@ -11,6 +11,7 @@
 #include "gen_code_mpc/mpc_tgt_calc.h"
 #include "include/logging_task.hpp"
 #include "include/maze_solver.hpp"
+#include "include/sensing.hpp"
 
 #include "esp_system.h"
 #include "esp_vfs.h"
@@ -41,6 +42,9 @@ public:
   void set_tgt_val(std::shared_ptr<motion_tgt_val_t> &_tgt_val);
   void set_error_entity(std::shared_ptr<pid_error_entity_t> &_error_entity);
   void set_logging_task(std::shared_ptr<LoggingTask> &_lt);
+  void set_sensing(std::shared_ptr<Sensing> &_sn) { sn = _sn; 
+  
+  };
 
   void buzzer(ledc_channel_config_t &buzzer_ch,
               ledc_timer_config_t &buzzer_timer);
@@ -168,6 +172,7 @@ private:
   std::shared_ptr<sensing_result_entity_t> sensing_result;
   std::shared_ptr<input_param_t> param_ro;
   std::shared_ptr<LoggingTask> lt;
+  std::shared_ptr<Sensing> sn;
 
   t_tgt *mpc_tgt;
   t_ego *mpc_now_ego;

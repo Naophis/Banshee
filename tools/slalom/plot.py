@@ -66,7 +66,8 @@ class Plot:
                 start_ang = 0
             else:
                 if hf_cl == 0:
-                    rad = 55.25
+                    # rad = 50.25
+                    rad = 54.5
                     n = 4
                     tgt_ang = 180
                     end_pos = {"x": 0, "y": 180}
@@ -281,9 +282,9 @@ class Plot:
         print('  ang: {}'.format(sla.base_ang))
         print('  pow_n: {}'.format(sla.pow_n))
         print('  rad: {}'.format(sla.rad))
+        print('  time: {}'.format(sla.base_time))
         if type == "orval":
             print('  rad2: {}'.format(sla.rad))
-        print('  time: {}'.format(sla.base_time))
         if type == "orval":
             print('  time2: {}'.format(sla.base_time))
 

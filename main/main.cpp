@@ -12,6 +12,7 @@
 #include "freertos/task.h"
 #include "include/adachi.hpp"
 #include "include/defines.hpp"
+#include "include/sensing.hpp"
 #include "sdkconfig.h"
 #include "soc/adc_channel.h"
 #include "soc/ledc_periph.h"
@@ -119,7 +120,7 @@ std::shared_ptr<pid_error_entity_t> error_entity =
 std::shared_ptr<PlanningTask> pt = std::make_shared<PlanningTask>();
 std::shared_ptr<LoggingTask> lt = std::make_shared<LoggingTask>();
 std::shared_ptr<MainTask> mt = std::make_shared<MainTask>();
-SensingTask st;
+std::shared_ptr<Sensing> sn = std::make_shared<Sensing>();
 
 std::shared_ptr<sensing_result_entity_t> get_sensing_entity() {
   return sensing_entity;
@@ -150,18 +151,17 @@ extern "C" void app_main() {
   tgt_val->ego_in.w = 0;
   param->gyro_param.gyro_w_gain_left = 0.0002645;
 
-  st.set_sensing_entity(sensing_entity);
-  st.set_tgt_val(tgt_val);
-  st.set_main_task(mt);
-  st.set_input_param_entity(param);
-  st.set_planning_task(pt);
-  st.create_task(0);
+  sn->set_sensing_entity(sensing_entity);
+  sn->set_tgt_val(tgt_val);
+  sn->set_input_param_entity(param);
+  sn->init();
 
   pt->set_sensing_entity(sensing_entity);
   pt->set_input_param_entity(param);
   pt->set_tgt_val(tgt_val);
   pt->set_error_entity(error_entity);
   pt->set_queue_handler(xQueue);
+  pt->set_sensing(sn);
   pt->create_task(0);
 
   lt->set_sensing_entity(sensing_entity);

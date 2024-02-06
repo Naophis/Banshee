@@ -999,8 +999,6 @@ unsigned int MazeSolverBaseLgc::searchGoalPosition(
   // search_log.shrink_to_fit();
 
   unsigned int cnt = updateVectorMap(isSearch, subgoal_list);
-
-  vTaskDelay(1.0 / portTICK_RATE_MS);
   while (true) {
     now_dir = next_dir;
     dirLog[2] = dirLog[1];
