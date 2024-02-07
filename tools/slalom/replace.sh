@@ -1,5 +1,5 @@
 #!/bin/bash
-input_file="../param_tuner/profile/t_$1.yaml"
+input_file="../param_tuner/profile/hf/t_$1.yaml"
 new_txt=$(cat "./result.yaml")
 
 echo $1

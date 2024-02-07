@@ -43,7 +43,7 @@ class Plot:
             start_ang = 0
         elif type == "large":
             if hf_cl == 0:
-                rad = 57.5
+                rad = 67.5
                 n = 4
                 tgt_ang = 90
                 start_ang = 0
@@ -280,8 +280,8 @@ class Plot:
         print('{}:'.format(type))
         print('  v: {}'.format(sla.v))
         print('  ang: {}'.format(sla.base_ang))
-        print('  pow_n: {}'.format(sla.pow_n))
         print('  rad: {}'.format(sla.rad))
+        print('  pow_n: {}'.format(sla.pow_n))
         print('  time: {}'.format(sla.base_time))
         if type == "orval":
             print('  rad2: {}'.format(sla.rad))

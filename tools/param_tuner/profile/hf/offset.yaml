@@ -45,8 +45,8 @@ front_dist_offset_dia_left45: 50
 
 seach_timer: 450
 
-clear_dist_ragne_from: 24
-clear_dist_ragne_to: 48
+clear_dist_ragne_from: 30
+clear_dist_ragne_to: 50
 
 wall_off_hold_dist: 30
 
@@ -67,10 +67,16 @@ wall_off_hold_noexist_th_r: 60
 wall_off_hold_noexist_th_l2: 60
 wall_off_hold_noexist_th_r2: 60
 # 壁切れ オフセット距離
-wall_off_hold_dist_str_l: -1.0
-wall_off_hold_dist_str_r: -1.25
-wall_off_hold_dist_str_l_exist: -1.5
-wall_off_hold_dist_str_r_exist: -1.0
+wall_off_hold_dist_str_l: -2.0
+wall_off_hold_dist_str_r: -0.25
+wall_off_hold_dist_str_l_exist: -2.5
+wall_off_hold_dist_str_r_exist: -1.25
+
+
+# wall_off_hold_dist_str_l: 3.0
+# wall_off_hold_dist_str_r: 3.0
+# wall_off_hold_dist_str_l_exist: 3.0
+# wall_off_hold_dist_str_r_exist: 3.0
 
 wall_off_front_move_dist_th: 2
 wall_off_front_move_dia_dist_th: 2

@@ -3,11 +3,11 @@ dt: 0.001
 # tire2: 13.60125
 
 tire_tread: 38.0
-tire: 13.535
-tire2: 13.535
+tire: 13.6145
+tire2: 13.6145
 # offset_start_dist: 21.0
 offset_start_dist_search: 15.0
-offset_start_dist: 6.0
+offset_start_dist: 4.0
 gear_a: 37
 gear_b: 9
 # max_duty: 99.9
@@ -26,14 +26,14 @@ motor_debug_mode_duty_r: 10
 motor_debug_mode_duty_l: -10
 
 MotorHz: 32500
-SuctionHz: 25000
+SuctionHz: 32500
 MotorResolution: 40
 SuctionResolution: 40
 
 # roll
 Ke: 0.00185 # 大：逆起電力大
 # Km: 0.00225 # 大：縦系の出力小
-Km: 0.00115 # 大：縦系の出力小
+Km: 0.00225 # 大：縦系の出力小
 # Km: 0.000750 # 大：縦系の出力小
 Lm: 0.0000175 # 大：横系の出力大
 # Lm: 0.0004 # 大：横系の出力大
@@ -42,7 +42,7 @@ Resist: 2.4
 Mass: 0.030
 
 slip_param_K: 0.5
-slip_param_k2: 100
+slip_param_k2: 150
 
 sakiyomi_time: 10
 
@@ -247,8 +247,8 @@ gyro_param:
   # gyro_w_gain_right: 0.002476800
   # gyro_w_gain_left: 0.002476800
   # Gray
-  gyro_w_gain_right: 0.002456800
-  gyro_w_gain_left: 0.002456800
+  gyro_w_gain_right: 0.002455900
+  gyro_w_gain_left: 0.002455800
   lp_delay: 1
 accel_x_param:
   # gain: 315.56 # 16g

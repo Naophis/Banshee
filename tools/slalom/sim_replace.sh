@@ -26,23 +26,23 @@
 # ./replace.sh 1200 
 # python main.py 1250 0 > result.yaml
 # ./replace.sh 1250 
-python main.py 1300 0 > result.yaml
-./replace.sh 1300 
-python main.py 1350 0 > result.yaml
-./replace.sh 1350 
-python main.py 1400 0 > result.yaml
-./replace.sh 1400 
-python main.py 1450 0 > result.yaml
-./replace.sh 1450 
-python main.py 1500 0 > result.yaml
-./replace.sh 1500 
-# python main.py 1550 0 > result.yaml
-# ./replace.sh 1550 
-# python main.py 1600 0 > result.yaml
-# ./replace.sh 1600 
-# python main.py 1650 0 > result.yaml
-# ./replace.sh 1650 
-# python main.py 1700 0 > result.yaml
-# ./replace.sh 1700 
-# python main.py 1800 0 > result.yaml
-# ./replace.sh 1800 
+# python main.py 1300 0 > result.yaml
+# ./replace.sh 1300 
+# python main.py 1350 0 > result.yaml
+# ./replace.sh 1350 
+# python main.py 1400 0 > result.yaml
+# ./replace.sh 1400 
+# python main.py 1450 0 > result.yaml
+# ./replace.sh 1450 
+# python main.py 1500 0 > result.yaml
+# ./replace.sh 1500 
+python main.py 1550 0 > result.yaml
+./replace.sh 1550 
+python main.py 1600 0 > result.yaml
+./replace.sh 1600 
+python main.py 1650 0 > result.yaml
+./replace.sh 1650 
+python main.py 1700 0 > result.yaml
+./replace.sh 1700 
+python main.py 1800 0 > result.yaml
+./replace.sh 1800 
