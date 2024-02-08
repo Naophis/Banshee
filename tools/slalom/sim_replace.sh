@@ -36,8 +36,8 @@
 # ./replace.sh 1450 
 # python main.py 1500 0 > result.yaml
 # ./replace.sh 1500 
-python main.py 1550 0 > result.yaml
-./replace.sh 1550 
+# python main.py 1550 0 > result.yaml
+# ./replace.sh 1550 
 python main.py 1600 0 > result.yaml
 ./replace.sh 1600 
 python main.py 1650 0 > result.yaml

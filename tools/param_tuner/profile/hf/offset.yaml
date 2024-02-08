@@ -67,10 +67,14 @@ wall_off_hold_noexist_th_r: 60
 wall_off_hold_noexist_th_l2: 60
 wall_off_hold_noexist_th_r2: 60
 # 壁切れ オフセット距離
-wall_off_hold_dist_str_l: -5.0
-wall_off_hold_dist_str_r: -5.75
-wall_off_hold_dist_str_l_exist: -5.0
-wall_off_hold_dist_str_r_exist: -5.75
+wall_off_hold_dist_str_l: -8.0
+wall_off_hold_dist_str_r: -8.0
+wall_off_hold_dist_str_l_exist: -8.0
+wall_off_hold_dist_str_r_exist: -8.0
+# wall_off_hold_dist_str_l: 1.0
+# wall_off_hold_dist_str_r: 0.0
+# wall_off_hold_dist_str_l_exist: 1.0
+# wall_off_hold_dist_str_r_exist: 0.0
 
 
 # wall_off_hold_dist_str_l: 3.0
@@ -102,28 +106,28 @@ wall_off_hold_exist_dist_dia_r: 50
 wall_off_hold_noexist_dia_th_l: 50
 wall_off_hold_noexist_dia_th_r: 55
 # 壁切れ オフセット距離
-wall_off_hold_dist_dia_l2: 3.0
-wall_off_hold_dist_dia_r2: 3.0
+wall_off_hold_dist_dia_l2: -3.0
+wall_off_hold_dist_dia_r2: -2.0
 #斜めターン壁有り補正
-dia_turn_th_l: 55
-dia_turn_th_r: 62
+dia_turn_th_l: 52
+dia_turn_th_r: 52
 # 壁切れ オフセット距離(反対側の壁有り)
 wall_off_hold_dist_dia_l: -4.0
 wall_off_hold_dist_dia_r: -4.0
 #斜め壁切れ時のmax接近距離
 # dia_wall_off_ref_l: 27.5
 # dia_wall_off_ref_r: 28.75
-dia_wall_off_ref_l: 29.5
-dia_wall_off_ref_r: 30.75
+dia_wall_off_ref_l: 30.5
+dia_wall_off_ref_r: 31.5
 dia_offset_max_dist: 10
 
 #ターン後オフセット距離
-offset_after_turn_l: 24
-offset_after_turn_r: 24
-offset_after_turn_l2: 18
-offset_after_turn_r2: 18
-offset_after_turn_dia_l: 16
-offset_after_turn_dia_r: 16
+offset_after_turn_l: 24 #dia45, dia135
+offset_after_turn_r: 24 #dia45, dia135
+offset_after_turn_l2: 20 #large, orval
+offset_after_turn_r2: 20 #large, orval
+offset_after_turn_dia_l: 18
+offset_after_turn_dia_r: 18
 
 # constant
 cell: 90.0
