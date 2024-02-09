@@ -100,7 +100,7 @@ if test_mode == 0
 
 elseif test_mode == 1
     % tgt
-    v_max = 950;
+    v_max = 1200;
     end_v = v_max;
     accl = 28000;
     decel = -20000;
@@ -119,11 +119,11 @@ elseif test_mode == 1
     ego_state = int8(0);
 
     % radius = 90.5;
-    radius = 45;
+    radius = 64;
     alphaTemp = (ego_v / radius);
     sla.base_alpha = alphaTemp;
     % sla.base_time = 0.18627166748046875;
-    sla.base_time = 0.0731249999999984;
+    sla.base_time = 0.027453124999998708;
 
     sla.limit_time_count = sla.base_time * 2 / dt;
     sla.pow_n = 4;

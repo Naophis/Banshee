@@ -67,7 +67,7 @@ class Plot:
             else:
                 if hf_cl == 0:
                     # rad = 50.25
-                    rad = 54.5
+                    rad = 54.25
                     n = 4
                     tgt_ang = 180
                     end_pos = {"x": 0, "y": 180}
@@ -78,7 +78,7 @@ class Plot:
                     tgt_ang = 180
                     end_pos = {"x": 0, "y": 360}
                     start_ang = 0
-                
+
         elif type == "dia45":
             end_pos = {"x": 90, "y": 45}
             if mode > 0:
@@ -105,9 +105,9 @@ class Plot:
                 tgt_ang3 = 45.0
                 tgt_ang = 45
                 start_ang = 0
-                
+
                 if hf_cl == 0:
-                    rad = 64
+                    rad = 60
                     n = 4
                     end_pos = {"x": 90, "y": 45}
                 elif hf_cl == 1:
@@ -117,9 +117,9 @@ class Plot:
 
         elif type == "dia135":
             start_ang = 0
-            
+
             if hf_cl == 0:
-                rad = 45
+                rad = 47.5
                 n = 4
                 tgt_ang = 135
                 end_pos = {"x": 45, "y": 90}
@@ -128,7 +128,7 @@ class Plot:
                 n = 4
                 tgt_ang = 135
                 end_pos = {"x": 90, "y": 180}
-            
+
         elif type == "dia45_2":
             start_ang = 45
             if hf_cl == 0:
@@ -141,13 +141,13 @@ class Plot:
                 n = 4
                 tgt_ang = 45
                 end_pos = {"x": 180, "y": 90}
-            
-            
-            
+
+
+
         elif type == "dia135_2":
             start_ang = 45
             if hf_cl == 0:
-                rad = 45
+                rad = 44.50
                 n = 4
                 tgt_ang = 135
                 end_pos = {"x": -45, "y": 90}
@@ -159,16 +159,16 @@ class Plot:
         elif type == "dia90":
             start_ang = 0
             if hf_cl == 0:
-                rad = 45
+                rad = 44.0
                 n = 4
                 tgt_ang = 90
-                end_pos = {"x": 0, "y": 90}
+                end_pos = {"x": 90/math.sqrt(2), "y": 90/math.sqrt(2)}
             elif hf_cl == 1:
                 rad = 45
                 n = 4
                 tgt_ang = 90
                 end_pos = {"x": 0, "y": 180}
-            
+
         res = {}
         if mode > 0:
             sla = Slalom2(v, rad, n, tgt_ang1, tgt_ang2, tgt_ang3,
@@ -264,7 +264,10 @@ class Plot:
                  alpha=trj_alpha, ls="--")
         trj.plot(res2["after_path_x2"], res2["after_path_y2"],
                  ls="--", color="cyan", lw=1, alpha=trj_alpha)
-
+        if res2["after_path_x2"][1] != end_pos["x"] or \
+                res2["after_path_y2"][1] != end_pos["y"]:
+            print(res2["after_path_x2"])
+            print(res2["after_path_y2"])
         # plV = plt.subplot2grid((plot_row, plot_col), (1, 0), rowspan=plot_col)
         plV = plt.subplot2grid((plot_row, plot_col), (0, 1), rowspan=1)
         plV.plot(res["v"] * 1000)
@@ -274,14 +277,15 @@ class Plot:
         plVy.plot(res["vy"] * 1000)
         plW = plt.subplot2grid((plot_row, plot_col), (3, 1), rowspan=1)
         plW.plot(res["w"])
+        plW.plot(res["w2"])
         # plBeta = plt.subplot2grid((plot_row, plot_col), (4, 1), rowspan=1)
         # plBeta.plot(res["beta"] * 180 / np.pi)
         # plVx.plot(res["vx"])
         print('{}:'.format(type))
         print('  v: {}'.format(sla.v))
         print('  ang: {}'.format(sla.base_ang))
-        print('  rad: {}'.format(sla.rad))
         print('  pow_n: {}'.format(sla.pow_n))
+        print('  rad: {}'.format(sla.rad))
         print('  time: {}'.format(sla.base_time))
         if type == "orval":
             print('  rad2: {}'.format(sla.rad))

@@ -122,7 +122,7 @@ dia_wall_off_ref_r: 31.5
 dia_offset_max_dist: 10
 
 #ターン後オフセット距離
-offset_after_turn_l: 24 #dia45, dia135
+offset_after_turn_l: 15 #dia45, dia135
 offset_after_turn_r: 24 #dia45, dia135
 offset_after_turn_l2: 20 #large, orval
 offset_after_turn_r2: 20 #large, orval

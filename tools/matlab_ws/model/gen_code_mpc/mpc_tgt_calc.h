@@ -24,8 +24,14 @@ extern "C"
 class mpc_tgt_calcModelClass final
 {
  public:
+  struct B_mpc_tgt_calc_T {
+    real32_T Merge_p[2];
+    real32_T Merge1[2];
+  };
+
   struct P_IfActionSubsystem_mpc_tgt_c_T {
     real32_T Constant1_Value;
+    real32_T Constant2_Value;
   };
 
   struct P_keep_mpc_tgt_calc_T {
@@ -83,16 +89,26 @@ class mpc_tgt_calcModelClass final
     real32_T Constant_Value_ne;
     real32_T Constant1_Value_mn;
     real32_T Constant5_Value;
+    real32_T Constant10_Value;
     real32_T Constant2_Value_e;
+    real32_T Constant3_Value_j;
+    real32_T Constant7_Value;
+    real32_T Constant8_Value;
     real32_T Gain1_Gain_l;
     real32_T Constant4_Value_d;
     real32_T Constant6_Value_o;
     real32_T Constant_Value_f;
     real32_T Constant1_Value_i;
     real32_T Constant5_Value_j;
+    real32_T Constant10_Value_f;
     real32_T Constant2_Value_m;
+    real32_T Constant3_Value_k;
+    real32_T Constant7_Value_a;
+    real32_T Constant8_Value_k;
     real32_T Gain1_Gain_d;
     real32_T Constant_Value_j;
+    real32_T Merge_InitialOutput;
+    real32_T Merge1_InitialOutput;
     real32_T Gain1_Gain_h;
     real32_T Switch1_Threshold;
     real32_T Constant_Value_ph;
@@ -126,7 +142,7 @@ class mpc_tgt_calcModelClass final
     real32_T Gain_Gain_n;
     real32_T Constant3_Value_c;
     real32_T Gain1_Gain_o0;
-    real32_T Merge_InitialOutput;
+    real32_T Merge_InitialOutput_o;
     real32_T Constant_Value_nex;
     real32_T Constant4_Value_c;
     real32_T Constant3_Value_cn;
@@ -149,6 +165,7 @@ class mpc_tgt_calcModelClass final
     real32_T Gain1_Gain_i5;
     real32_T Gain3_Gain_k;
     uint8_T ManualSwitch_CurrentSetting;
+    uint8_T ManualSwitch_CurrentSetting_o;
     uint8_T ManualSwitch_CurrentSetting_c;
     uint8_T ManualSwitch_CurrentSetting_i;
     uint8_T ManualSwitch_CurrentSetting_e;
@@ -175,8 +192,9 @@ class mpc_tgt_calcModelClass final
   mpc_tgt_calcModelClass();
   ~mpc_tgt_calcModelClass();
  private:
+  B_mpc_tgt_calc_T mpc_tgt_calc_B;
   static P_mpc_tgt_calc_T mpc_tgt_calc_P;
-  static void mpc_tgt_calc_IfActionSubsystem(real32_T *rty_Out1,
+  static void mpc_tgt_calc_IfActionSubsystem(real32_T rty_Out1[2],
     P_IfActionSubsystem_mpc_tgt_c_T *localP);
   static void mpc_tgt_calc_keep(real32_T *rty_accl_out, int32_T *rty_state_out,
     P_keep_mpc_tgt_calc_T *localP);

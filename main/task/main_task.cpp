@@ -222,8 +222,8 @@ int MainTask::select_mode() {
     int res = ui->encoder_operation();
     mode_num += res;
     if (mode_num == -1) {
-      mode_num = 28;
-    } else if (mode_num == 29) {
+      mode_num = 13;
+    } else if (mode_num == 14) {
       mode_num = (int)(MODE::SEARCH);
     }
     lbit.byte = mode_num + 1;
@@ -1245,8 +1245,8 @@ void MainTask::load_slas(
           getItem(getItem(root, p.second.c_str()), "rad2")->valuedouble;
       turn_map[p.first].time2 =
           getItem(getItem(root, p.second.c_str()), "time2")->valuedouble;
-    printf("   - rad2: %f\n", turn_map[p.first].rad2);
-    printf("   - time2: %f\n", turn_map[p.first].time2);
+      printf("   - rad2: %f\n", turn_map[p.first].rad2);
+      printf("   - time2: %f\n", turn_map[p.first].time2);
     }
 
     turn_map[p.first].pow_n =
@@ -1523,60 +1523,32 @@ void MainTask::task() {
       } else if (mode_num == 3) {
         path_run(1, 1);
       } else if (mode_num == 4) {
-        path_run(2, 2);
-      } else if (mode_num == 5) {
-        path_run(3, 3);
-      } else if (mode_num == 6) {
-        path_run(4, 4);
-      } else if (mode_num == 7) {
-        path_run(5, 5);
-      } else if (mode_num == 8) {
-        path_run(6, 6);
-      } else if (mode_num == 9) {
-        path_run(7, 7);
-      } else if (mode_num == 10) {
-        path_run(8, 8);
-      } else if (mode_num == 11) {
-        path_run(9, 9);
-      } else if (mode_num == 12) {
-        path_run(10, 10);
-      } else if (mode_num == 13) {
-        path_run(11, 11);
-      } else if (mode_num == 14) {
         path_run(12, 12);
-      } else if (mode_num == 15) {
-        path_run(13, 12);
-      } else if (mode_num == 16) {
+      } else if (mode_num == 5) {
         path_run(14, 12);
-      } else if (mode_num == 17) {
-        path_run(15, 12);
-      } else if (mode_num == 18) {
+      } else if (mode_num == 6) {
         path_run(16, 12);
-      } else if (mode_num == 19) {
+      } else if (mode_num == 7) {
         path_run(17, 12);
-      } else if (mode_num == 20) {
+      } else if (mode_num == 8) {
         path_run(18, 12);
-      } else if (mode_num == 21) {
+      } else if (mode_num == 9) {
         path_run(19, 12);
-      } else if (mode_num == 22) {
+      } else if (mode_num == 10) {
         path_run(20, 12);
-      } else if (mode_num == 23) {
-        path_run(21, 12);
-      } else if (mode_num == 24) {
+      } else if (mode_num == 11) {
         path_run(22, 12);
-      } else if (mode_num == 25) {
-        path_run(23, 8);
-      } else if (mode_num == 26) {
+      } else if (mode_num == 12) {
         printf("keep_pivot\n");
         keep_pivot();
-      } else if (mode_num == 27) {
+      } else if (mode_num == 13) {
         // dump1(); // taskの最終行に配置すること
         printf("suction\n");
         mp->reset_gyro_ref_with_check();
         pt->suction_enable(sys.test.suction_duty, sys.test.suction_duty_low);
         vTaskDelay(1000 * 10 / portTICK_PERIOD_MS);
         pt->suction_disable();
-      } else if (mode_num == 28) {
+      } else if (mode_num == 13) {
         save_maze_data(false);
         save_maze_kata_data(false);
         save_maze_return_data(false);

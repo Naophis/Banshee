@@ -24,11 +24,11 @@ orval:
   v: 1600
   ang: 180
   pow_n: 4
-  rad: 54.75
-  rad2: 54.75
-  time: 0.0704374999999975
-  time2: 0.0704374999999975
-  front: { left: 8, right: 8 }
+  rad: 56.0
+  time: 0.07204687499999804
+  rad2: 54.25
+  time2: 0.06979687499999729
+  front: { left: 18, right: 18 }
   back: { left: 5, right: 5 }
 normal:
   v: 300.000000

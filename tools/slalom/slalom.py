@@ -62,7 +62,7 @@ class Slalom:
             self.Et = 0.763214618198974433973
         self.base_alpha = v / rad
 
-    def set_cell_size(self, size): 
+    def set_cell_size(self, size):
         self.cell_size = size
         self.half_cell_size = size / 2
 
@@ -85,23 +85,27 @@ class Slalom:
         res["y"] = np.array([0])
         res["alpha"] = np.array([0])
         res["w"] = np.array([0])
+        res["w2"] = np.array([0])
         tmp_w = 0
         tmp_theta = start_ang * math.pi / 180
         tmp_x = 0
         tmp_y = 0
         for i in range(1, int(self.limit_time_count + 1)):
             tmp_alpha = self.base_alpha * \
-                        self.calc_neipire(dt * i, self.base_time, self.pow_n)
+                self.calc_neipire(dt * i, self.base_time, self.pow_n)
+            tmp_w2 = self.base_alpha * \
+                self.calc_neipire_w(dt * i, self.base_time, self.pow_n)
             tmp_w = tmp_w + tmp_alpha * dt
             tmp_theta = tmp_theta + tmp_w * dt
             tmp_x = tmp_x + self.v * \
-                    math.cos(self.start_theta + tmp_theta) * dt
+                math.cos(self.start_theta + tmp_theta) * dt
             tmp_y = tmp_y + self.v * \
-                    math.sin(self.start_theta + tmp_theta) * dt
+                math.sin(self.start_theta + tmp_theta) * dt
             res["x"] = np.append(res["x"], tmp_x)
             res["y"] = np.append(res["y"], tmp_y)
             res["alpha"] = np.append(res["alpha"], tmp_alpha)
             res["w"] = np.append(res["w"], tmp_w)
+            res["w2"] = np.append(res["w2"], tmp_w2)
         # print(np.max(res["w"]) ** 2 * self.rad / 9.81 / 1000)
         self.res = res
         return res
@@ -117,6 +121,7 @@ class Slalom:
         res["vy"] = np.array([])
         res["beta"] = np.array([])
         res["acc_y"] = np.array([])
+        res["w2"] = np.array([])
         tmp_w = 0
         tmp_theta = start_ang * math.pi / 180
         tmp_x = 0
@@ -134,10 +139,13 @@ class Slalom:
         old_beta = 0
         for i in range(1, int(self.limit_time_count + 1)):
             tmp_alpha = self.base_alpha * \
-                        self.calc_neipire(dt * i, self.base_time, self.pow_n)
+                self.calc_neipire(dt * i, self.base_time, self.pow_n)
             old_w = tmp_w
 
-            tmp_w = tmp_w + tmp_alpha * dt
+            # tmp_w = tmp_w + tmp_alpha * dt
+            tmp_w = self.base_alpha * \
+                self.calc_neipire_w(dt * i, self.base_time, self.pow_n)
+            tmp_w2 = tmp_w
             tmp_theta = tmp_theta + tmp_w * dt + delta_beta
             # Fx = 0
 
@@ -159,9 +167,9 @@ class Slalom:
             tmp_v = np.sqrt(vx ** 2 + vy ** 2)
 
             tmp_x = tmp_x + tmp_v * 1000 * \
-                    np.cos(self.start_theta + tmp_theta) * dt
+                np.cos(self.start_theta + tmp_theta) * dt
             tmp_y = tmp_y + tmp_v * 1000 * \
-                    np.sin(self.start_theta + tmp_theta) * dt
+                np.sin(self.start_theta + tmp_theta) * dt
 
             # tmp_x = tmp_x + vx * 1000 * dt
             # tmp_y = tmp_y + vy * 1000 * dt
@@ -174,6 +182,7 @@ class Slalom:
             res["y"] = np.append(res["y"], tmp_y)
             res["alpha"] = np.append(res["alpha"], tmp_alpha)
             res["w"] = np.append(res["w"], tmp_w)
+            res["w2"] = np.append(res["w2"], tmp_w2)
             res["acc_y"] = np.append(res["acc_y"], (tmp_v * tmp_w))
             old_beta = beta
             beta = np.arctan2(vy, vx)
@@ -212,9 +221,9 @@ class Slalom:
             tmp_theta = tmp_theta + tmp_w * dt
 
             tmp_x = tmp_x + self.v * \
-                    math.cos(self.start_theta + tmp_theta) * dt
+                math.cos(self.start_theta + tmp_theta) * dt
             tmp_y = tmp_y + self.v * \
-                    math.sin(self.start_theta + tmp_theta) * dt
+                math.sin(self.start_theta + tmp_theta) * dt
 
             if state == 0:
                 if tmp_theta > (self.ang / 3):
@@ -300,9 +309,9 @@ class Slalom:
             tmp_v = np.sqrt(vx ** 2 + vy ** 2)
 
             tmp_x = tmp_x + tmp_v * 1000 * \
-                    np.cos(self.start_theta + tmp_theta) * dt
+                np.cos(self.start_theta + tmp_theta) * dt
             tmp_y = tmp_y + tmp_v * 1000 * \
-                    np.sin(self.start_theta + tmp_theta) * dt
+                np.sin(self.start_theta + tmp_theta) * dt
 
             # tmp_x = tmp_x + vx * 1000 * dt
             # tmp_y = tmp_y + vy * 1000 * dt
@@ -348,7 +357,14 @@ class Slalom:
         P = math.pow((t - z), N - z)
         Q = P * (t - z)
         res = -N * P / ((Q - z) * (Q - z)) * \
-              math.pow(math.exp(1), z + z / (Q - z)) / s
+            math.pow(math.exp(1), z + z / (Q - z)) / s
+        if t == 0:
+            return 0
+        return res
+
+    def calc_neipire_w(self, t, s, N):
+        t = t / s
+        res = math.exp(1) * math.pow(math.exp(1), (-1/(1-math.pow(t-1, N))))
         if t == 0:
             return 0
         return res
@@ -364,6 +380,7 @@ class Slalom:
 
         self.end_offset = (self.end_pos["y"] - end_y - start_pos_y[0]) / a
         self.start_offset = (self.end_pos["x"] - end_x) - self.end_offset * b
+
         # start_offset=0
         # end_offset=0
         end_offset = (self.end_pos["y"] - end_y) / a
@@ -392,14 +409,16 @@ class Slalom:
             pass
         elif self.type == "dia45":
             end_offset = (self.end_pos["y"] - end_y) / a
-            start_offset = (self.end_pos["x"] - end_x + offset["prev"]) - end_offset * b
+            start_offset = (
+                self.end_pos["x"] - end_x + offset["prev"]) - end_offset * b
             prev_path_x = [-offset["prev"], start_offset - offset["prev"]]
             prev_path_y = [0, 0]
             after_path_x = [end_x, end_x + end_offset * b]
             after_path_y = [end_y, end_y + end_offset * a]
         elif self.type == "dia135":
             end_offset = (self.end_pos["y"] - end_y) / a
-            start_offset = (self.end_pos["x"] - end_x + offset["prev"]) - end_offset * b
+            start_offset = (
+                self.end_pos["x"] - end_x + offset["prev"]) - end_offset * b
             prev_path_x = [-offset["prev"], start_offset - offset["prev"]]
             prev_path_y = [0, 0]
             after_path_x = [end_x, end_x + end_offset * b]
@@ -407,11 +426,15 @@ class Slalom:
 
         elif self.type == "dia45_2":
 
-            start_offset = (self.half_cell_size - end_x) / a + offset["prev_dia"]
-            end_offset = (self.cell_size - end_y) - (start_offset - offset["prev_dia"]) * a
+            start_offset = (self.half_cell_size - end_x) / \
+                a + offset["prev_dia"]
+            end_offset = (self.cell_size - end_y) - \
+                (start_offset - offset["prev_dia"]) * a
 
-            prev_path_x = [-offset["prev_dia"] * a, (start_offset - offset["prev_dia"]) * b]
-            prev_path_y = [-offset["prev_dia"] * a, (start_offset - offset["prev_dia"]) * a]
+            prev_path_x = [-offset["prev_dia"] * a,
+                           (start_offset - offset["prev_dia"]) * b]
+            prev_path_y = [-offset["prev_dia"] * a,
+                           (start_offset - offset["prev_dia"]) * a]
             after_path_x = [end_x, end_x]
             after_path_y = [end_y, end_y + end_offset]
 
@@ -420,10 +443,13 @@ class Slalom:
         elif self.type == "dia135_2":
 
             start_offset = (self.cell_size - end_y) / b + offset["prev"]
-            end_offset = math.fabs(self.half_cell_size + end_x + abs((start_offset - offset["prev"]) * a))
+            end_offset = math.fabs(
+                self.half_cell_size + end_x + abs((start_offset - offset["prev"]) * a))
 
-            prev_path_x = [-offset["prev_dia"] * a, abs((start_offset - offset["prev_dia"]) * a)]
-            prev_path_y = [-offset["prev_dia"] * a, abs((start_offset - offset["prev_dia"]) * b)]
+            prev_path_x = [-offset["prev_dia"] * a,
+                           abs((start_offset - offset["prev_dia"]) * a)]
+            prev_path_y = [-offset["prev_dia"] * a,
+                           abs((start_offset - offset["prev_dia"]) * b)]
             after_path_x = [end_x, end_x - end_offset]
             after_path_y = [end_y, end_y]
 
@@ -431,17 +457,23 @@ class Slalom:
         elif self.type == "dia90":
             self.half_cell_size = 0
             end_offset = (self.cell_size / math.sqrt(2) - end_y)
-            start_offset = (self.cell_size / math.sqrt(2) - end_x) + offset["prev_dia"]
+            start_offset = (self.cell_size / math.sqrt(2) -
+                            end_x) + offset["prev_dia"]
 
-            prev_path_x = [-offset["prev_dia"], start_offset - offset["prev_dia"]]
+            prev_path_x = [-offset["prev_dia"],
+                           start_offset - offset["prev_dia"]]
             prev_path_y = [0, 0]
             after_path_x = [end_x, end_x + end_offset * b]
             after_path_y = [end_y, end_y + end_offset * a]
 
             # prev_path_x = [-offset["prev"], start_offset - offset["prev"]]
 
-        after_path_x2 = [after_path_x[0] + prev_path_x[1], after_path_x[1] + prev_path_x[1]]
-        after_path_y2 = [after_path_y[0] + prev_path_y[1], after_path_y[1] + prev_path_y[1]]
+        after_path_x2 = [after_path_x[0] + prev_path_x[1],
+                         after_path_x[1] + prev_path_x[1]]
+        after_path_y2 = [after_path_y[0] + prev_path_y[1],
+                         after_path_y[1] + prev_path_y[1]]
+        # print(after_path_x)
+        # print(after_path_y)
         res = {}
 
         res["turn_offset_x"] = prev_path_x[1]  # ターンの原点x
