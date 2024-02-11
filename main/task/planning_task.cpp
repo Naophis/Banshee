@@ -13,7 +13,7 @@ PlanningTask::PlanningTask() {}
 
 PlanningTask::~PlanningTask() {}
 void PlanningTask::create_task(const BaseType_t xCoreID) {
-  xTaskCreatePinnedToCore(task_entry_point, "planning_task", 8192 * 4, this, 4,
+  xTaskCreatePinnedToCore(task_entry_point, "planning_task", 8192, this, 4,
                           &handle, xCoreID);
   motor_qh_enable = xQueueCreate(4, sizeof(motor_req_t *));
   suction_qh_enable = xQueueCreate(4, sizeof(motor_req_t *));
@@ -444,7 +444,7 @@ void PlanningTask::task() {
       first_req = true;
     }
 
-    sn->task(search_mode, mode_select, res == pdTRUE);
+    // sn->task(search_mode, mode_select, res == pdTRUE);
     start2 = esp_timer_get_time();
 
     // 物理量ベース計算
@@ -521,34 +521,56 @@ float PlanningTask::calc_sensor_pid() {
   error_entity.sen.error_i += error_entity.sen.error_p;
   error_entity.sen.error_d = error_entity.sen.error_p;
   error_entity.sen.error_p = check_sen_error();
+  if (search_mode) {
+    if (error_entity.sen.error_p > param_ro->search_sen_ctrl_limitter) {
+      error_entity.sen.error_p = param_ro->search_sen_ctrl_limitter;
+    } else if (error_entity.sen.error_p < -param_ro->search_sen_ctrl_limitter) {
+      error_entity.sen.error_p = -param_ro->search_sen_ctrl_limitter;
+    }
+  }
   error_entity.sen.error_d =
       error_entity.sen.error_p - error_entity.sen.error_d;
 
   if (search_mode) {
-    duty = param_ro->str_ang_pid.p * error_entity.sen.error_p -
-           param_ro->str_ang_pid.d * sensing_result->ego.w_kf;
-    //  (error_entity.sen_log.gain_z - error_entity.sen_log.gain_zz) * dt;
-    error_entity.sen_log.gain_zz = error_entity.sen_log.gain_z;
-    error_entity.sen_log.gain_z = duty;
+    if (error_entity.sen.error_p != 0) {
+      duty = param_ro->str_ang_pid.p * error_entity.sen.error_p -
+             param_ro->str_ang_pid.d * sensing_result->ego.w_kf;
 
-    set_ctrl_val(error_entity.s_val, error_entity.sen.error_p, 0, 0,
-                 sensing_result->ego.w_kf,
-                 param_ro->str_ang_pid.p * error_entity.sen.error_p, 0, 0,
-                 -param_ro->str_ang_pid.d * sensing_result->ego.w_kf,
-                 error_entity.sen_log.gain_zz, error_entity.sen_log.gain_z);
-
+      //  (error_entity.sen_log.gain_z - error_entity.sen_log.gain_zz) * dt;
+      set_ctrl_val(error_entity.s_val, error_entity.sen.error_p, 0, 0,
+                   sensing_result->ego.w_kf,
+                   param_ro->str_ang_pid.p * error_entity.sen.error_p, 0, 0,
+                   -param_ro->str_ang_pid.d * sensing_result->ego.w_kf,
+                   error_entity.sen_log.gain_zz, error_entity.sen_log.gain_z);
+      error_entity.sen_log.gain_zz = error_entity.sen_log.gain_z;
+      error_entity.sen_log.gain_z = duty;
+    } else {
+      duty = 0;
+      error_entity.sen_log.gain_zz = error_entity.sen_log.gain_z;
+      error_entity.sen_log.gain_z = duty;
+      set_ctrl_val(error_entity.s_val, 0, 0, 0, 0, 0, 0, 0, 0,
+                   error_entity.sen_log.gain_zz, error_entity.sen_log.gain_z);
+    }
   } else {
-    duty = param_ro->str_ang_pid.b * error_entity.sen.error_p -
-           param_ro->str_ang_pid.d * sensing_result->ego.w_kf;
-    //  (error_entity.sen_log.gain_z - error_entity.sen_log.gain_zz) * dt;
-    error_entity.sen_log.gain_zz = error_entity.sen_log.gain_z;
-    error_entity.sen_log.gain_z = duty;
 
-    set_ctrl_val(error_entity.s_val, error_entity.sen.error_p, 0, 0,
-                 sensing_result->ego.w_kf,
-                 param_ro->str_ang_pid.b * error_entity.sen.error_p, 0, 0,
-                 -param_ro->str_ang_pid.d * sensing_result->ego.w_kf,
-                 error_entity.sen_log.gain_zz, error_entity.sen_log.gain_z);
+    if (error_entity.sen.error_p != 0) {
+      duty = param_ro->str_ang_pid.b * error_entity.sen.error_p -
+             param_ro->str_ang_pid.d * sensing_result->ego.w_kf;
+
+      error_entity.sen_log.gain_zz = error_entity.sen_log.gain_z;
+      error_entity.sen_log.gain_z = duty;
+      set_ctrl_val(error_entity.s_val, error_entity.sen.error_p, 0, 0,
+                   sensing_result->ego.w_kf,
+                   param_ro->str_ang_pid.b * error_entity.sen.error_p, 0, 0,
+                   -param_ro->str_ang_pid.d * sensing_result->ego.w_kf,
+                   error_entity.sen_log.gain_zz, error_entity.sen_log.gain_z);
+    } else {
+      duty = 0;
+      error_entity.sen_log.gain_zz = error_entity.sen_log.gain_z;
+      error_entity.sen_log.gain_z = duty;
+      set_ctrl_val(error_entity.s_val, 0, 0, 0, 0, 0, 0, 0, 0,
+                   error_entity.sen_log.gain_zz, error_entity.sen_log.gain_z);
+    }
   }
 
   // if (search_mode) {
@@ -1926,8 +1948,10 @@ void PlanningTask::calc_tgt_duty() {
 
       } else {
         // mode3 main
-        const auto diff_ang =
-            (tgt_val->ego_in.img_ang - sensing_result->ego.ang_kf);
+        auto diff_ang = (tgt_val->ego_in.img_ang - sensing_result->ego.ang_kf);
+        if (tgt_val->motion_type == MotionType::SLALOM) {
+          diff_ang = 0;
+        }
         auto kp_gain = param_ro->gyro_pid.p * error_entity.w.error_p;
         auto ki_gain = param_ro->gyro_pid.i * diff_ang;
         auto kb_gain = param_ro->gyro_pid.b * error_entity.w.error_i;
@@ -1936,24 +1960,22 @@ void PlanningTask::calc_tgt_duty() {
         limitter(kp_gain, ki_gain, kb_gain, kd_gain,
                  param_ro->gyro_pid_gain_limitter);
         duty_roll = kp_gain + ki_gain + kb_gain + kc_gain + kd_gain;
-        // +  (error_entity.ang_log.gain_z -
+        // +            (error_entity.ang_log.gain_z -
         // error_entity.ang_log.gain_zz) * dt;
 
         error_entity.ang_log.gain_zz = error_entity.ang_log.gain_z;
         error_entity.ang_log.gain_z = duty_roll;
 
-        set_ctrl_val(
-            error_entity.w_val,
-            error_entity.w.error_p,                                 // p
-            (tgt_val->ego_in.img_ang - sensing_result->ego.ang_kf), // i
-            error_entity.w.error_i,                                 // i2
-            error_entity.w_kf.error_d,                              // d
-            param_ro->gyro_pid.p * error_entity.w.error_p,          // kp*p
-            param_ro->gyro_pid.i *
-                (tgt_val->ego_in.img_ang - sensing_result->ego.ang_kf), // ki*i
-            param_ro->gyro_pid.b * error_entity.w.error_i,              // kb*i2
-            param_ro->gyro_pid.d * error_entity.w_kf.error_d,           // kd*d
-            error_entity.ang_log.gain_zz, error_entity.ang_log.gain_z);
+        set_ctrl_val(error_entity.w_val,
+                     error_entity.w.error_p,                           // p
+                     diff_ang,                                         // i
+                     error_entity.w.error_i,                           // i2
+                     error_entity.w_kf.error_d,                        // d
+                     param_ro->gyro_pid.p * error_entity.w.error_p,    // kp*p
+                     param_ro->gyro_pid.i * diff_ang,                  // ki*i
+                     param_ro->gyro_pid.b * error_entity.w.error_i,    // kb*i2
+                     param_ro->gyro_pid.d * error_entity.w_kf.error_d, // kd*d
+                     error_entity.ang_log.gain_zz, error_entity.ang_log.gain_z);
         // const auto diff_dist =
         //     tgt_val->ego_in.img_dist - sensing_result->ego.dist_kf;
         // duty_c = param_ro->motor_pid2.p * error_entity.v.error_p +
@@ -2322,6 +2344,8 @@ void PlanningTask::cp_tgt_val() {
     if (tgt_val->ego_in.v < 10) {
       tgt_val->ego_in.v = tmp_v;
     }
+    sensing_result->sen.r45.sensor_dist = 0;
+    sensing_result->sen.l45.sensor_dist = 0;
   }
 
   tgt_val->ego_in.w = mpc_next_ego.w;

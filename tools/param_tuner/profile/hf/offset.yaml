@@ -2,12 +2,13 @@
 clear_angle: 5
 clear_dist_order: 88
 
-pivot_angle_90: 90.25
-pivot_angle_180: 180.25
+pivot_angle_90: 89.750
+pivot_angle_180: 180.0
 
 # 探索スラローム
-sla_front_ctrl_th: 300.0 # 探索時前壁補正条件しきい時間
-front_dist_offset: 101.250 # 探索時の前壁補正 大→短くなる
+th_offset_dist: 52
+sla_front_ctrl_th: 150.0 # 探索時前壁補正条件しきい時間
+front_dist_offset: 100.250 # 探索時の前壁補正 大→短くなる
 
 front_dist_offset0: 94.0 # pivot時の前壁補正ref
 pivot_back_enable_front_th: 120 # バック判断のための壁有無しきい値
@@ -17,8 +18,8 @@ pivot_back_dist1: 12.0 # pivot時の前壁補正後のバック距離のオフ�
 # スラロームオフセット距離壁補正リファレンス値
 # sla_wall_ref_l: 44.0
 # sla_wall_ref_r: 49.5
-sla_wall_ref_l: 44.50
-sla_wall_ref_r: 44.50
+sla_wall_ref_l: 43.0
+sla_wall_ref_r: 44.0
 sla_max_offset_dist: 6
 
 # Orvalスラロームオフセット距離壁補正リファレンス値
@@ -87,9 +88,9 @@ wall_off_front_move_dia_dist_th: 2
 
 wall_off_wait_dist_dia: 45
 
-diff_dist_th_l: 5
-diff_dist_th_r: 5 
-wall_off_diff_check_dist: 10
+diff_dist_th_l: 20
+diff_dist_th_r: 20
+wall_off_diff_check_dist: 20
 
 # 壁切れ：前壁補正
 front_dist_offset2: 146.0 #ref
@@ -122,10 +123,10 @@ dia_wall_off_ref_r: 31.5
 dia_offset_max_dist: 10
 
 #ターン後オフセット距離
-offset_after_turn_l: 15 #dia45, dia135
-offset_after_turn_r: 24 #dia45, dia135
-offset_after_turn_l2: 20 #large, orval
-offset_after_turn_r2: 20 #large, orval
+offset_after_turn_l: 8 #dia45, dia135 
+offset_after_turn_r: 8 #dia45, dia135
+offset_after_turn_l2: 15 #large, orval
+offset_after_turn_r2: 15 #large, orval
 offset_after_turn_dia_l: 18
 offset_after_turn_dia_r: 18
 

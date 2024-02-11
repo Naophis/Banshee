@@ -3,8 +3,8 @@ dt: 0.001
 # tire2: 13.60125
 
 tire_tread: 38.0
-tire: 13.6145
-tire2: 13.6145
+tire: 13.425
+tire2: 13.425
 # offset_start_dist: 21.0
 offset_start_dist_search: 15.0
 offset_start_dist: 4.0
@@ -18,12 +18,12 @@ FF_roll: 1
 FF_keV: 1 #FF制御on/off flag
 
 motor_driver_type: 2 # 1: EN1_PH1, 2: EN1_PH2, 3: TWO_PWM
-motor_r_cw_ccw_type: 1 # 1: duty > 0 -> true, 0: duty < 0 -> true
-motor_l_cw_ccw_type: 0 # 1: duty > 0 -> true, 0: duty < 0 -> true
+motor_r_cw_ccw_type: 0 # 1: duty > 0 -> true, 0: duty < 0 -> true
+motor_l_cw_ccw_type: 1 # 1: duty > 0 -> true, 0: duty < 0 -> true
 # debug for motor io direction
 motor_debug_mode: 0
 motor_debug_mode_duty_r: 10
-motor_debug_mode_duty_l: -10
+motor_debug_mode_duty_l: -50
 
 MotorHz: 32500
 SuctionHz: 32500
@@ -52,7 +52,7 @@ search_log_enable: 1
 test_log_enable: 1
 fast_log_enable: 1
 sen_log_size: 100
-log_size: 12500
+log_size: 2500
 
 front_ctrl_error_th: 1
 
@@ -75,6 +75,8 @@ axel_degenerate_x: [0, 1, 2, 4, 6, 8, 10]
 # axel_degenerate_y: [1, 1, 0.5, 0.2, 0.2, 0.1, 0.1]
 axel_degenerate_y: [1, 1, 0.8, 0.75, 0.5, 0.2, 0.1]
 # axel_degenerate_y: [1, 1, 1, 1, 1, 1, 1]
+
+search_sen_ctrl_limitter: 8
 
 motor_pid_gain_limitter: 
   mode: 0
@@ -197,7 +199,7 @@ str_agl_pid:
   # d: 1.25
   # p: 0.095 #search_mode
   # b: 0.095 #!searchm_mode
-  p: 0.175 #search_mode
+  p: 0.095 #search_mode
   b: 0.125 #!searchm_mode
   d: 0.0035
   # d: 0.00
@@ -252,8 +254,8 @@ gyro_param:
   # gyro_w_gain_right: 0.002476800
   # gyro_w_gain_left: 0.002476800
   # Gray
-  gyro_w_gain_right: 0.002455900
-  gyro_w_gain_left: 0.002455800
+  gyro_w_gain_right: 0.002455800
+  gyro_w_gain_left: 0.002455700
   lp_delay: 1
 accel_x_param:
   # gain: 315.56 # 16g

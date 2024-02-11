@@ -55,12 +55,13 @@ MotionResult MotionPlanning::go_straight(param_straight_t &p,
 
   const auto left = param->sen_ref_p.normal.exist.left45;
   const auto right = param->sen_ref_p.normal.exist.right45;
-  if (p.search_str_wide_ctrl_l) {
-    param->sen_ref_p.normal.exist.left45 = param->go_straight_wide_ctrl_th;
-  }
-  if (p.search_str_wide_ctrl_r) {
-    param->sen_ref_p.normal.exist.right45 = param->go_straight_wide_ctrl_th;
-  }
+
+  // if (p.search_str_wide_ctrl_l) {
+  //   param->sen_ref_p.normal.exist.left45 = param->go_straight_wide_ctrl_th;
+  // }
+  // if (p.search_str_wide_ctrl_r) {
+  //   param->sen_ref_p.normal.exist.right45 = param->go_straight_wide_ctrl_th;
+  // }
 
   tgt_val->nmr.sct = p.sct;
   if (p.motion_type != MotionType::NONE) {
@@ -295,7 +296,7 @@ MotionResult MotionPlanning::slalom(slalom_param2_t &sp, TurnDirection td,
       // (sensing_result->ego.front_dist - param->front_dist_offset);
     }
     if (td == TurnDirection::Right) {
-      if (sensing_result->ego.left45_dist < th_offset_dist) {
+      if (sensing_result->ego.left45_dist < param->th_offset_dist) {
         auto diff = (param->sla_wall_ref_l - sensing_result->ego.left45_dist);
         if (diff > param->normal_sla_offset) {
           diff = param->normal_sla_offset;
@@ -308,7 +309,7 @@ MotionResult MotionPlanning::slalom(slalom_param2_t &sp, TurnDirection td,
         }
       }
     } else {
-      if (sensing_result->ego.right45_dist < th_offset_dist) {
+      if (sensing_result->ego.right45_dist < param->th_offset_dist) {
         auto diff = (param->sla_wall_ref_r - sensing_result->ego.right45_dist);
         if (diff > param->normal_sla_offset) {
           diff = param->normal_sla_offset;
@@ -332,20 +333,20 @@ MotionResult MotionPlanning::slalom(slalom_param2_t &sp, TurnDirection td,
     float dist_r = ps_back.dist;
     float dist_l = ps_back.dist;
     if (td == TurnDirection::Right) {
-      if (sensing_result->ego.right45_dist < th_offset_dist) {
+      if (sensing_result->ego.right45_dist < param->th_offset_dist) {
         dist_r -= param->sla_wall_ref_r - sensing_result->ego.right45_dist;
         find_r = true;
       }
-      if (sensing_result->ego.left45_dist < th_offset_dist) {
+      if (sensing_result->ego.left45_dist < param->th_offset_dist) {
         dist_l += param->sla_wall_ref_l - sensing_result->ego.left45_dist;
         find_l = true;
       }
     } else {
-      if (sensing_result->ego.left45_dist < th_offset_dist) {
+      if (sensing_result->ego.left45_dist < param->th_offset_dist) {
         dist_l -= param->sla_wall_ref_l - sensing_result->ego.left45_dist;
         find_l = true;
       }
-      if (sensing_result->ego.right45_dist < th_offset_dist) {
+      if (sensing_result->ego.right45_dist < param->th_offset_dist) {
         dist_r += param->sla_wall_ref_r - sensing_result->ego.right45_dist;
         find_r = true;
       }
@@ -1253,7 +1254,7 @@ void MotionPlanning::calc_dia135_offset(param_straight_t &front,
     offset = offset_r;
   }
   front.dist += offset;
-  back.dist += offset * ROOT2;
+  // back.dist += offset * ROOT2;
 }
 
 void MotionPlanning::calc_dia45_offset(param_straight_t &front,

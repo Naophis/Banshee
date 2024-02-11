@@ -14,8 +14,8 @@ MainTask::MainTask() {
 MainTask::~MainTask() {}
 
 void MainTask::create_task(const BaseType_t xCoreID) {
-  xTaskCreatePinnedToCore(task_entry_point, "main_task", 8192 * 3, this, 2,
-                          &handle, xCoreID);
+  xTaskCreatePinnedToCore(task_entry_point, "main_task", 8192, this, 2, &handle,
+                          xCoreID);
 }
 void MainTask::task_entry_point(void *task_instance) {
   static_cast<MainTask *>(task_instance)->task();
@@ -222,8 +222,8 @@ int MainTask::select_mode() {
     int res = ui->encoder_operation();
     mode_num += res;
     if (mode_num == -1) {
-      mode_num = 13;
-    } else if (mode_num == 14) {
+      mode_num = 14;
+    } else if (mode_num == 15) {
       mode_num = (int)(MODE::SEARCH);
     }
     lbit.byte = mode_num + 1;
@@ -353,6 +353,8 @@ void MainTask::load_hw_param() {
       getItem(root, "led_light_delay_cnt")->valuedouble;
   param->led_light_delay_cnt2 =
       getItem(root, "led_light_delay_cnt2")->valuedouble;
+  param->search_sen_ctrl_limitter =
+      getItem(root, "search_sen_ctrl_limitter")->valuedouble;
 
   const unsigned long motor_hz = getItem(root, "MotorHz")->valueint;
   const unsigned long suction_motor_hz = getItem(root, "SuctionHz")->valueint;
@@ -636,6 +638,7 @@ void MainTask::load_offset_param() {
   param->clear_dist_order = getItem(root, "clear_dist_order")->valuedouble;
   param->pivot_back_dist0 = getItem(root, "pivot_back_dist0")->valuedouble;
   param->pivot_back_dist1 = getItem(root, "pivot_back_dist1")->valuedouble;
+  param->th_offset_dist = getItem(root, "th_offset_dist")->valuedouble;
   param->sla_front_ctrl_th = getItem(root, "sla_front_ctrl_th")->valuedouble;
 
   param->wall_off_front_move_dist_th =
@@ -1357,6 +1360,7 @@ void MainTask::task() {
   mp->set_userinterface(ui);
   search_ctrl->set_userinterface(ui);
   pt->ready = true;
+  vTaskDelay(100.0 / portTICK_RATE_MS);
   pt->motor_disable();
   pt->suction_disable();
   check_battery();
@@ -1548,7 +1552,7 @@ void MainTask::task() {
         pt->suction_enable(sys.test.suction_duty, sys.test.suction_duty_low);
         vTaskDelay(1000 * 10 / portTICK_PERIOD_MS);
         pt->suction_disable();
-      } else if (mode_num == 13) {
+      } else if (mode_num == 14) {
         save_maze_data(false);
         save_maze_kata_data(false);
         save_maze_return_data(false);

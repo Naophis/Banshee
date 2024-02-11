@@ -250,11 +250,11 @@ profile_idx: [
       normal: 0,
       large: 16,
       orval: 16,
-      dia45: 16,
-      dia45_2: 16,
+      dia45: 14,
+      dia45_2: 14,
       dia135: 16,
       dia135_2: 16,
-      dia90: 16,
+      dia90: 14,
     },
     {
       # 17: 最短パラメータ 1450
@@ -263,11 +263,11 @@ profile_idx: [
       normal: 0,
       large: 18,
       orval: 17,
-      dia45: 17,
-      dia45_2: 17,
+      dia45: 14,
+      dia45_2: 14,
       dia135: 17,
       dia135_2: 17,
-      dia90: 17,
+      dia90: 14,
     },
     {
       # 18: 最短パラメータ 1500
@@ -276,11 +276,11 @@ profile_idx: [
       normal: 0,
       large: 18,
       orval: 18,
-      dia45: 18,
-      dia45_2: 18,
+      dia45: 14,
+      dia45_2: 14,
       dia135: 18,
       dia135_2: 18,
-      dia90: 17,
+      dia90: 14,
     },
     {
       # 19: 最短パラメータ 1500
@@ -289,11 +289,11 @@ profile_idx: [
       normal: 0,
       large: 20,
       orval: 19,
-      dia45: 18,
-      dia45_2: 19,
+      dia45: 14,
+      dia45_2: 14,
       dia135: 19,
       dia135_2: 19,
-      dia90: 17,
+      dia90: 14,
     },
     {
       # 20: 最短パラメータ 1500
@@ -302,11 +302,11 @@ profile_idx: [
       normal: 0,
       large: 20,
       orval: 19,
-      dia45: 18,
-      dia45_2: 19,
+      dia45: 14,
+      dia45_2: 14,
       dia135: 19,
       dia135_2: 19,
-      dia90: 17,
+      dia90: 14,
     },
     {
       # 21: 最短パラメータ 1500
@@ -328,11 +328,11 @@ profile_idx: [
       normal: 0,
       large: 22,
       orval: 19,
-      dia45: 18,
-      dia45_2: 19,
+      dia45: 14,
+      dia45_2: 14,
       dia135: 19,
       dia135_2: 19,
-      dia90: 17,
+      dia90: 14,
     },
     {
       # 23: 最短パラメータ 1500

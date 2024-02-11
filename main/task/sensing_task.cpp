@@ -231,19 +231,91 @@ void SensingTask::task() {
   int64_t start2 = 0;
   int64_t end2 = 0;
   int64_t start_before = 0;
+  bool battery_check = true;
+  bool skip_sen = false;
   while (1) {
+    skip_sen = false;
+    // if (xQueueReceive(*qh, &receive_req, 0) == pdTRUE) {
+    //   skip_sen = true;
+    // }
+
+    bool r90 = true;
+    bool l90 = true;
+    bool r45 = true;
+    bool l45 = true;
 
     start_before = start;
     start = esp_timer_get_time();
     se->calc_time = (int16_t)(start - start_before);
     gyro_if.req_read2byte_itr(0x26);
     start2 = esp_timer_get_time();
-    adc2_get_raw(BATTERY, width, &sensing_result->battery.raw);
+
+    if (!skip_sen) {
+      adc2_get_raw(BATTERY, width, &sensing_result->battery.raw);
+    }
+
+    if (pt->search_mode && tgt_val->motion_type == MotionType::STRAIGHT) {
+      // 加速中は正面は発光させない
+      if (tgt_val->ego_in.state == 0) {
+        r90 = l90 = false;
+      }
+    }
+    if (pt->search_mode && tgt_val->nmr.sct == SensorCtrlType::NONE) {
+      // 探索中、壁制御しないときはOFF
+      r90 = l90 = false;
+      r45 = l45 = false;
+    }
+    if (tgt_val->nmr.sct == SensorCtrlType::Dia) {
+      if (tgt_val->ego_in.state == 0) {
+        // 斜め壁制御加速中は横は発光させない
+        r45 = l45 = false;
+      }
+    }
+    if (tgt_val->nmr.sct == SensorCtrlType::Straight) {
+      r90 = l90 = true;
+      r45 = l45 = true;
+    }
+    if (tgt_val->motion_type == MotionType::READY) {
+      // motion check用
+      r90 = l90 = true;
+      r45 = l45 = false;
+    }
+    if (tgt_val->motion_type == MotionType::FRONT_CTRL) {
+      // 前壁制御中は横は発光させない
+      r90 = l90 = true;
+      r45 = l45 = false;
+    }
+    if (tgt_val->motion_type == MotionType::SENSING_DUMP) {
+      r90 = l90 = true;
+      r45 = l45 = true;
+    }
+
     // LED_OFF ADC
-    adc2_get_raw(SEN_R90, width, &sensing_result->led_sen_before.right90.raw);
-    adc2_get_raw(SEN_L90, width, &sensing_result->led_sen_before.left90.raw);
-    adc2_get_raw(SEN_R45, width, &sensing_result->led_sen_before.right45.raw);
-    adc2_get_raw(SEN_L45, width, &sensing_result->led_sen_before.left45.raw);
+    if (r90) {
+      adc2_get_raw(SEN_R90, width, &sensing_result->led_sen_before.right90.raw);
+    } else {
+      sensing_result->led_sen_before.right90.raw = 0;
+    }
+    if (l90) {
+      adc2_get_raw(SEN_L90, width, &sensing_result->led_sen_before.left90.raw);
+    } else {
+      sensing_result->led_sen_before.left90.raw = 0;
+    }
+    if (r45) {
+      adc2_get_raw(SEN_R45, width, &sensing_result->led_sen_before.right45.raw);
+    } else {
+      sensing_result->led_sen_before.right45.raw = 0;
+    }
+    if (l45) {
+      adc2_get_raw(SEN_L45, width, &sensing_result->led_sen_before.left45.raw);
+    } else {
+      sensing_result->led_sen_before.left45.raw = 0;
+    }
+
+    r90 = true;
+    l90 = true;
+    r45 = true;
+    l45 = true;
     // LED_OFF ADC
     // 超信地旋回中は発光をサボる
     bool led_on = true;
@@ -259,10 +331,6 @@ void SensingTask::task() {
       led_on = false;
     }
     if (led_on) {
-      bool r90 = true;
-      bool l90 = true;
-      bool r45 = true;
-      bool l45 = true;
       if (pt->search_mode && pt->tgt_val->motion_type == MotionType::STRAIGHT) {
         // 加速中は正面は発光させない
         if (pt->tgt_val->ego_in.state == 0) {

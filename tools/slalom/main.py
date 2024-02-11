@@ -10,7 +10,7 @@ import sys
 p = Plot()
 po = PlotOrval()
 
-v = 1550
+v = 1500
 dia45_mode = 0
 
 hf_cl = 0

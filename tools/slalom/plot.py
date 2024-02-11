@@ -43,7 +43,7 @@ class Plot:
             start_ang = 0
         elif type == "large":
             if hf_cl == 0:
-                rad = 64.0
+                rad = 58.5
                 n = 4
                 tgt_ang = 90
                 start_ang = 0
@@ -67,7 +67,7 @@ class Plot:
             else:
                 if hf_cl == 0:
                     # rad = 50.25
-                    rad = 54.25
+                    rad = 48.0
                     n = 4
                     tgt_ang = 180
                     end_pos = {"x": 0, "y": 180}
@@ -107,7 +107,7 @@ class Plot:
                 start_ang = 0
 
                 if hf_cl == 0:
-                    rad = 60
+                    rad = 53
                     n = 4
                     end_pos = {"x": 90, "y": 45}
                 elif hf_cl == 1:
@@ -119,7 +119,7 @@ class Plot:
             start_ang = 0
 
             if hf_cl == 0:
-                rad = 47.5
+                rad = 44.5
                 n = 4
                 tgt_ang = 135
                 end_pos = {"x": 45, "y": 90}

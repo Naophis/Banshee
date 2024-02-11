@@ -73,7 +73,8 @@ MotionResult SearchController::go_straight_wrapper(param_set_t &p_set,
       sensing_result->ego.left45_dist < param->sen_ref_p.search_exist.left45;
   bool right_exist =
       sensing_result->ego.right45_dist < param->sen_ref_p.search_exist.right45;
-
+  p.search_str_wide_ctrl_l = left_exist;
+  p.search_str_wide_ctrl_r = right_exist;
   bool near_left =
       left_exist && //
       sensing_result->ego.left45_dist < param->sen_ref_p.search_ref.left45;
@@ -89,7 +90,18 @@ MotionResult SearchController::go_straight_wrapper(param_set_t &p_set,
       sensing_result->ego.right45_dist > param->sen_ref_p.search_ref.right90;
 
   if (!left_exist && !right_exist) {
-    return mp->go_straight(p, adachi, true);
+    auto exist_right45 = param->sen_ref_p.normal.exist.right45;
+    auto exist_left45 = param->sen_ref_p.normal.exist.left45;
+    if (!p.search_str_wide_ctrl_l) {
+      param->sen_ref_p.normal.exist.left45 = 0;
+    }
+    if (!p.search_str_wide_ctrl_r) {
+      param->sen_ref_p.normal.exist.right45 = 0;
+    }
+    auto res = mp->go_straight(p, adachi, true);
+    param->sen_ref_p.normal.exist.left45 = exist_left45;
+    param->sen_ref_p.normal.exist.right45 = exist_right45;
+    return res;
   }
   if ((near_left && right_exist)) {
     return straight_offset(p_set, TurnDirection::Right, diff);

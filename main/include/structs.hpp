@@ -393,6 +393,7 @@ typedef struct {
   sen_ref_param_t sen_ref_p;
   sensor_gain_t sensor_gain;
   float sakiyomi_time = 1;
+  float search_sen_ctrl_limitter = 1;
   float clear_angle = 0;
   float clear_dist_order = 0;
   float front_dist_offset = 0;
@@ -432,6 +433,7 @@ typedef struct {
   float pivot_back_dist0 = 0;
   float pivot_back_dist1 = 0;
   int sen_log_size = 100;
+  int sen_log_size2 = 100;
   int led_light_delay_cnt = 1000;
   int led_light_delay_cnt2 = 1000;
   bool set_param = false;
@@ -480,6 +482,7 @@ typedef struct {
   float dist_mod_num = 90;
   float sen_ctrl_front_th = 45;
   float sen_ctrl_front_diff_th = 40;
+  float th_offset_dist = 58;
   float sla_front_ctrl_th = 110;
   float orval_front_ctrl_min = 40;
   float orval_front_ctrl_max = 150;

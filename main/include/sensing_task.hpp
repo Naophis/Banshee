@@ -7,6 +7,7 @@
 #include "driver/timer.h"
 #include "esp_timer.h"
 #include "freertos/FreeRTOS.h"
+#include "freertos/queue.h"
 #include "freertos/task.h"
 #include "icm20689.hpp"
 #include "lsm6dsr.hpp"
@@ -28,6 +29,8 @@ public:
   void set_sensing_entity(std::shared_ptr<sensing_result_entity_t> &_entity);
   void set_planning_task(std::shared_ptr<PlanningTask> &_pt);
 
+  QueueHandle_t *qh;
+  void set_queue_handler(QueueHandle_t &_qh) { qh = &_qh; }
   std::shared_ptr<MainTask> mt;
   void set_main_task(std::shared_ptr<MainTask> &_mt) {
     mt = _mt; //
@@ -54,6 +57,8 @@ private:
   esp_timer_handle_t timer_200us;
   esp_timer_handle_t timer_250us;
   esp_timer_handle_t timer_10us;
+
+  motion_tgt_val_t *receive_req;
 
   static void timer_10us_callback(void *arg);
   static void timer_200us_callback(void *arg);
