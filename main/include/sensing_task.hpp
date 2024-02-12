@@ -63,6 +63,8 @@ private:
   static void timer_10us_callback(void *arg);
   static void timer_200us_callback(void *arg);
   static void timer_250us_callback(void *arg);
+
+  void calc_vel(float dt);
   void set_gpio_state(gpio_num_t gpio_num, int state) {
     const int num = (int)gpio_num;
     if (num < 32) {

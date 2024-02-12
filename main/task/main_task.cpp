@@ -355,6 +355,9 @@ void MainTask::load_hw_param() {
       getItem(root, "led_light_delay_cnt2")->valuedouble;
   param->search_sen_ctrl_limitter =
       getItem(root, "search_sen_ctrl_limitter")->valuedouble;
+  param->ff_roll_gain_before =
+      getItem(root, "ff_roll_gain_before")->valuedouble;
+  param->ff_roll_gain_after = getItem(root, "ff_roll_gain_after")->valuedouble;
 
   const unsigned long motor_hz = getItem(root, "MotorHz")->valueint;
   const unsigned long suction_motor_hz = getItem(root, "SuctionHz")->valueint;
@@ -397,6 +400,8 @@ void MainTask::load_hw_param() {
   param->fail_check.duty = getItem(root, "fail_duty_cnt")->valueint;
   param->fail_check.v = getItem(root, "fail_v_cnt")->valueint;
   param->fail_check.w = getItem(root, "fail_w_cnt")->valueint;
+  param->fail_check.ang = getItem(root, "fail_ang_cnt")->valueint;
+  param->fail_check.wall_off = getItem(root, "fail_wall_off_cnt")->valueint;
   tgt_val->ego_in.ff_duty_low_th = param->ff_front_dury;
   tgt_val->ego_in.ff_duty_low_v_th = param->ff_v_th;
   param->front_ctrl_error_th =

@@ -331,6 +331,8 @@ typedef struct {
   int duty;
   int v;
   int w;
+  int ang;
+  int wall_off;
 } fail_check_cnt_t;
 
 typedef struct {
@@ -370,6 +372,8 @@ typedef struct {
   float pivot_angle_90 = 90;
   float wall_off_front_move_dist_th = 90;
   float wall_off_front_move_dia_dist_th = 90;
+  float ff_roll_gain_before = 1;
+  float ff_roll_gain_after = 1;
   pid_param_t motor_pid;
   pid_param_t motor_pid_gain_limitter;
   pid_param_t motor_pid2;
@@ -458,6 +462,7 @@ typedef struct {
   float slip_param_k2 = 0;
 
   fail_check_cnt_t fail_check;
+  float fail_check_ang_th = 30.0 / 180 * M_PI;
   float normal_sla_offset = 4;
   float front_diff_th = 3;
   float ff_v_th = 3;
@@ -487,7 +492,7 @@ typedef struct {
   float orval_front_ctrl_min = 40;
   float orval_front_ctrl_max = 150;
   float wall_off_front_ctrl_min = 40;
-  float dia_turn_offset_calc_th = 60;
+  float dia_turn_offset_calc_th = 52;
   float go_straight_wide_ctrl_th = 60;
   float wall_off_pass_through_offset_r = 8;
   float wall_off_pass_through_offset_l = 8;

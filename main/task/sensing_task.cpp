@@ -51,107 +51,16 @@ float linearInterpolation(const std::vector<int> &x,
   return y0 + (y2 - y0) * (x1 - x0) / (x2 - x0);
 }
 
-void SensingTask::timer_10us_callback_main() {
-  const auto se = get_sensing_entity();
-  int32_t enc = 0;
-  switch (cnt_a) {
-  case 0:
-    adc2_get_raw(BATTERY, ADC_WIDTH_BIT_12, &se->battery.raw);
-    // se->battery.data = BATTERY_GAIN * 4.2 * sensing_result->battery.raw /
-    // 4096;
-    se->battery.data = linearInterpolation(x, y, sensing_result->battery.raw);
-    // se->gyro_list[0] = gyro_if.read_2byte_itr();
-    break;
-  case 1:
-    adc2_get_raw(SEN_R90, width, &se->led_sen_after.right90.raw);
-    // se->gyro_list[1] = gyro_if.read_2byte_itr();
-    break;
-  case 2:
-    adc2_get_raw(SEN_L90, width, &se->led_sen_after.left90.raw);
-    // se->gyro_list[2] = gyro_if.read_2byte_itr();
-
-    // enc = enc_if.read2byte(0x3F, 0xFF, false) & 0x3FFF;
-    // se->encoder.left_old = se->encoder.left;
-    // se->encoder.left = -enc;
-    break;
-  case 3:
-    adc2_get_raw(SEN_R45, width, &se->led_sen_after.right45.raw);
-    // adc2_get_raw(SEN_R45_2, width, &se->led_sen_after.right45_2.raw);
-    // se->gyro_list[3] = gyro_if.read_2byte_itr();
-
-    // enc = enc_if.read2byte(0x3F, 0xFF, true) & 0x3FFF;
-    // se->encoder.right_old = se->encoder.right;
-    // se->encoder.right = -enc;
-    break;
-  case 4:
-    adc2_get_raw(SEN_L45, width, &se->led_sen_after.left45.raw);
-    // adc2_get_raw(SEN_L45_2, width, &se->led_sen_after.left45_2.raw);
-    // se->gyro_list[4] = gyro_if.read_2byte_itr();
-    se->led_sen.right90.raw = std::max(
-        se->led_sen_after.right90.raw - se->led_sen_before.right90.raw, 0);
-    se->led_sen.right45.raw = std::max(
-        se->led_sen_after.right45.raw - se->led_sen_before.right45.raw, 0);
-    se->led_sen.right45_2.raw = std::max(
-        se->led_sen_after.right45_2.raw - se->led_sen_before.right45_2.raw, 0);
-    se->led_sen.left45_2.raw = std::max(
-        se->led_sen_after.left45_2.raw - se->led_sen_before.left45_2.raw, 0);
-    se->led_sen.left45.raw = std::max(
-        se->led_sen_after.left45.raw - se->led_sen_before.left45.raw, 0);
-    se->led_sen.left90.raw = std::max(
-        se->led_sen_after.left90.raw - se->led_sen_before.left90.raw, 0);
-    se->led_sen.front.raw =
-        (se->led_sen.left90.raw + se->led_sen.right90.raw) / 2;
-    // mt->notify();
-    // mt->mp->notify();
-    cnt_a = -1;
-    break;
-  }
-  set_gpio_state(LED_EN, false);
-  cnt_a++;
-  // esp_timer_stop(timer_10us);
-}
+void SensingTask::timer_10us_callback_main() {}
 
 // 壁切れ時に必要ないセンシング処理をやめて、本来ほしいデータにまわす
 
-void SensingTask::timer_200us_callback_main() {
-  const auto se = get_sensing_entity();
-  switch (cnt_a) {
-  case 0:
-    adc2_get_raw(BATTERY, ADC_WIDTH_BIT_12, &se->battery.raw);
-    break;
-  case 1:
-    adc2_get_raw(SEN_R90, width, &se->led_sen_before.left90.raw);
-    set_gpio_state(LED_A0, false);
-    set_gpio_state(LED_A1, false);
-    set_gpio_state(LED_EN, true);
-    break;
-  case 2:
-    adc2_get_raw(SEN_L90, width, &se->led_sen_before.left90.raw);
-    set_gpio_state(LED_A0, true);
-    set_gpio_state(LED_A1, false);
-    set_gpio_state(LED_EN, true);
-    break;
-  case 3:
-    adc2_get_raw(SEN_R45, width, &se->led_sen_before.right45.raw);
-    set_gpio_state(LED_A0, false);
-    set_gpio_state(LED_A1, true);
-    set_gpio_state(LED_EN, true);
-    break;
-  case 4:
-    adc2_get_raw(SEN_L45, width, &se->led_sen_before.left45.raw);
-    set_gpio_state(LED_A0, true);
-    set_gpio_state(LED_A1, true);
-    set_gpio_state(LED_EN, true);
-    break;
-  }
-  esp_timer_stop(timer_10us);
-  esp_timer_start_once(timer_10us, 20); // 1ms/4
-}
+void SensingTask::timer_200us_callback_main() {}
 
 void SensingTask::timer_250us_callback_main() {}
 
 void SensingTask::create_task(const BaseType_t xCoreID) {
-  xTaskCreatePinnedToCore(task_entry_point, "sensing_task", 8192 * 2, this, 3,
+  xTaskCreatePinnedToCore(task_entry_point, "sensing_task", 8192 * 2, this, 2,
                           &handle, xCoreID);
   // const esp_timer_create_args_t timer_200us_args = {
   //     .callback = &SensingTask::timer_200us_callback,
@@ -232,12 +141,10 @@ void SensingTask::task() {
   int64_t end2 = 0;
   int64_t start_before = 0;
   bool battery_check = true;
-  bool skip_sen = false;
+  bool skip_sensing = false;
+
   while (1) {
-    skip_sen = false;
-    // if (xQueueReceive(*qh, &receive_req, 0) == pdTRUE) {
-    //   skip_sen = true;
-    // }
+    skip_sensing = !skip_sensing;
 
     bool r90 = true;
     bool l90 = true;
@@ -247,10 +154,12 @@ void SensingTask::task() {
     start_before = start;
     start = esp_timer_get_time();
     se->calc_time = (int16_t)(start - start_before);
+
+    const float tmp_dt = ((float)se->calc_time) / 1000000.0;
     gyro_if.req_read2byte_itr(0x26);
     start2 = esp_timer_get_time();
 
-    if (!skip_sen) {
+    if (skip_sensing) {
       adc2_get_raw(BATTERY, width, &sensing_result->battery.raw);
     }
 
@@ -291,25 +200,34 @@ void SensingTask::task() {
     }
 
     // LED_OFF ADC
-    if (r90) {
-      adc2_get_raw(SEN_R90, width, &sensing_result->led_sen_before.right90.raw);
+    if (skip_sensing) {
+      if (r90) {
+        adc2_get_raw(SEN_R90, width,
+                     &sensing_result->led_sen_before.right90.raw);
+      } else {
+        sensing_result->led_sen_before.right90.raw = 0;
+      }
+      adc2_get_raw(BATTERY, width, &sensing_result->battery.raw);
+      if (l90) {
+        adc2_get_raw(SEN_L90, width,
+                     &sensing_result->led_sen_before.left90.raw);
+      } else {
+        sensing_result->led_sen_before.left90.raw = 0;
+      }
     } else {
-      sensing_result->led_sen_before.right90.raw = 0;
-    }
-    if (l90) {
-      adc2_get_raw(SEN_L90, width, &sensing_result->led_sen_before.left90.raw);
-    } else {
-      sensing_result->led_sen_before.left90.raw = 0;
-    }
-    if (r45) {
-      adc2_get_raw(SEN_R45, width, &sensing_result->led_sen_before.right45.raw);
-    } else {
-      sensing_result->led_sen_before.right45.raw = 0;
-    }
-    if (l45) {
-      adc2_get_raw(SEN_L45, width, &sensing_result->led_sen_before.left45.raw);
-    } else {
-      sensing_result->led_sen_before.left45.raw = 0;
+
+      if (r45) {
+        adc2_get_raw(SEN_R45, width,
+                     &sensing_result->led_sen_before.right45.raw);
+      } else {
+        sensing_result->led_sen_before.right45.raw = 0;
+      }
+      if (l45) {
+        adc2_get_raw(SEN_L45, width,
+                     &sensing_result->led_sen_before.left45.raw);
+      } else {
+        sensing_result->led_sen_before.left45.raw = 0;
+      }
     }
 
     r90 = true;
@@ -449,8 +367,7 @@ void SensingTask::task() {
     se->encoder.left_old = se->encoder.left;
     se->encoder.left = enc_l;
 
-    // std::bitset<32> bits(enc_r);
-    // std::cout << bits << std::endl;
+    calc_vel(tmp_dt);
 
     // cout << enc_r << ", " << enc_l << endl;
     end = esp_timer_get_time();
@@ -466,4 +383,69 @@ float SensingTask::calc_sensor(float data, float a, float b) {
   if (res < 5 || res > 180)
     return 180;
   return res;
+}
+
+void SensingTask::calc_vel(float dt) {
+  // const float dt = param->dt;
+  const float tire = pt->suction_en ? param->tire2 : param->tire;
+  const auto enc_delta_l =
+      sensing_result->encoder.left - sensing_result->encoder.left_old;
+  float enc_ang_l = 0.f;
+  if (ABS(enc_delta_l) < MIN(ABS(enc_delta_l - ENC_RESOLUTION),
+                             ABS(enc_delta_l + ENC_RESOLUTION))) {
+    enc_ang_l = 2 * m_PI * (float)enc_delta_l / (float)ENC_RESOLUTION;
+  } else {
+    if (ABS(enc_delta_l - ENC_RESOLUTION) < ABS(enc_delta_l + ENC_RESOLUTION)) {
+      enc_ang_l = 2 * m_PI * (float)(enc_delta_l - ENC_RESOLUTION) /
+                  (float)ENC_RESOLUTION;
+    } else {
+      enc_ang_l = 2 * m_PI * (float)(enc_delta_l + ENC_RESOLUTION) /
+                  (float)ENC_RESOLUTION;
+    }
+  }
+
+  const auto enc_delta_r =
+      sensing_result->encoder.right - sensing_result->encoder.right_old;
+  float enc_ang_r = 0.f;
+  if (ABS(enc_delta_r) < MIN(ABS(enc_delta_r - ENC_RESOLUTION),
+                             ABS(enc_delta_r + ENC_RESOLUTION))) {
+    enc_ang_r = 2 * m_PI * (float)enc_delta_r / (float)ENC_RESOLUTION;
+  } else {
+    if (ABS(enc_delta_r - ENC_RESOLUTION) < ABS(enc_delta_r + ENC_RESOLUTION)) {
+      enc_ang_r = 2 * m_PI * (float)(enc_delta_r - ENC_RESOLUTION) /
+                  (float)ENC_RESOLUTION;
+    } else {
+      enc_ang_r = 2 * m_PI * (float)(enc_delta_r + ENC_RESOLUTION) /
+                  (float)ENC_RESOLUTION;
+    }
+  }
+
+  sensing_result->ego.v_l_old = sensing_result->ego.v_l;
+  sensing_result->ego.v_r_old = sensing_result->ego.v_r;
+
+  sensing_result->ego.v_l = tire * enc_ang_l / dt / 2;
+  sensing_result->ego.v_r = -tire * enc_ang_r / dt / 2;
+
+  sensing_result->ego.v_c =
+      (sensing_result->ego.v_l + sensing_result->ego.v_r) / 2;
+
+  sensing_result->ego.rpm.right =
+      30.0 * sensing_result->ego.v_r / (m_PI * tire / 2);
+  sensing_result->ego.rpm.left =
+      30.0 * sensing_result->ego.v_l / (m_PI * tire / 2);
+
+  if (tgt_val->motion_dir == MotionDirection::LEFT) {
+    sensing_result->ego.w_raw =
+        param->gyro_param.gyro_w_gain_left *
+        (sensing_result->gyro.data - tgt_val->gyro_zero_p_offset);
+  } else {
+    sensing_result->ego.w_raw =
+        param->gyro_param.gyro_w_gain_right *
+        (sensing_result->gyro.data - tgt_val->gyro_zero_p_offset);
+  }
+
+  tgt_val->ego_in.dist += sensing_result->ego.v_c * dt;
+  tgt_val->global_pos.dist += sensing_result->ego.v_c * dt;
+  tgt_val->ego_in.ang += sensing_result->ego.w_lp * dt;
+  tgt_val->global_pos.ang += sensing_result->ego.w_lp * dt;
 }

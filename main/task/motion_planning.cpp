@@ -571,6 +571,12 @@ MotionResult MotionPlanning::slalom(slalom_param2_t &sp, TurnDirection td,
   ps_back.v_max = MAX(sp.v, next_motion.v_max);
   ps_back.v_end = next_motion.v_end;
   ps_back.accl = next_motion.accl;
+
+  ps_back.accl =
+      ABS((ps_back.v_end + tgt_val->ego_in.v) *
+              (ps_back.v_end - tgt_val->ego_in.v) / (2.0 * ps_back.dist) +
+          500);
+
   ps_back.decel = next_motion.decel;
   ps_back.motion_type = MotionType::SLA_BACK_STR;
   ps_back.sct = SensorCtrlType::Straight;
@@ -1029,6 +1035,9 @@ void MotionPlanning::wall_off(TurnDirection td, param_straight_t &ps_front) {
           return;
         }
       }
+      if (tgt_val->fss.error != static_cast<int>(FailSafe::NONE)) {
+        return;
+      }
       vTaskDelay(1.0 / portTICK_RATE_MS);
     }
     while (true) {
@@ -1054,6 +1063,10 @@ void MotionPlanning::wall_off(TurnDirection td, param_straight_t &ps_front) {
           ps_front.dist = MAX(ps_front.dist, 0.1);
           return;
         }
+      }
+
+      if (tgt_val->fss.error != static_cast<int>(FailSafe::NONE)) {
+        return;
       }
       vTaskDelay(1.0 / portTICK_RATE_MS);
     }
@@ -1095,6 +1108,9 @@ void MotionPlanning::wall_off(TurnDirection td, param_straight_t &ps_front) {
           return;
         }
       }
+      if (tgt_val->fss.error != static_cast<int>(FailSafe::NONE)) {
+        return;
+      }
       vTaskDelay(1.0 / portTICK_RATE_MS);
     }
     while (true) {
@@ -1120,6 +1136,9 @@ void MotionPlanning::wall_off(TurnDirection td, param_straight_t &ps_front) {
           ps_front.dist = MAX(ps_front.dist, 0.1);
           return;
         }
+      }
+      if (tgt_val->fss.error != static_cast<int>(FailSafe::NONE)) {
+        return;
       }
       vTaskDelay(1.0 / portTICK_RATE_MS);
     }
@@ -1207,40 +1226,46 @@ void MotionPlanning::calc_dia135_offset(param_straight_t &front,
   bool valid_r = false;
   if (dir == TurnDirection::Left) {
     if (exec_wall_off) {
-      if (sensing_result->sen.l45.sensor_dist <
-          param->dia_turn_offset_calc_th) {
+      if (1 < sensing_result->sen.l45.sensor_dist &&
+          sensing_result->sen.l45.sensor_dist <
+              param->dia_turn_offset_calc_th) {
         offset_l = sensing_result->sen.l45.sensor_dist -
                    param->sen_ref_p.normal.ref.left45;
         valid_l = true;
       }
     } else {
-      if (sensing_result->ego.left45_dist < param->dia_turn_offset_calc_th) {
+      if (1 < sensing_result->ego.left45_dist &&
+          sensing_result->ego.left45_dist < param->dia_turn_offset_calc_th) {
         offset_l = sensing_result->ego.left45_dist -
                    param->sen_ref_p.normal.ref.left45;
         valid_l = true;
       }
     }
-    if (sensing_result->ego.right45_dist < param->dia_turn_offset_calc_th) {
+    if (1 < sensing_result->ego.right45_dist &&
+        sensing_result->ego.right45_dist < param->dia_turn_offset_calc_th) {
       offset_r = param->sen_ref_p.normal.ref.right45 -
                  sensing_result->ego.right45_dist;
       valid_r = true;
     }
   } else {
     if (exec_wall_off) {
-      if (sensing_result->sen.r45.sensor_dist <
-          param->dia_turn_offset_calc_th) {
+      if (1 < sensing_result->sen.r45.sensor_dist &&
+          sensing_result->sen.r45.sensor_dist <
+              param->dia_turn_offset_calc_th) {
         offset_r = sensing_result->sen.r45.sensor_dist -
                    param->sen_ref_p.normal.ref.right45;
         valid_r = true;
       }
     } else {
-      if (sensing_result->ego.right45_dist < param->dia_turn_offset_calc_th) {
+      if (1 < sensing_result->ego.right45_dist &&
+          sensing_result->ego.right45_dist < param->dia_turn_offset_calc_th) {
         offset_r = sensing_result->ego.right45_dist -
                    param->sen_ref_p.normal.ref.right45;
         valid_r = true;
       }
     }
-    if (sensing_result->ego.left45_dist < param->dia_turn_offset_calc_th) {
+    if (1 < sensing_result->ego.left45_dist &&
+        sensing_result->ego.left45_dist < param->dia_turn_offset_calc_th) {
       offset_l =
           param->sen_ref_p.normal.ref.left45 - sensing_result->ego.left45_dist;
       valid_l = true;
@@ -1254,7 +1279,7 @@ void MotionPlanning::calc_dia135_offset(param_straight_t &front,
     offset = offset_r;
   }
   front.dist += offset;
-  // back.dist += offset * ROOT2;
+  back.dist += offset * ROOT2;
 }
 
 void MotionPlanning::calc_dia45_offset(param_straight_t &front,
@@ -1267,40 +1292,46 @@ void MotionPlanning::calc_dia45_offset(param_straight_t &front,
   bool valid_r = false;
   if (dir == TurnDirection::Left) {
     if (exec_wall_off) {
-      if (sensing_result->sen.l45.sensor_dist <
-          param->dia_turn_offset_calc_th) {
+      if (1 < sensing_result->sen.l45.sensor_dist &&
+          sensing_result->sen.l45.sensor_dist <
+              param->dia_turn_offset_calc_th) {
         offset_l = sensing_result->sen.l45.sensor_dist -
                    param->sen_ref_p.normal.ref.left45;
         valid_l = true;
       }
     } else {
-      if (sensing_result->ego.left45_dist < param->dia_turn_offset_calc_th) {
+      if (1 < sensing_result->ego.left45_dist &&
+          sensing_result->ego.left45_dist < param->dia_turn_offset_calc_th) {
         offset_l = sensing_result->ego.left45_dist -
                    param->sen_ref_p.normal.ref.left45;
         valid_l = true;
       }
     }
-    if (sensing_result->ego.right45_dist < param->dia_turn_offset_calc_th) {
+    if (1 < sensing_result->ego.right45_dist &&
+        sensing_result->ego.right45_dist < param->dia_turn_offset_calc_th) {
       offset_r = param->sen_ref_p.normal.ref.right45 -
                  sensing_result->ego.right45_dist;
       valid_r = true;
     }
   } else {
     if (exec_wall_off) {
-      if (sensing_result->sen.r45.sensor_dist <
-          param->dia_turn_offset_calc_th) {
+      if (1 < sensing_result->sen.r45.sensor_dist &&
+          sensing_result->sen.r45.sensor_dist <
+              param->dia_turn_offset_calc_th) {
         offset_r = sensing_result->sen.r45.sensor_dist -
                    param->sen_ref_p.normal.ref.right45;
         valid_r = true;
       }
     } else {
-      if (sensing_result->ego.right45_dist < param->dia_turn_offset_calc_th) {
+      if (1 < sensing_result->ego.right45_dist &&
+          sensing_result->ego.right45_dist < param->dia_turn_offset_calc_th) {
         offset_r = sensing_result->ego.right45_dist -
                    param->sen_ref_p.normal.ref.right45;
         valid_r = true;
       }
     }
-    if (sensing_result->ego.left45_dist < param->dia_turn_offset_calc_th) {
+    if (1 < sensing_result->ego.left45_dist &&
+        sensing_result->ego.left45_dist < param->dia_turn_offset_calc_th) {
       offset_l =
           param->sen_ref_p.normal.ref.left45 - sensing_result->ego.left45_dist;
       valid_l = true;

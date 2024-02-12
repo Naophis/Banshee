@@ -42,9 +42,7 @@ public:
   void set_tgt_val(std::shared_ptr<motion_tgt_val_t> &_tgt_val);
   void set_error_entity(std::shared_ptr<pid_error_entity_t> &_error_entity);
   void set_logging_task(std::shared_ptr<LoggingTask> &_lt);
-  void set_sensing(std::shared_ptr<Sensing> &_sn) { sn = _sn; 
-  
-  };
+  void set_sensing(std::shared_ptr<Sensing> &_sn) { sn = _sn; };
 
   void buzzer(ledc_channel_config_t &buzzer_ch,
               ledc_timer_config_t &buzzer_timer);
@@ -153,6 +151,8 @@ private:
   void calc_filter();
 
   duty_t tgt_duty;
+  int fail_check_ang = 0;
+  int keep_wall_off_cnt = 0;
   int buzzer_time_cnt = 0;
   int buzzer_timestamp = 0;
   int motion_req_timestamp = 0;

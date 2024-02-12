@@ -68,10 +68,10 @@ wall_off_hold_noexist_th_r: 60
 wall_off_hold_noexist_th_l2: 60
 wall_off_hold_noexist_th_r2: 60
 # 壁切れ オフセット距離
-wall_off_hold_dist_str_l: -8.0
-wall_off_hold_dist_str_r: -8.0
-wall_off_hold_dist_str_l_exist: -8.0
-wall_off_hold_dist_str_r_exist: -8.0
+wall_off_hold_dist_str_l: -7.25
+wall_off_hold_dist_str_r: -5.5
+wall_off_hold_dist_str_l_exist: -7.5
+wall_off_hold_dist_str_r_exist: -6.5
 # wall_off_hold_dist_str_l: 1.0
 # wall_off_hold_dist_str_r: 0.0
 # wall_off_hold_dist_str_l_exist: 1.0
@@ -95,9 +95,9 @@ wall_off_diff_check_dist: 20
 # 壁切れ：前壁補正
 front_dist_offset2: 146.0 #ref
 # 壁切れ：前壁補正
-front_dist_offset3: 135 #th
+front_dist_offset3: 137.0 #th
 # 壁切れ：前壁補正
-front_dist_offset4: 135.0 # both front sensors condition th
+front_dist_offset4: 137.0 # both front sensors condition th
 wall_off_wait_dist: 40
 
 # 壁切れ In(斜め)
