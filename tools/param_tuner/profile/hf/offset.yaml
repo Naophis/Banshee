@@ -30,7 +30,8 @@ orval_rad_offset_l: 0
 orval_rad_offset_r: 0
 orval_offset_enable: 0
 
-dia45_offset_enable: 1
+dia45_offset_enable: 0
+dia135_offset_enable: 0
 
 # front_dist_offset2: 137.0
 
@@ -85,12 +86,12 @@ wall_off_hold_dist_str_r_exist: -6.5
 
 wall_off_front_move_dist_th: 2
 wall_off_front_move_dia_dist_th: 2
+# 壁切れ街制限距離
+wall_off_wait_dist_dia: 85
 
-wall_off_wait_dist_dia: 45
-
-diff_dist_th_l: 20
-diff_dist_th_r: 20
-wall_off_diff_check_dist: 20
+diff_dist_th_l: 200
+diff_dist_th_r: 200
+wall_off_diff_check_dist: 90
 
 # 壁切れ：前壁補正
 front_dist_offset2: 146.0 #ref
@@ -98,7 +99,8 @@ front_dist_offset2: 146.0 #ref
 front_dist_offset3: 137.0 #th
 # 壁切れ：前壁補正
 front_dist_offset4: 137.0 # both front sensors condition th
-wall_off_wait_dist: 40
+# 壁切れ街制限距離
+wall_off_wait_dist: 65
 
 # 壁切れ In(斜め)
 wall_off_hold_exist_dist_dia_l: 45
@@ -107,19 +109,19 @@ wall_off_hold_exist_dist_dia_r: 50
 wall_off_hold_noexist_dia_th_l: 50
 wall_off_hold_noexist_dia_th_r: 55
 # 壁切れ オフセット距離
-wall_off_hold_dist_dia_l2: -3.0
-wall_off_hold_dist_dia_r2: -2.0
+wall_off_hold_dist_dia_l2: -1.0
+wall_off_hold_dist_dia_r2: 2.0
 #斜めターン壁有り補正
-dia_turn_th_l: 52
-dia_turn_th_r: 52
+dia_turn_th_l: 55
+dia_turn_th_r: 55
 # 壁切れ オフセット距離(反対側の壁有り)
-wall_off_hold_dist_dia_l: -4.0
-wall_off_hold_dist_dia_r: -4.0
+wall_off_hold_dist_dia_l: -6.0
+wall_off_hold_dist_dia_r: -6.0
 #斜め壁切れ時のmax接近距離
 # dia_wall_off_ref_l: 27.5
 # dia_wall_off_ref_r: 28.75
-dia_wall_off_ref_l: 30.5
-dia_wall_off_ref_r: 31.5
+dia_wall_off_ref_l: 32.5
+dia_wall_off_ref_r: 35.5
 dia_offset_max_dist: 10
 
 #ターン後オフセット距離

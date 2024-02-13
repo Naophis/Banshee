@@ -51,6 +51,8 @@ public:
   bool is_ready() { return ready; }
   std::deque<int> gyro_q;
   void set_tgt_val(std::shared_ptr<motion_tgt_val_t> &_tgt_val);
+  std::vector<float> coef_list_r;
+  std::vector<float> coef_list_l;
 
 private:
   volatile int cnt_a = 0;
@@ -123,6 +125,8 @@ private:
       // .unit = unit,
       .channel = PCNT_CHANNEL_1,
   };
+
+  float offset_enc_val(float val, vector<float> &coef_list);
 };
 
 #endif

@@ -161,6 +161,7 @@ private:
   void read_maze_data();
 
   void test_system_identification(bool para);
+  void encoder_test();
 
   std::vector<param_set_t> paramset_list;
   param_set_t param_set;

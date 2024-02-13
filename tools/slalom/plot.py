@@ -67,7 +67,7 @@ class Plot:
             else:
                 if hf_cl == 0:
                     # rad = 50.25
-                    rad = 48.0
+                    rad = 54.5
                     n = 4
                     tgt_ang = 180
                     end_pos = {"x": 0, "y": 180}
@@ -107,7 +107,7 @@ class Plot:
                 start_ang = 0
 
                 if hf_cl == 0:
-                    rad = 53
+                    rad = 58
                     n = 4
                     end_pos = {"x": 90, "y": 45}
                 elif hf_cl == 1:
@@ -119,7 +119,7 @@ class Plot:
             start_ang = 0
 
             if hf_cl == 0:
-                rad = 44.5
+                rad = 46.0
                 n = 4
                 tgt_ang = 135
                 end_pos = {"x": 45, "y": 90}
@@ -159,7 +159,7 @@ class Plot:
         elif type == "dia90":
             start_ang = 0
             if hf_cl == 0:
-                rad = 44.0
+                rad = 45.0
                 n = 4
                 tgt_ang = 90
                 end_pos = {"x": 90/math.sqrt(2), "y": 90/math.sqrt(2)}

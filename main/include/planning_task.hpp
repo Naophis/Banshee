@@ -102,6 +102,9 @@ public:
   float ideal_v_r, ideal_v_l;
 
 private:
+  sensor_ctrl_keep_dist_t right_keep;
+  sensor_ctrl_keep_dist_t left_keep;
+
   void limitter(float &kp, float &ki, float &kb, float &kd,
                 pid_param_t &limitter);
 

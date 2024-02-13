@@ -359,6 +359,9 @@ void MainTask::load_hw_param() {
       getItem(root, "ff_roll_gain_before")->valuedouble;
   param->ff_roll_gain_after = getItem(root, "ff_roll_gain_after")->valuedouble;
 
+  param->left_keep_dist_th = getItem(root, "left_keep_dist_th")->valuedouble;
+  param->right_keep_dist_th = getItem(root, "right_keep_dist_th")->valuedouble;
+
   const unsigned long motor_hz = getItem(root, "MotorHz")->valueint;
   const unsigned long suction_motor_hz = getItem(root, "SuctionHz")->valueint;
   const unsigned long motor_res = getItem(root, "MotorResolution")->valueint;
@@ -774,6 +777,7 @@ void MainTask::load_offset_param() {
 
   param->orval_enable = getItem(root, "orval_offset_enable")->valueint;
   param->dia45_offset_enable = getItem(root, "dia45_offset_enable")->valueint;
+  param->dia135_offset_enable = getItem(root, "dia135_offset_enable")->valueint;
 
   param->front_dist_offset_dia_front =
       getItem(root, "front_dist_offset_dia_front")->valuedouble;
@@ -974,7 +978,14 @@ void MainTask::load_sensor_param() {
 
 void MainTask::load_circuit_path() {
   mount();
-  string fileName = "/spiflash/circuit.txt";
+  string fileName = "/spiflash/circuit.hf";
+
+  if (sys.hf_cl == 0) {
+    fileName = "/spiflash/circuit.hf";
+  } else {
+    fileName = "/spiflash/circuit.cl";
+  }
+
   std::ifstream ifs(fileName);
   if (!ifs) {
     printf("not found\n");
@@ -1466,6 +1477,8 @@ void MainTask::task() {
     } else if (sys.user_mode == 21) {
       printf("test_pivot_n2\n");
       test_pivot_n2();
+    } else if (sys.user_mode == 22) {
+      encoder_test();
     }
     umount();
   } else {
@@ -2728,4 +2741,19 @@ void MainTask::path_run(int idx, int idx2) {
   param->sen_ref_p.normal.exist.right45 = backup_r45;
 
   // param->fast_log_enable = 0; //１回きり
+}
+void MainTask::encoder_test() {
+  const auto sr = sensing_result;
+  if (param->motor_debug_mode) {
+    printf("timestamp,encoder.left.abs_val,encoder.right.abs_val,ego.v_l,ego.v_"
+           "r,ego.v_c,enc.left.sin,enc.right.sin\n");
+  }
+  while (1) {
+    printf("%lld,%ld,%ld,%f,%f,%f,%f,%f\n", sr->sensing_timestamp,
+           sr->encoder.left, sr->encoder.right, sr->ego.v_l, sr->ego.v_r,
+           sr->ego.v_c,
+           std::sin(2.0 * m_PI * sr->encoder.left / ENC_RESOLUTION),
+           std::sin(2.0 * m_PI * sr->encoder.right / ENC_RESOLUTION));
+    vTaskDelay(1.0 / portTICK_PERIOD_MS);
+  }
 }

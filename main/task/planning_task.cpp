@@ -623,8 +623,8 @@ float PlanningTask::calc_sensor_pid_dia() {
     error_entity.sen_log_dia.gain_zz = error_entity.sen_log_dia.gain_z;
     error_entity.sen_log_dia.gain_z = duty;
 
-    set_ctrl_val(error_entity.s_val, error_entity.sen_dia.error_p,
-                 error_entity.sen_dia.error_i, 0, error_entity.sen_dia.error_d,
+    set_ctrl_val(error_entity.s_val, error_entity.sen_dia.error_p, 0, 0,
+                 error_entity.sen_dia.error_d,
                  param_ro->sensor_pid_dia.p * error_entity.sen_dia.error_p,
                  param_ro->sensor_pid_dia.i * error_entity.sen_dia.error_i, 0,
                  param_ro->sensor_pid_dia.d * error_entity.sen_dia.error_d,
@@ -635,8 +635,8 @@ float PlanningTask::calc_sensor_pid_dia() {
            param_ro->sensor_pid_dia.i * error_entity.sen_dia.error_i +
            param_ro->sensor_pid_dia.d * error_entity.sen_dia.error_d;
 
-    set_ctrl_val(error_entity.s_val, error_entity.sen_dia.error_p,
-                 error_entity.sen_dia.error_i, 0, error_entity.sen_dia.error_d,
+    set_ctrl_val(error_entity.s_val, error_entity.sen_dia.error_p, 0, 0,
+                 error_entity.sen_dia.error_d,
                  param_ro->sensor_pid_dia.p * error_entity.sen_dia.error_p,
                  param_ro->sensor_pid_dia.i * error_entity.sen_dia.error_i, 0,
                  param_ro->sensor_pid_dia.d * error_entity.sen_dia.error_d, 0,
@@ -676,19 +676,8 @@ float PlanningTask::check_sen_error() {
 
   auto exist_right45 = param_ro->sen_ref_p.normal.exist.right45;
   auto exist_left45 = param_ro->sen_ref_p.normal.exist.left45;
-  // if (search_mode) {
-  //   if (!(param_ro->clear_dist_ragne_from <= tmp_dist &&
-  //         tmp_dist <= param_ro->clear_dist_ragne_to)) {
-  //     if (sensing_result->ego.left45_dist <
-  //         param_ro->wall_off_dist.ctrl_exist_wall_th_l) {
-  //       exist_left45 = param_ro->wall_off_dist.ctrl_exist_wall_th_l;
-  //     }
-  //     if (sensing_result->ego.right45_dist <
-  //         param_ro->wall_off_dist.ctrl_exist_wall_th_r) {
-  //       exist_right45 = param_ro->wall_off_dist.ctrl_exist_wall_th_r;
-  //     }
-  //   }
-  // }
+  auto exist_right45_2 = param_ro->sen_ref_p.normal2.exist.right45;
+  auto exist_left45_2 = param_ro->sen_ref_p.normal2.exist.left45;
 
   //前壁が近すぎるときはエスケープ
   if (!(10 < sensing_result->ego.left90_mid_dist &&
@@ -702,20 +691,46 @@ float PlanningTask::check_sen_error() {
         param_ro->sen_ref_p.normal.ref.kireme_r) {
       if ((1 < sensing_result->ego.right45_dist &&
            sensing_result->ego.right45_dist < exist_right45)) {
-        error += param_ro->sen_ref_p.normal.ref.right45 -
-                 sensing_result->ego.right45_dist;
-        check++;
+        if (search_mode) {
+          error += param_ro->sen_ref_p.normal.ref.right45 -
+                   sensing_result->ego.right45_dist;
+          check++;
+        } else {
+          if (ABS(tgt_val->global_pos.dist - right_keep.star_dist) >
+              param_ro->right_keep_dist_th) {
+            error += param_ro->sen_ref_p.normal.ref.right45 -
+                     sensing_result->ego.right45_dist;
+            check++;
+          }
+        }
+      } else {
+        right_keep.star_dist = tgt_val->global_pos.dist;
       }
+    } else {
+      right_keep.star_dist = tgt_val->global_pos.dist;
     }
     if (std::abs(sensing_result->ego.left45_dist -
                  sensing_result->ego.left45_dist_old) <
         param_ro->sen_ref_p.normal.ref.kireme_l) {
       if ((1 < sensing_result->ego.left45_dist &&
            sensing_result->ego.left45_dist < exist_left45)) {
-        error -= param_ro->sen_ref_p.normal.ref.left45 -
-                 sensing_result->ego.left45_dist;
-        check++;
+        if (search_mode) {
+          error -= param_ro->sen_ref_p.normal.ref.left45 -
+                   sensing_result->ego.left45_dist;
+          check++;
+        } else {
+          if (ABS(tgt_val->global_pos.dist - left_keep.star_dist) >
+              param_ro->left_keep_dist_th) {
+            error -= param_ro->sen_ref_p.normal.ref.left45 -
+                     sensing_result->ego.left45_dist;
+            check++;
+          }
+        }
+      } else {
+        left_keep.star_dist = tgt_val->global_pos.dist;
       }
+    } else {
+      left_keep.star_dist = tgt_val->global_pos.dist;
     }
   }
   if (check == 0) {
@@ -734,8 +749,7 @@ float PlanningTask::check_sen_error() {
           sensing_result->ego.left45_dist >
               param_ro->sen_ref_p.normal2.ref.kireme_l) {
         if ((1 < sensing_result->sen.r45.sensor_dist &&
-             sensing_result->sen.r45.sensor_dist <
-                 param_ro->sen_ref_p.normal2.exist.right45)) {
+             sensing_result->sen.r45.sensor_dist < exist_right45_2)) {
           error += param_ro->sen_ref_p.normal2.ref.right45 -
                    sensing_result->sen.r45.sensor_dist;
           check++;
@@ -746,8 +760,7 @@ float PlanningTask::check_sen_error() {
           sensing_result->ego.left45_dist >
               param_ro->sen_ref_p.normal2.ref.kireme_l) {
         if ((1 < sensing_result->sen.l45.sensor_dist &&
-             sensing_result->sen.l45.sensor_dist <
-                 param_ro->sen_ref_p.normal2.exist.left45)) {
+             sensing_result->sen.l45.sensor_dist < exist_left45_2)) {
           error -= param_ro->sen_ref_p.normal2.ref.left45 -
                    sensing_result->sen.l45.sensor_dist;
           check++;
@@ -1894,9 +1907,9 @@ void PlanningTask::calc_tgt_duty() {
         auto kd_gain = param_ro->gyro_pid.d * error_entity.w_kf.error_d;
         limitter(kp_gain, ki_gain, kb_gain, kd_gain,
                  param_ro->gyro_pid_gain_limitter);
-        duty_roll = kp_gain + ki_gain + kb_gain + kc_gain + kd_gain;
-        // +            (error_entity.ang_log.gain_z -
-        // error_entity.ang_log.gain_zz) * dt;
+        duty_roll =
+            kp_gain + ki_gain + kb_gain + kc_gain + kd_gain +
+            (error_entity.ang_log.gain_z - error_entity.ang_log.gain_zz) * dt;
 
         error_entity.ang_log.gain_zz = error_entity.ang_log.gain_z;
         error_entity.ang_log.gain_z = duty_roll;
@@ -2447,6 +2460,10 @@ void PlanningTask::cp_request() {
     tgt_val->global_pos.dist -= tgt_val->global_pos.img_dist;
     tgt_val->global_pos.img_dist = 0;
   }
+
+  right_keep.star_dist = tgt_val->global_pos.dist;
+  left_keep.star_dist = tgt_val->global_pos.dist;
+
   if (tgt_val->tgt_in.tgt_angle != 0) {
     const auto tmp_ang = tgt_val->ego_in.ang;
     tgt_val->ego_in.img_ang -= tmp_ang;

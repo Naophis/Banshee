@@ -154,7 +154,7 @@ void SensingTask::task() {
     start_before = start;
     start = esp_timer_get_time();
     se->calc_time = (int16_t)(start - start_before);
-
+    se->sensing_timestamp = start;
     const float tmp_dt = ((float)se->calc_time) / 1000000.0;
     gyro_if.req_read2byte_itr(0x26);
     start2 = esp_timer_get_time();

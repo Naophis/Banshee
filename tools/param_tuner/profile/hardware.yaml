@@ -3,8 +3,8 @@ dt: 0.001
 # tire2: 13.60125
 
 tire_tread: 38.0
-tire: 13.575
-tire2: 13.575
+tire: 13.520
+tire2: 13.520
 # offset_start_dist: 21.0
 offset_start_dist_search: 15.0
 offset_start_dist: 4.0
@@ -23,7 +23,7 @@ motor_l_cw_ccw_type: 1 # 1: duty > 0 -> true, 0: duty < 0 -> true
 # debug for motor io direction
 motor_debug_mode: 0
 motor_debug_mode_duty_r: 10
-motor_debug_mode_duty_l: -50
+motor_debug_mode_duty_l: 10
 
 MotorHz: 32500
 SuctionHz: 32500
@@ -48,11 +48,11 @@ sakiyomi_time: 8
 
 #ログON_OFF
 logging_time: 1.0
-search_log_enable: 1
+search_log_enable: 0
 test_log_enable: 1
 fast_log_enable: 1
 sen_log_size: 100
-log_size: 2500
+log_size: 9500
 
 front_ctrl_error_th: 1
 
@@ -81,7 +81,7 @@ axel_degenerate_y: [1, 1, 0.8, 0.75, 0.5, 0.2, 0.1]
 search_sen_ctrl_limitter: 8
 
 ff_roll_gain_before: 0.25
-ff_roll_gain_after: 0.125
+ff_roll_gain_after: 0.145
 
 motor_pid_gain_limitter: 
   mode: 0
@@ -268,7 +268,7 @@ gyro_param:
   # gyro_w_gain_left: 0.002476800
   # Gray
   gyro_w_gain_right: 0.002455800
-  gyro_w_gain_left: 0.002455700
+  gyro_w_gain_left: 0.002456000
   lp_delay: 1
 accel_x_param:
   # gain: 315.56 # 16g
@@ -299,3 +299,6 @@ kalman_config:
 
 # led_blight: [0x05, 0x05, 0x08, 0x0d, 0x02, 0x05]
 led_blight: [0x0d, 0x0d, 0x0d, 0x0d, 0x0d, 0x0d]
+
+left_keep_dist_th: 8
+right_keep_dist_th: 8

@@ -202,6 +202,7 @@ typedef struct {
   sen_dist_log_t sen_dist_log;
   int16_t calc_time;
   int16_t calc_time2;
+  int64_t sensing_timestamp;
 } sensing_result_entity_t;
 
 typedef struct {
@@ -324,6 +325,7 @@ typedef struct {
   float diff_check_dist = 20;
   float diff_dist_th_l = 20;
   float diff_dist_th_r = 20;
+  float diff_check_dist_dia = 15;
 
 } wall_off_hold_dist_t;
 
@@ -418,7 +420,8 @@ typedef struct {
   float orval_rad_offset_l = 0;
   float orval_rad_offset_r = 0;
   int orval_enable = 0;
-  int dia45_offset_enable = 0;
+  bool dia45_offset_enable = false;
+  bool dia135_offset_enable = false;
   float front_ctrl_error_th = 4;
 
   float clear_dist_ragne_from = 0;
@@ -497,6 +500,8 @@ typedef struct {
   float wall_off_pass_through_offset_r = 8;
   float wall_off_pass_through_offset_l = 8;
   float tire_tread;
+  float right_keep_dist_th = 0;
+  float left_keep_dist_th = 0;
 } input_param_t;
 
 typedef struct {
@@ -898,8 +903,8 @@ typedef struct {
   real16_T right90_lp;
   real16_T battery_lp;
 
-  real16_T left45_2_lp;
-  real16_T right45_2_lp;
+  // real16_T left45_2_lp;
+  // real16_T right45_2_lp;
 
   char motion_type;
   int16_t motion_timestamp;
@@ -974,4 +979,9 @@ typedef struct {
   float vy = 0;
   float v = 0;
 } slip_t;
+
+typedef struct {
+  float star_dist;
+
+} sensor_ctrl_keep_dist_t;
 #endif

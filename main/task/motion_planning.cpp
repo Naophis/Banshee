@@ -167,7 +167,7 @@ MotionResult MotionPlanning::pivot_turn(param_roll_t &p) {
   xQueueReset(*qh);
   xQueueSendToFront(*qh, &tgt_val, 1);
   vTaskDelay(10.0 / portTICK_RATE_MS);
-
+  const auto sr = sensing_result;
   int c = 0;
   while (1) {
     vTaskDelay(1.0 / portTICK_RATE_MS);
@@ -1163,6 +1163,10 @@ bool MotionPlanning::wall_off_dia(TurnDirection td,
   tgt_val->nmr.dia_mode = ps_front.dia_mode;
   tgt_val->nmr.sct = SensorCtrlType::Dia;
   tgt_val->nmr.timstamp++;
+
+  float tmp_dist_before = tgt_val->global_pos.dist;
+  float tmp_dist_after = tmp_dist_before;
+
   if (td == TurnDirection::Right) {
     while (true) {
       // 壁切れ開始
@@ -1171,10 +1175,14 @@ bool MotionPlanning::wall_off_dia(TurnDirection td,
         break;
       }
       // 反対側の壁あり
-      if (sensing_result->ego.left45_dist < param->dia_turn_th_l) {
-        ps_front.dist += param->wall_off_dist.right_dia;
-        ps_front.dist = MAX(ps_front.dist, 0.1);
-        return false;
+      tmp_dist_after = tgt_val->global_pos.dist;
+      if (std::abs(tmp_dist_after - tmp_dist_before) >=
+          std::abs(param->wall_off_dist.diff_check_dist)) {
+        if (sensing_result->ego.left45_dist < param->dia_turn_th_l) {
+          ps_front.dist += param->wall_off_dist.right_dia;
+          ps_front.dist = MAX(ps_front.dist, 0.1);
+          return false;
+        }
       }
       vTaskDelay(1.0 / portTICK_RATE_MS);
     }
@@ -1196,10 +1204,15 @@ bool MotionPlanning::wall_off_dia(TurnDirection td,
         break;
       }
       // 反対側壁あり
-      if (sensing_result->ego.right45_dist < param->dia_turn_th_r) {
-        ps_front.dist += param->wall_off_dist.left_dia;
-        ps_front.dist = MAX(ps_front.dist, 0.1);
-        return false;
+
+      tmp_dist_after = tgt_val->global_pos.dist;
+      if (std::abs(tmp_dist_after - tmp_dist_before) >=
+          std::abs(param->wall_off_dist.diff_check_dist)) {
+        if (sensing_result->ego.right45_dist < param->dia_turn_th_r) {
+          ps_front.dist += param->wall_off_dist.left_dia;
+          ps_front.dist = MAX(ps_front.dist, 0.1);
+          return false;
+        }
       }
       vTaskDelay(1.0 / portTICK_RATE_MS);
     }
@@ -1278,8 +1291,10 @@ void MotionPlanning::calc_dia135_offset(param_straight_t &front,
   } else if (valid_r) {
     offset = offset_r;
   }
-  front.dist += offset;
-  back.dist += offset * ROOT2;
+  if (param->dia135_offset_enable) {
+    front.dist += offset;
+    back.dist += offset * ROOT2;
+  }
 }
 
 void MotionPlanning::calc_dia45_offset(param_straight_t &front,
