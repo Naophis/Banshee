@@ -6,6 +6,21 @@ from plot import Plot
 from plotorval import PlotOrval
 
 import sys
+import os
+import yaml
+
+
+def read_yaml(filename):
+    # 現在のスクリプトのディレクトリを取得
+    current_dir = os.path.dirname(os.path.abspath(__file__))
+    # ファイルパスを結合
+    filepath = os.path.join(current_dir, filename)
+
+    with open(filepath, 'r') as file:
+        data = yaml.safe_load(file)
+    return data
+
+data = read_yaml("../param_tuner/profile/hardware.yaml")
 
 p = Plot()
 po = PlotOrval()
@@ -22,10 +37,8 @@ if len(sys.argv) > 1:
     hf_cl = 0
     show = False
 
-K = 150
-list_K_y = [0.5]
-# K = 13540
-# show = False
+K = data["slip_param_k2"]
+list_K_y = [data["slip_param_K"]]
 
 offset = {
     "prev": 7,
