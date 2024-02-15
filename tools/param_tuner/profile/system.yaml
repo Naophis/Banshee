@@ -54,7 +54,7 @@ mode: 0 # メイン
 # mode: 22 # encoder_test
 
 test: # テスト走行時に使用するパラメータ群
-  v_max: 350
+  v_max: 5000
   end_v: 10
   accl: 28000
   decel: -28000
@@ -72,10 +72,10 @@ test: # テスト走行時に使用するパラメータ群
   suction_duty_low: 4.25
   suction_gain: 50
   # suction_duty: 3.25
-  file_idx: 22
+  file_idx: 16
   sla_dist: 90
   # sla_type: 3
-  sla_type: 3
+  sla_type: 4
   sla_type2: 6 #復路ターン種類
   sla_return: 0 # 往復フラグ
   # sla_type: 1 normal
@@ -88,7 +88,7 @@ test: # テスト走行時に使用するパラメータ群
   # sla_type: 8 #dia45_2
   # sla_type: 9 #dia135_2
   turn_times: 0
-  ignore_opp_sen: 0 #斜めターン後の直進テスト 0無効、1斜め制御なし、2斜め制御あり
+  ignore_opp_sen: 2 #斜めターン後の直進テスト 0無効、1斜め制御なし、2斜め制御あり
   sysid_test_mode: 0 #システム同定のテスト:0 直進、1回転
   sysid_duty: 4.25 #duty 
   sysid_time: 2000 #duty 

@@ -8,7 +8,7 @@ pivot_angle_180: 180.0
 # 探索スラローム
 th_offset_dist: 52
 sla_front_ctrl_th: 150.0 # 探索時前壁補正条件しきい時間
-front_dist_offset: 100.250 # 探索時の前壁補正 大→短くなる
+front_dist_offset: 107.250 # 探索時の前壁補正 大→短くなる
 
 front_dist_offset0: 94.0 # pivot時の前壁補正ref
 pivot_back_enable_front_th: 120 # バック判断のための壁有無しきい値
