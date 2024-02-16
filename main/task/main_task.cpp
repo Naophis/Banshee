@@ -669,6 +669,8 @@ void MainTask::load_offset_param() {
       getItem(root, "clear_dist_ragne_from")->valuedouble;
   param->clear_dist_ragne_to =
       getItem(root, "clear_dist_ragne_to")->valuedouble;
+  param->clear_dist_ragne_to2 =
+      getItem(root, "clear_dist_ragne_to2")->valuedouble;
   param->front_diff_th = getItem(root, "front_diff_th")->valuedouble;
 
   param->offset_after_turn_l2 =
@@ -687,6 +689,11 @@ void MainTask::load_offset_param() {
 
   param->dia_turn_th_l = getItem(root, "dia_turn_th_l")->valuedouble;
   param->dia_turn_th_r = getItem(root, "dia_turn_th_r")->valuedouble;
+
+  param->normal_sla_offset_front =
+      getItem(root, "normal_sla_offset_front")->valuedouble;
+  param->normal_sla_offset_back =
+      getItem(root, "normal_sla_offset_back")->valuedouble;
 
   param->pivot_back_enable_front_th =
       getItem(root, "pivot_back_enable_front_th")->valuedouble;
@@ -710,6 +717,8 @@ void MainTask::load_offset_param() {
       getItem(root, "diff_dist_th_r")->valuedouble;
   param->wall_off_dist.diff_check_dist =
       getItem(root, "wall_off_diff_check_dist")->valuedouble;
+  param->wall_off_dist.diff_check_dist_dia =
+      getItem(root, "wall_off_diff_check_dist_dia")->valuedouble;
 
   param->wall_off_wait_dist = getItem(root, "wall_off_wait_dist")->valuedouble;
   param->wall_off_wait_dist_dia =
@@ -737,6 +746,8 @@ void MainTask::load_offset_param() {
       getItem(root, "ctrl_exist_wall_th_l")->valuedouble;
   param->wall_off_dist.ctrl_exist_wall_th_r =
       getItem(root, "ctrl_exist_wall_th_r")->valuedouble;
+  param->wall_off_dist.go_straight_wide_ctrl_th =
+      getItem(root, "go_straight_wide_ctrl_th")->valuedouble;
 
   param->wall_off_dist.noexist_th_l =
       getItem(root, "wall_off_hold_noexist_th_l")->valuedouble;

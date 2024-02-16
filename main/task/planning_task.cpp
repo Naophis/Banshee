@@ -691,17 +691,17 @@ float PlanningTask::check_sen_error() {
         param_ro->sen_ref_p.normal.ref.kireme_r) {
       if ((1 < sensing_result->ego.right45_dist &&
            sensing_result->ego.right45_dist < exist_right45)) {
-        if (search_mode) {
+        // if (search_mode) {
+        //   error += param_ro->sen_ref_p.normal.ref.right45 -
+        //            sensing_result->ego.right45_dist;
+        //   check++;
+        // } else {
+        if (ABS(tgt_val->global_pos.dist - right_keep.star_dist) >
+            param_ro->right_keep_dist_th) {
           error += param_ro->sen_ref_p.normal.ref.right45 -
                    sensing_result->ego.right45_dist;
           check++;
-        } else {
-          if (ABS(tgt_val->global_pos.dist - right_keep.star_dist) >
-              param_ro->right_keep_dist_th) {
-            error += param_ro->sen_ref_p.normal.ref.right45 -
-                     sensing_result->ego.right45_dist;
-            check++;
-          }
+          // }
         }
       } else {
         right_keep.star_dist = tgt_val->global_pos.dist;
@@ -714,17 +714,17 @@ float PlanningTask::check_sen_error() {
         param_ro->sen_ref_p.normal.ref.kireme_l) {
       if ((1 < sensing_result->ego.left45_dist &&
            sensing_result->ego.left45_dist < exist_left45)) {
-        if (search_mode) {
+        // if (search_mode) {
+        //   error -= param_ro->sen_ref_p.normal.ref.left45 -
+        //            sensing_result->ego.left45_dist;
+        //   check++;
+        // } else {
+        if (ABS(tgt_val->global_pos.dist - left_keep.star_dist) >
+            param_ro->left_keep_dist_th) {
           error -= param_ro->sen_ref_p.normal.ref.left45 -
                    sensing_result->ego.left45_dist;
           check++;
-        } else {
-          if (ABS(tgt_val->global_pos.dist - left_keep.star_dist) >
-              param_ro->left_keep_dist_th) {
-            error -= param_ro->sen_ref_p.normal.ref.left45 -
-                     sensing_result->ego.left45_dist;
-            check++;
-          }
+          // }
         }
       } else {
         left_keep.star_dist = tgt_val->global_pos.dist;

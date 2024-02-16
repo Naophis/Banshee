@@ -47,6 +47,16 @@ void Sensing::task(bool search_mode, bool mode_select, bool skip_sen) {
   int64_t start2 = 0;
   int64_t end2 = 0;
   int64_t start_before = 0;
+
+  int64_t last_gyro_time = 0;
+  int64_t now_gyro_time = 0;
+
+  int64_t last_enc_r_time = 0;
+  int64_t now_enc_r_time = 0;
+
+  int64_t last_enc_l_time = 0;
+  int64_t now_enc_l_time = 0;
+
   bool r90 = true;
   bool l90 = true;
   bool r45 = true;
@@ -55,6 +65,7 @@ void Sensing::task(bool search_mode, bool mode_select, bool skip_sen) {
   start_before = start;
   start = esp_timer_get_time();
   se->calc_time = (int16_t)(start - start_before);
+  now_gyro_time = esp_timer_get_time();
   gyro_if.req_read2byte_itr(0x26);
   start2 = esp_timer_get_time();
   if (!skip_sen) {
@@ -248,12 +259,16 @@ void Sensing::task(bool search_mode, bool mode_select, bool skip_sen) {
   se->gyro.raw = se->gyro_list[4];
   se->gyro.data = (float)(se->gyro_list[4]);
   // int32_t enc_r = (enc_if.read2byte(0x00, 0x00, true) & 0xFFFF) >> 2;
+
+  now_enc_r_time = esp_timer_get_time();
   int32_t enc_r = enc_if.read2byte(0x3F, 0xFF, true) & 0x3FFF;
 
   se->encoder.right_old = se->encoder.right;
   se->encoder.right = enc_r;
 
   // int32_t enc_l = (enc_if.read2byte(0x00, 0x00, false) & 0xFFFF) >> 2;
+
+  now_enc_l_time = esp_timer_get_time();
   int32_t enc_l = enc_if.read2byte(0x3F, 0xFF, false) & 0x3FFF;
   se->encoder.left_old = se->encoder.left;
   se->encoder.left = enc_l;

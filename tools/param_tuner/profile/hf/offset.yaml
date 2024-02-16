@@ -7,8 +7,11 @@ pivot_angle_180: 180.0
 
 # 探索スラローム
 th_offset_dist: 52
-sla_front_ctrl_th: 150.0 # 探索時前壁補正条件しきい時間
+sla_front_ctrl_th: 135.0 # 探索時前壁補正条件しきい時間
 front_dist_offset: 107.250 # 探索時の前壁補正 大→短くなる
+
+normal_sla_offset_front: 5
+normal_sla_offset_back: 3
 
 front_dist_offset0: 94.0 # pivot時の前壁補正ref
 pivot_back_enable_front_th: 120 # バック判断のための壁有無しきい値
@@ -49,12 +52,14 @@ seach_timer: 450
 
 clear_dist_ragne_from: 30
 clear_dist_ragne_to: 50
+clear_dist_ragne_to2: 35 # 探索時制御範囲拡張移動距離
 
 wall_off_hold_dist: 30
 
 # 探索壁あり判定
 ctrl_exist_wall_th_l: 50
 ctrl_exist_wall_th_r: 50
+go_straight_wide_ctrl_th: 75
 
 # 壁切れ壁あり判定
 wall_off_exist_wall_th_l: 50
@@ -92,6 +97,7 @@ wall_off_wait_dist_dia: 85
 diff_dist_th_l: 200
 diff_dist_th_r: 200
 wall_off_diff_check_dist: 90
+wall_off_diff_check_dist_dia: 60
 
 # 壁切れ：前壁補正
 front_dist_offset2: 146.0 #ref

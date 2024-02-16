@@ -143,7 +143,21 @@ void SensingTask::task() {
   bool battery_check = true;
   bool skip_sensing = false;
 
+  int64_t last_gyro_time = 0;
+  int64_t now_gyro_time = 0;
+
+  int64_t last_enc_r_time = 0;
+  int64_t now_enc_r_time = 0;
+
+  int64_t last_enc_l_time = 0;
+  int64_t now_enc_l_time = 0;
+
   while (1) {
+
+    last_gyro_time = now_gyro_time;
+    last_enc_r_time = now_enc_r_time;
+    last_enc_l_time = now_enc_l_time;
+
     skip_sensing = !skip_sensing;
 
     bool r90 = true;
@@ -156,6 +170,8 @@ void SensingTask::task() {
     se->calc_time = (int16_t)(start - start_before);
     se->sensing_timestamp = start;
     const float tmp_dt = ((float)se->calc_time) / 1000000.0;
+    now_gyro_time = esp_timer_get_time();
+    const float gyro_dt = ((float)(now_gyro_time - last_gyro_time)) / 1000000.0;
     gyro_if.req_read2byte_itr(0x26);
     start2 = esp_timer_get_time();
 
@@ -357,17 +373,22 @@ void SensingTask::task() {
     se->gyro.raw = se->gyro_list[4];
     se->gyro.data = (float)(se->gyro_list[4]);
     // int32_t enc_r = (enc_if.read2byte(0x00, 0x00, true) & 0xFFFF) >> 2;
+    now_enc_r_time = esp_timer_get_time();
     int32_t enc_r = enc_if.read2byte(0x3F, 0xFF, true) & 0x3FFF;
-
+    const auto enc_r_dt =
+        ((float)(now_enc_r_time - last_enc_r_time)) / 1000000.0;
     se->encoder.right_old = se->encoder.right;
     se->encoder.right = enc_r;
 
     // int32_t enc_l = (enc_if.read2byte(0x00, 0x00, false) & 0xFFFF) >> 2;
+    now_enc_l_time = esp_timer_get_time();
     int32_t enc_l = enc_if.read2byte(0x3F, 0xFF, false) & 0x3FFF;
+    const auto enc_l_dt =
+        ((float)(now_enc_l_time - last_enc_l_time)) / 1000000.0;
     se->encoder.left_old = se->encoder.left;
     se->encoder.left = enc_l;
 
-    calc_vel(tmp_dt);
+    calc_vel(gyro_dt, enc_l_dt, enc_r_dt);
 
     // cout << enc_r << ", " << enc_l << endl;
     end = esp_timer_get_time();
@@ -385,7 +406,7 @@ float SensingTask::calc_sensor(float data, float a, float b) {
   return res;
 }
 
-void SensingTask::calc_vel(float dt) {
+void SensingTask::calc_vel(float gyro_dt, float enc_r_dt, float enc_l_dt) {
   // const float dt = param->dt;
   const float tire = pt->suction_en ? param->tire2 : param->tire;
   const auto enc_delta_l =
@@ -423,8 +444,8 @@ void SensingTask::calc_vel(float dt) {
   sensing_result->ego.v_l_old = sensing_result->ego.v_l;
   sensing_result->ego.v_r_old = sensing_result->ego.v_r;
 
-  sensing_result->ego.v_l = tire * enc_ang_l / dt / 2;
-  sensing_result->ego.v_r = -tire * enc_ang_r / dt / 2;
+  sensing_result->ego.v_l = tire * enc_ang_l / enc_l_dt / 2;
+  sensing_result->ego.v_r = -tire * enc_ang_r / enc_r_dt / 2;
 
   sensing_result->ego.v_c =
       (sensing_result->ego.v_l + sensing_result->ego.v_r) / 2;
@@ -444,8 +465,10 @@ void SensingTask::calc_vel(float dt) {
         (sensing_result->gyro.data - tgt_val->gyro_zero_p_offset);
   }
 
+  const auto dt = (enc_l_dt + enc_r_dt) / 2;
+
   tgt_val->ego_in.dist += sensing_result->ego.v_c * dt;
   tgt_val->global_pos.dist += sensing_result->ego.v_c * dt;
-  tgt_val->ego_in.ang += sensing_result->ego.w_lp * dt;
-  tgt_val->global_pos.ang += sensing_result->ego.w_lp * dt;
+  tgt_val->ego_in.ang += sensing_result->ego.w_lp * gyro_dt;
+  tgt_val->global_pos.ang += sensing_result->ego.w_lp * gyro_dt;
 }

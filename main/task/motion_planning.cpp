@@ -56,13 +56,16 @@ MotionResult MotionPlanning::go_straight(param_straight_t &p,
   const auto left = param->sen_ref_p.normal.exist.left45;
   const auto right = param->sen_ref_p.normal.exist.right45;
 
-  // if (p.search_str_wide_ctrl_l) {
-  //   param->sen_ref_p.normal.exist.left45 = param->go_straight_wide_ctrl_th;
-  // }
-  // if (p.search_str_wide_ctrl_r) {
-  //   param->sen_ref_p.normal.exist.right45 = param->go_straight_wide_ctrl_th;
-  // }
-
+  if (adachi != nullptr) {
+    if (p.search_str_wide_ctrl_l) {
+      param->sen_ref_p.normal.exist.left45 =
+          param->wall_off_dist.go_straight_wide_ctrl_th;
+    }
+    if (p.search_str_wide_ctrl_r) {
+      param->sen_ref_p.normal.exist.right45 =
+          param->wall_off_dist.go_straight_wide_ctrl_th;
+    }
+  }
   tgt_val->nmr.sct = p.sct;
   if (p.motion_type != MotionType::NONE) {
     tgt_val->nmr.motion_type = p.motion_type;
@@ -86,13 +89,20 @@ MotionResult MotionPlanning::go_straight(param_straight_t &p,
   }
 
   unsigned int cnt = 0;
+
+  float tmp_dist_before = tgt_val->global_pos.dist;
+  float tmp_dist_after = tmp_dist_before;
   while (1) {
     vTaskDelay(1.0 / portTICK_RATE_MS);
     cnt++;
     if (std::abs(tgt_val->ego_in.dist) >= std::abs(p.dist)) {
       break;
     }
-    if (std::abs(tgt_val->ego_in.dist) >= param->clear_dist_ragne_to) {
+
+    tmp_dist_after = tgt_val->global_pos.dist;
+
+    if (std::abs(tmp_dist_after - tmp_dist_before) >=
+        param->clear_dist_ragne_to2) {
       param->sen_ref_p.normal.exist.left45 = left;
       param->sen_ref_p.normal.exist.right45 = right;
     }
@@ -284,10 +294,10 @@ MotionResult MotionPlanning::slalom(slalom_param2_t &sp, TurnDirection td,
         sensing_result->ego.right90_mid_dist < param->sla_front_ctrl_th) {
       auto diff =
           (sensing_result->ego.front_mid_dist - param->front_dist_offset);
-      if (diff > param->normal_sla_offset) {
-        diff = param->normal_sla_offset;
-      } else if (diff < -param->normal_sla_offset) {
-        diff = -param->normal_sla_offset;
+      if (diff > param->normal_sla_offset_front) {
+        diff = param->normal_sla_offset_front;
+      } else if (diff < -param->normal_sla_offset_front) {
+        diff = -param->normal_sla_offset_front;
       }
       ps_front.dist += diff;
       if (ps_front.dist < 0) {
@@ -298,10 +308,10 @@ MotionResult MotionPlanning::slalom(slalom_param2_t &sp, TurnDirection td,
     if (td == TurnDirection::Right) {
       if (sensing_result->ego.left45_dist < param->th_offset_dist) {
         auto diff = (param->sla_wall_ref_l - sensing_result->ego.left45_dist);
-        if (diff > param->normal_sla_offset) {
-          diff = param->normal_sla_offset;
-        } else if (diff < -param->normal_sla_offset) {
-          diff = -param->normal_sla_offset;
+        if (diff > param->normal_sla_offset_back) {
+          diff = param->normal_sla_offset_back;
+        } else if (diff < -param->normal_sla_offset_back) {
+          diff = -param->normal_sla_offset_back;
         }
         ps_back.dist += diff;
         if (ps_back.dist < 0) {
@@ -311,10 +321,10 @@ MotionResult MotionPlanning::slalom(slalom_param2_t &sp, TurnDirection td,
     } else {
       if (sensing_result->ego.right45_dist < param->th_offset_dist) {
         auto diff = (param->sla_wall_ref_r - sensing_result->ego.right45_dist);
-        if (diff > param->normal_sla_offset) {
-          diff = param->normal_sla_offset;
-        } else if (diff < -param->normal_sla_offset) {
-          diff = -param->normal_sla_offset;
+        if (diff > param->normal_sla_offset_back) {
+          diff = param->normal_sla_offset_back;
+        } else if (diff < -param->normal_sla_offset_back) {
+          diff = -param->normal_sla_offset_back;
         }
         ps_back.dist += diff;
         if (ps_back.dist < 0) {
@@ -1177,7 +1187,7 @@ bool MotionPlanning::wall_off_dia(TurnDirection td,
       // 反対側の壁あり
       tmp_dist_after = tgt_val->global_pos.dist;
       if (std::abs(tmp_dist_after - tmp_dist_before) >=
-          std::abs(param->wall_off_dist.diff_check_dist)) {
+          std::abs(param->wall_off_dist.diff_check_dist_dia)) {
         if (sensing_result->ego.left45_dist < param->dia_turn_th_l) {
           ps_front.dist += param->wall_off_dist.right_dia;
           ps_front.dist = MAX(ps_front.dist, 0.1);
@@ -1207,7 +1217,7 @@ bool MotionPlanning::wall_off_dia(TurnDirection td,
 
       tmp_dist_after = tgt_val->global_pos.dist;
       if (std::abs(tmp_dist_after - tmp_dist_before) >=
-          std::abs(param->wall_off_dist.diff_check_dist)) {
+          std::abs(param->wall_off_dist.diff_check_dist_dia)) {
         if (sensing_result->ego.right45_dist < param->dia_turn_th_r) {
           ps_front.dist += param->wall_off_dist.left_dia;
           ps_front.dist = MAX(ps_front.dist, 0.1);

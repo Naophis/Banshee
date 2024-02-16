@@ -321,6 +321,7 @@ typedef struct {
 
   float ctrl_exist_wall_th_l;
   float ctrl_exist_wall_th_r;
+  float go_straight_wide_ctrl_th;
 
   float diff_check_dist = 20;
   float diff_dist_th_l = 20;
@@ -426,6 +427,7 @@ typedef struct {
 
   float clear_dist_ragne_from = 0;
   float clear_dist_ragne_to = 0;
+  float clear_dist_ragne_to2 = 0;
   float wall_off_hold_dist;
   wall_off_hold_dist_t wall_off_dist;
 
@@ -466,7 +468,10 @@ typedef struct {
 
   fail_check_cnt_t fail_check;
   float fail_check_ang_th = 30.0 / 180 * M_PI;
+
   float normal_sla_offset = 4;
+  float normal_sla_offset_front = 4;
+  float normal_sla_offset_back = 4;
   float front_diff_th = 3;
   float ff_v_th = 3;
   float ff_front_dury = 3;
