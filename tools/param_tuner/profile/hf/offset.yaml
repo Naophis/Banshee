@@ -98,6 +98,7 @@ diff_dist_th_l: 200
 diff_dist_th_r: 200
 wall_off_diff_check_dist: 90
 wall_off_diff_check_dist_dia: 60
+diff_check_dist_dia_2: 15
 
 # 壁切れ：前壁補正
 front_dist_offset2: 146.0 #ref
@@ -129,6 +130,8 @@ wall_off_hold_dist_dia_r: -6.0
 dia_wall_off_ref_l: 32.5
 dia_wall_off_ref_r: 35.5
 dia_offset_max_dist: 10
+
+wall_off_pass_dist: 10
 
 #ターン後オフセット距離
 offset_after_turn_l: 8 #dia45, dia135 

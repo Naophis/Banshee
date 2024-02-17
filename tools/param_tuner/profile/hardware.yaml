@@ -3,8 +3,8 @@ dt: 0.001
 # tire2: 13.60125
 
 tire_tread: 38.0
-tire: 13.390
-tire2: 13.390
+tire: 13.4250
+tire2: 13.4350
 # offset_start_dist: 21.0
 offset_start_dist_search: 15.0
 offset_start_dist: 4.0
@@ -48,7 +48,7 @@ sakiyomi_time: 8
 
 #ログON_OFF
 logging_time: 1.0
-search_log_enable: 1
+search_log_enable: 0
 test_log_enable: 1
 fast_log_enable: 1
 sen_log_size: 100

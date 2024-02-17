@@ -327,6 +327,7 @@ typedef struct {
   float diff_dist_th_l = 20;
   float diff_dist_th_r = 20;
   float diff_check_dist_dia = 15;
+  float diff_check_dist_dia_2 = 5;
 
 } wall_off_hold_dist_t;
 
@@ -458,6 +459,7 @@ typedef struct {
   float dia_turn_exist_th_r = 0.0;
   float dia_turn_th_l = 0.0;
   float dia_turn_th_r = 0.0;
+  float wall_off_pass_dist = 10;
 
   float dia_wall_off_ref_l = 0;
   float dia_wall_off_ref_r = 0;
@@ -498,7 +500,7 @@ typedef struct {
   float th_offset_dist = 58;
   float sla_front_ctrl_th = 110;
   float orval_front_ctrl_min = 40;
-  float orval_front_ctrl_max = 150;
+  float orval_front_ctrl_max = 130;
   float wall_off_front_ctrl_min = 40;
   float dia_turn_offset_calc_th = 52;
   float go_straight_wide_ctrl_th = 60;

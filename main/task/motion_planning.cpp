@@ -1177,6 +1177,9 @@ bool MotionPlanning::wall_off_dia(TurnDirection td,
   float tmp_dist_before = tgt_val->global_pos.dist;
   float tmp_dist_after = tmp_dist_before;
 
+  float init_r45_dist = sensing_result->ego.right45_dist;
+  float init_l45_dist = sensing_result->ego.left45_dist;
+
   if (td == TurnDirection::Right) {
     while (true) {
       // 壁切れ開始
@@ -1186,6 +1189,17 @@ bool MotionPlanning::wall_off_dia(TurnDirection td,
       }
       // 反対側の壁あり
       tmp_dist_after = tgt_val->global_pos.dist;
+
+      if (std::abs(tmp_dist_after - tmp_dist_before) >=
+          std::abs(param->wall_off_dist.diff_check_dist_dia_2)) {
+        if ((sensing_result->ego.right45_dist - init_r45_dist) >
+            param->wall_off_pass_dist) {
+          ps_front.dist += param->wall_off_dist.right_dia;
+          ps_front.dist = MAX(ps_front.dist, 0.1);
+          return false;
+        }
+      }
+
       if (std::abs(tmp_dist_after - tmp_dist_before) >=
           std::abs(param->wall_off_dist.diff_check_dist_dia)) {
         if (sensing_result->ego.left45_dist < param->dia_turn_th_l) {
@@ -1216,6 +1230,17 @@ bool MotionPlanning::wall_off_dia(TurnDirection td,
       // 反対側壁あり
 
       tmp_dist_after = tgt_val->global_pos.dist;
+
+      if (std::abs(tmp_dist_after - tmp_dist_before) >=
+          std::abs(param->wall_off_dist.diff_check_dist_dia_2)) {
+        if ((sensing_result->ego.left45_dist - init_l45_dist) >
+            param->wall_off_pass_dist) {
+          ps_front.dist += param->wall_off_dist.left_dia;
+          ps_front.dist = MAX(ps_front.dist, 0.1);
+          return false;
+        }
+      }
+      
       if (std::abs(tmp_dist_after - tmp_dist_before) >=
           std::abs(param->wall_off_dist.diff_check_dist_dia)) {
         if (sensing_result->ego.right45_dist < param->dia_turn_th_r) {

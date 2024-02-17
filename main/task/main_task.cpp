@@ -689,6 +689,7 @@ void MainTask::load_offset_param() {
 
   param->dia_turn_th_l = getItem(root, "dia_turn_th_l")->valuedouble;
   param->dia_turn_th_r = getItem(root, "dia_turn_th_r")->valuedouble;
+  param->wall_off_pass_dist = getItem(root, "wall_off_pass_dist")->valuedouble;
 
   param->normal_sla_offset_front =
       getItem(root, "normal_sla_offset_front")->valuedouble;
