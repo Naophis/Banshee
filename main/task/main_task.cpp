@@ -222,8 +222,8 @@ int MainTask::select_mode() {
     int res = ui->encoder_operation();
     mode_num += res;
     if (mode_num == -1) {
-      mode_num = 14;
-    } else if (mode_num == 15) {
+      mode_num = 16;
+    } else if (mode_num == 17) {
       mode_num = (int)(MODE::SEARCH);
     }
     lbit.byte = mode_num + 1;
@@ -1570,18 +1570,22 @@ void MainTask::task() {
       } else if (mode_num == 10) {
         path_run(20, 12);
       } else if (mode_num == 11) {
-        path_run(22, 12);
+        path_run(21, 12);
       } else if (mode_num == 12) {
+        path_run(22, 12);
+      } else if (mode_num == 13) {
+        path_run(23, 12);
+      } else if (mode_num == 14) {
         printf("keep_pivot\n");
         keep_pivot();
-      } else if (mode_num == 13) {
+      } else if (mode_num == 15) {
         // dump1(); // taskの最終行に配置すること
         printf("suction\n");
         mp->reset_gyro_ref_with_check();
         pt->suction_enable(sys.test.suction_duty, sys.test.suction_duty_low);
         vTaskDelay(1000 * 10 / portTICK_PERIOD_MS);
         pt->suction_disable();
-      } else if (mode_num == 14) {
+      } else if (mode_num == 16) {
         save_maze_data(false);
         save_maze_kata_data(false);
         save_maze_return_data(false);
