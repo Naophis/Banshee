@@ -17,7 +17,7 @@
     "@types/serialport": "^8.0.2",
     "csvtojson": "^2.0.10",
     "js-yaml": "^4.1.0",
-    "serialport": "^8.0.5",
+    "serialport": "8.0.5",
     "ts-node": "^10.9.1",
     "typescript": "^4.9.5"
   }

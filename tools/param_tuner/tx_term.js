@@ -56,7 +56,7 @@ const callerFun = async (mode) => {
           let txt = fs.readFileSync(`${__dirname}/profile/${mode}/${file}`, {
             encoding: "utf-8",
           });
-          var file_name = file.replaceAll("yaml", mode);
+          var file_name = file.replace("yaml", mode);
           if (file === "maze.yaml") {
             var str = `${file_name}@${txt}`;
             write(str);
@@ -78,7 +78,7 @@ const callerFun = async (mode) => {
         let txt = fs.readFileSync(`${__dirname}/profile/${file}`, {
           encoding: "utf-8",
         });
-        var file_name = file.replaceAll("yaml", "txt");
+        var file_name = file.replace("yaml", "txt");
         var saveData = yaml.load(txt);
         // console.log(saveData)
         var str = `${file_name}@${JSON.stringify(saveData)}`;
@@ -99,7 +99,7 @@ const callerFun = async (mode) => {
         let txt = fs.readFileSync(`${__dirname}/profile/${list[idx]}`, {
           encoding: "utf-8",
         });
-        var file_name = file.replaceAll("yaml", "txt");
+        var file_name = file.replace("yaml","txt");
         var saveData = yaml.load(txt);
         console.log(saveData)
         var str = `${file_name}@${JSON.stringify(saveData)}`;
@@ -110,7 +110,7 @@ const callerFun = async (mode) => {
         let txt = fs.readFileSync(`${__dirname}/profile/${mode}/${list[idx]}`, {
           encoding: "utf-8",
         });
-        var file_name = list[idx].replaceAll("yaml", mode);
+        var file_name = list[idx].replace("yaml", mode);
         if (file_name === "maze.txt") {
           var str = `${file_name}@${txt}`;
           write(str);
@@ -134,7 +134,7 @@ let ready = function (mode) {
   port = new SerialPort(
     comport,
     {
-      baudRate: 2000000,
+      baudRate: 3000000,
       // baudRate: 115200,
     },
     (e) => {

@@ -22,7 +22,7 @@ void PlanningTask::create_task(const BaseType_t xCoreID) {
 void PlanningTask::set_logging_task(std::shared_ptr<LoggingTask> &_lt) {
   lt = _lt; //
 }
-void PlanningTask::motor_enable_main() {
+void IRAM_ATTR PlanningTask::motor_enable_main() {
   motor_en = true;
   mcpwm_start(MCPWM_UNIT_0, MCPWM_TIMER_0);
   mcpwm_start(MCPWM_UNIT_0, MCPWM_TIMER_1);
@@ -33,7 +33,7 @@ void PlanningTask::motor_enable_main() {
   mcpwm_set_duty_type(MCPWM_UNIT_0, MCPWM_TIMER_1, MCPWM_OPR_A,
                       MCPWM_DUTY_MODE_0);
 }
-void PlanningTask::set_gpio_state(gpio_num_t gpio_num, int state) {
+void IRAM_ATTR PlanningTask::set_gpio_state(gpio_num_t gpio_num, int state) {
   const int num = (int)gpio_num;
   if (num < 32) {
     if (state) {
@@ -50,11 +50,11 @@ void PlanningTask::set_gpio_state(gpio_num_t gpio_num, int state) {
   }
 }
 
-void PlanningTask::pid_gain_data(pid_error_t &in, pid_error_t &save) {
+void IRAM_ATTR PlanningTask::pid_gain_data(pid_error_t &in, pid_error_t &save) {
   // pid_val_data(in, save);
 }
 
-void PlanningTask::set_ctrl_val(pid_error2_t &val, float error_p, float error_i,
+void IRAM_ATTR PlanningTask::set_ctrl_val(pid_error2_t &val, float error_p, float error_i,
                                 float error_i2, float error_d, float val_p,
                                 float val_i, float val_i2, float val_d,
                                 float zz, float z) {
@@ -69,13 +69,13 @@ void PlanningTask::set_ctrl_val(pid_error2_t &val, float error_p, float error_i,
   val.zz = zz;
   val.z = z;
 }
-void PlanningTask::pid_val_data(pid_error_t &in, pid_error_t &save) {
+void IRAM_ATTR PlanningTask::pid_val_data(pid_error_t &in, pid_error_t &save) {
   // error_entity_ptr->error_p = in.error_p;
   // error_entity_ptr->error_i = in.error_i;
   // error_entity_ptr->error_d = in.error_d;
 }
 
-float PlanningTask::interp1d(vector<float> &vx, vector<float> &vy, float x,
+float IRAM_ATTR PlanningTask::interp1d(vector<float> &vx, vector<float> &vy, float x,
                              bool extrapolate) {
   int size = vx.size();
   int i = 0;
@@ -98,7 +98,7 @@ float PlanningTask::interp1d(vector<float> &vx, vector<float> &vy, float x,
   return yL + dydx * (x - xL);
 }
 
-void PlanningTask::motor_disable_main() {
+void IRAM_ATTR PlanningTask::motor_disable_main() {
   motor_en = false;
   gain_cnt = 0;
   mcpwm_set_duty(MCPWM_UNIT_0, MCPWM_TIMER_0, MCPWM_OPR_B, 0);
@@ -123,24 +123,24 @@ void PlanningTask::motor_disable_main() {
   gpio_set_level(Motor_R_PWM, 0);
 }
 
-void PlanningTask::motor_enable() {
+void IRAM_ATTR PlanningTask::motor_enable() {
   motor_enable_send_msg.enable = true;
   motor_enable_send_msg.timestamp++;
   xQueueReset(motor_qh_enable);
   xQueueSendToFront(motor_qh_enable, &motor_enable_send_msg, 1);
 }
-void PlanningTask::motor_disable(bool reset_req) {
+void IRAM_ATTR PlanningTask::motor_disable(bool reset_req) {
   motor_enable_send_msg.enable = false;
   motor_enable_send_msg.timestamp++;
   xQueueReset(motor_qh_enable);
   xQueueSendToFront(motor_qh_enable, &motor_enable_send_msg, 1);
 }
-void PlanningTask::motor_disable() {
+void IRAM_ATTR PlanningTask::motor_disable() {
   motor_disable(true); //
   vTaskDelay(1.0 / portTICK_PERIOD_MS);
 }
 
-void PlanningTask::suction_motor_enable_main() {
+void IRAM_ATTR PlanningTask::suction_motor_enable_main() {
   suction_en = true;
   mcpwm_set_signal_low(MCPWM_UNIT_1, MCPWM_TIMER_2, MCPWM_OPR_A);
   mcpwm_set_duty(MCPWM_UNIT_1, MCPWM_TIMER_2, MCPWM_OPR_A,
@@ -151,7 +151,7 @@ void PlanningTask::suction_motor_enable_main() {
   // ledc_channel_config(&suction_ch);
   // ledc_timer_config(&suction_timer);
 }
-void PlanningTask::suction_motor_disable_main() {
+void IRAM_ATTR PlanningTask::suction_motor_disable_main() {
   suction_en = false;
   tgt_duty.duty_suction = 0;
   mcpwm_set_signal_low(MCPWM_UNIT_1, MCPWM_TIMER_2, MCPWM_OPR_A);
@@ -164,7 +164,7 @@ void PlanningTask::suction_motor_disable_main() {
   // ledc_update_duty(suction_ch.speed_mode, suction_ch.channel);
 }
 
-void PlanningTask::suction_enable(float duty, float duty2) {
+void IRAM_ATTR PlanningTask::suction_enable(float duty, float duty2) {
   tgt_duty.duty_suction = duty;
   tgt_duty.duty_suction_low = duty2;
   suction_enable_send_msg.enable = true;
@@ -172,7 +172,7 @@ void PlanningTask::suction_enable(float duty, float duty2) {
   xQueueReset(suction_qh_enable);
   xQueueSendToFront(suction_qh_enable, &suction_enable_send_msg, 1);
 }
-void PlanningTask::suction_disable() {
+void IRAM_ATTR PlanningTask::suction_disable() {
   suction_enable_send_msg.enable = false;
   suction_enable_send_msg.timestamp++;
   xQueueReset(suction_qh_enable);
@@ -515,7 +515,7 @@ void PlanningTask::task() {
   }
 }
 
-float PlanningTask::calc_sensor_pid() {
+float IRAM_ATTR PlanningTask::calc_sensor_pid() {
   float duty = 0;
 
   error_entity.sen.error_i += error_entity.sen.error_p;
@@ -605,7 +605,7 @@ float PlanningTask::calc_sensor_pid() {
 
   return duty;
 }
-float PlanningTask::calc_sensor_pid_dia() {
+float IRAM_ATTR PlanningTask::calc_sensor_pid_dia() {
   float duty = 0;
 
   error_entity.sen_dia.error_i += error_entity.sen_dia.error_p;
@@ -661,7 +661,7 @@ float PlanningTask::calc_sensor_pid_dia() {
 
   return duty;
 }
-float PlanningTask::check_sen_error() {
+float IRAM_ATTR PlanningTask::check_sen_error() {
   float error = 0;
   int check = 0;
   float dist_mod = (int)(tgt_val->ego_in.dist / param_ro->dist_mod_num);
@@ -807,7 +807,7 @@ float PlanningTask::check_sen_error() {
   error_entity.sen_log.gain_z = 0;
   return 0;
 }
-float PlanningTask::check_sen_error_dia() {
+float IRAM_ATTR PlanningTask::check_sen_error_dia() {
   float error = 0;
   int check = 0;
 
@@ -898,7 +898,7 @@ float PlanningTask::check_sen_error_dia() {
   return 0;
 }
 
-void PlanningTask::calc_vel() {
+void IRAM_ATTR PlanningTask::calc_vel() {
   // const float dt = param_ro->dt;
   // const float tire = suction_en ? param_ro->tire2 : param_ro->tire;
   // const auto enc_delta_l =
@@ -945,7 +945,7 @@ void PlanningTask::calc_vel() {
   //     (sensing_result->ego.v_l + sensing_result->ego.v_r) / 2;
 }
 
-void PlanningTask::update_ego_motion() {
+void IRAM_ATTR PlanningTask::update_ego_motion() {
   const float dt = param_ro->dt;
   const float tire = param_ro->tire;
   tgt_val->ego_in.ff_duty_low_th = param_ro->ff_front_dury;
@@ -1069,7 +1069,7 @@ void PlanningTask::update_ego_motion() {
   // コピー
   tgt_val->ego_in.slip_point.w = sensing_result->ego.w_lp;
 }
-bool PlanningTask::judge_motor_pwm(float duty, uint8_t type) {
+bool IRAM_ATTR PlanningTask::judge_motor_pwm(float duty, uint8_t type) {
   if (type == 1) {
     return duty > 0;
   } else {
@@ -1078,7 +1078,7 @@ bool PlanningTask::judge_motor_pwm(float duty, uint8_t type) {
   return true;
 }
 
-void PlanningTask::limitter(float &kp, float &ki, float &kb, float &kd,
+void IRAM_ATTR PlanningTask::limitter(float &kp, float &ki, float &kb, float &kd,
                             pid_param_t &limitter) {
   if (limitter.mode == 0) {
     return;
@@ -1105,7 +1105,7 @@ void PlanningTask::limitter(float &kp, float &ki, float &kb, float &kd,
   }
 }
 
-void PlanningTask::change_pwm_freq(float duty_l, float duty_r) {
+void IRAM_ATTR PlanningTask::change_pwm_freq(float duty_l, float duty_r) {
   if (param_ro->motor_debug_mode != 0) {
     duty_r = param_ro->motor_debug_mode_duty_r;
     duty_l = param_ro->motor_debug_mode_duty_l;
@@ -1199,7 +1199,7 @@ void PlanningTask::change_pwm_freq(float duty_l, float duty_r) {
   // }
 }
 
-void PlanningTask::set_next_duty(float duty_l, float duty_r,
+void IRAM_ATTR PlanningTask::set_next_duty(float duty_l, float duty_r,
                                  float duty_suction) {
   if (motor_en) {
     change_pwm_freq(duty_l, duty_r);
@@ -1258,7 +1258,7 @@ void PlanningTask::init_gpio() {
   // gpio_set_direction((gpio_num_t)GPIO_OUTPUT_IO_8,
 }
 
-void PlanningTask::pl_req_activate() {
+void IRAM_ATTR PlanningTask::pl_req_activate() {
   if (receive_req->pl_req.time_stamp != pid_req_timestamp) {
     if (receive_req->pl_req.error_gyro_reset == 1) {
       error_entity.v.error_i = 0;
@@ -1290,7 +1290,7 @@ float PlanningTask::get_feadforward_front() { return 0; }
 float PlanningTask::get_feadforward_roll() { return 0; }
 float PlanningTask::get_rpm_ff_val(TurnDirection td) { return 0; }
 float PlanningTask::satuate_sen_duty(float duty_sen) { return duty_sen; }
-void PlanningTask::calc_tgt_duty() {
+void IRAM_ATTR PlanningTask::calc_tgt_duty() {
 
   float duty_sen = 0;
   float sen_ang = 0;
@@ -2352,7 +2352,7 @@ void PlanningTask::cp_tgt_val() {
   ideal_v_l = tgt_val->ego_in.v + tgt_val->ego_in.w * param_ro->tire_tread / 2;
 }
 
-void PlanningTask::check_fail_safe() {
+void IRAM_ATTR PlanningTask::check_fail_safe() {
   bool no_problem = true;
 
   if (!motor_en) {
@@ -2390,7 +2390,7 @@ void PlanningTask::check_fail_safe() {
   // }
 }
 
-void PlanningTask::cp_request() {
+void IRAM_ATTR PlanningTask::cp_request() {
   // tgt_val->tgt_in.mass = param_ro->Mass;
 
   pl_req_activate();
@@ -2499,7 +2499,7 @@ void PlanningTask::cp_request() {
     tgt_val->ego_in.v = receive_req->nmr.v_max;
   }
 }
-float PlanningTask::calc_sensor(float data, float a, float b) {
+float IRAM_ATTR PlanningTask::calc_sensor(float data, float a, float b) {
   int idx = (int)data;
   if (idx <= param_ro->sensor_range_min || idx >= log_table.size()) {
     return param_ro->sensor_range_max;
@@ -2514,7 +2514,7 @@ float PlanningTask::calc_sensor(float data, float a, float b) {
   return res;
 }
 
-void PlanningTask::calc_sensor_dist_all() {
+void IRAM_ATTR PlanningTask::calc_sensor_dist_all() {
   if (!(tgt_val->motion_type == MotionType::NONE ||
         tgt_val->motion_type == MotionType::PIVOT)) {
     sensing_result->ego.left90_dist_old = sensing_result->ego.left90_dist;
@@ -2627,7 +2627,7 @@ void PlanningTask::calc_sensor_dist_all() {
   calc_sensor_dist_diff();
 }
 
-void PlanningTask::calc_sensor_dist_diff() {
+void IRAM_ATTR PlanningTask::calc_sensor_dist_diff() {
   if (sensing_result->sen.l45.sensor_dist > sensing_result->ego.left45_dist) {
     sensing_result->sen.l45.sensor_dist = sensing_result->ego.left45_dist;
     sensing_result->sen.l45.global_run_dist = tgt_val->global_pos.dist;

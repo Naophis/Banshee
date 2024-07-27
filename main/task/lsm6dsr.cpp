@@ -144,6 +144,37 @@ int16_t LSM6DSR::read2byte(const uint8_t address) {
                         ((unsigned short)(t.rx_data[1] & 0xff)));
 }
 
+int16_t IRAM_ATTR LSM6DSR::read_2byte(const uint8_t address) {
+  esp_err_t ret;
+  DRAM_ATTR static spi_transaction_t t;
+  static bool is_initialized = false;
+
+  if (!is_initialized) {
+    memset(&t, 0, sizeof(t)); // Zero out the transaction once
+    t.flags = SPI_TRANS_USE_TXDATA | SPI_TRANS_USE_RXDATA;
+    t.length = 24; // SPI_ADDRESS(8bit) + SPI_DATA(8bit)
+    is_initialized = true;
+  }
+
+  t.tx_data[0] = (address | READ_FLAG);
+  t.tx_data[1] = 0;
+  t.tx_data[2] = 0;
+
+  int64_t start_time = esp_timer_get_time();
+  spi_device_polling_start(spi, &t, portMAX_DELAY);
+  int64_t end_time = esp_timer_get_time();
+  spi_device_polling_end(spi, portMAX_DELAY);
+  int64_t end_time2 = esp_timer_get_time();
+  // auto data = (signed short)((((unsigned short)(t.rx_data[2] & 0xff)) << 8) |
+  //                            ((unsigned short)(t.rx_data[1] & 0xff)));
+  // printf("Time: %lld, %lld, %d\n", end_time - start_time, end_time2 -
+  // end_time,
+  //        data);
+
+  return (signed short)((((unsigned short)(t.rx_data[2] & 0xff)) << 8) |
+                        ((unsigned short)(t.rx_data[1] & 0xff)));
+}
+
 void LSM6DSR::begin() {
   // int32_t ret = 0;
 

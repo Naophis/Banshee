@@ -91,105 +91,7 @@ void LoggingTask::task() {
       if (logging_active) {
         if (idx_slalom_log <= param->log_size) {
           // auto ld = std::make_shared<log_data_t2>();
-          log_data_t2 *structPtr = (log_data_t2 *)heap_caps_malloc(
-              sizeof(log_data_t2), MALLOC_CAP_SPIRAM);
-          auto ld = std::shared_ptr<log_data_t2>(structPtr, heap_caps_free);
-
-          ld->img_v = floatToHalf(tgt_val->ego_in.v);
-          ld->v_l = floatToHalf(sensing_result->ego.v_l);
-          // ld->v_l = floatToHalf(sensing_result->ego.v_kf);
-          ld->v_c = floatToHalf(sensing_result->ego.v_c);
-          ld->v_c2 = floatToHalf(sensing_result->ego.v_kf);
-          ld->v_r = floatToHalf(sensing_result->ego.v_r);
-          ld->v_r_enc = (sensing_result->encoder.right);
-          ld->v_l_enc = (sensing_result->encoder.left);
-          ld->accl = floatToHalf(tgt_val->ego_in.accl);
-          ld->accl_x = floatToHalf(sensing_result->ego.w_kf);
-          ld->dist_kf = floatToHalf(sensing_result->ego.dist_kf);
-
-          // ld->accl_x = floatToHalf((float)tgt_val->ego_in.state);
-          // ld->accl = floatToHalf(tgt_val->v_error);
-          // ld->accl_x = floatToHalf(tgt_val->w_error);
-
-          ld->img_w = floatToHalf(tgt_val->ego_in.w);
-          ld->w_lp = floatToHalf(sensing_result->ego.w_lp);
-          ld->alpha = floatToHalf(tgt_val->ego_in.alpha);
-
-          ld->img_dist = floatToHalf(tgt_val->ego_in.img_dist);
-          ld->dist = floatToHalf(tgt_val->ego_in.dist);
-
-          ld->img_ang = floatToHalf(
-              (tgt_val->ego_in.img_ang + sensing_result->ego.duty.sen_ang) *
-              180 / m_PI);
-          ld->ang = floatToHalf(tgt_val->ego_in.ang * 180 / m_PI);
-          ld->ang_kf = floatToHalf(sensing_result->ego.ang_kf * 180 / m_PI);
-
-          ld->left90_lp = floatToHalf(sensing_result->ego.left90_lp);
-          ld->left45_lp = floatToHalf(sensing_result->ego.left45_lp);
-          // ld->front_lp = floatToHalf(sensing_result->ego.front_lp);
-          ld->right45_lp = floatToHalf(sensing_result->ego.right45_lp);
-          ld->right90_lp = floatToHalf(sensing_result->ego.right90_lp);
-
-          // ld->left45_2_lp = floatToHalf(sensing_result->ego.left45_2_lp);
-          // ld->right45_2_lp = floatToHalf(sensing_result->ego.right45_2_lp);
-
-          ld->battery_lp = floatToHalf(sensing_result->ego.batt_kf);
-          ld->duty_l = floatToHalf(sensing_result->ego.duty.duty_l);
-          ld->duty_r = floatToHalf(sensing_result->ego.duty.duty_r);
-
-          ld->ff_duty_front =
-              floatToHalf(sensing_result->ego.duty.ff_duty_front);
-          ld->ff_duty_roll = floatToHalf(sensing_result->ego.duty.ff_duty_roll);
-          ld->ff_duty_rpm_r =
-              floatToHalf(sensing_result->ego.duty.ff_duty_rpm_r);
-          ld->ff_duty_rpm_l =
-              floatToHalf(sensing_result->ego.duty.ff_duty_rpm_l);
-
-          ld->motion_type = static_cast<int>(tgt_val->motion_type);
-
-          ld->duty_sensor_ctrl = floatToHalf(sensing_result->ego.duty.sen);
-
-          ld->sen_log_l45 = floatToHalf(sensing_result->sen.l45.sensor_dist);
-          ld->sen_log_r45 = floatToHalf(sensing_result->sen.r45.sensor_dist);
-
-          ld->motion_timestamp = tgt_val->nmr.timstamp;
-          ld->sen_calc_time = sensing_result->calc_time;
-          ld->sen_calc_time2 = sensing_result->calc_time2;
-          ld->pln_calc_time = tgt_val->calc_time;
-          ld->pln_calc_time2 = tgt_val->calc_time2;
-          ld->pln_time_diff = tgt_val->calc_time_diff;
-
-          ld->m_pid_p = floatToHalf(error_entity->v_val.p);
-          ld->m_pid_i = floatToHalf(error_entity->v_val.i);
-          ld->m_pid_i2 = floatToHalf(error_entity->v_val.i2);
-          ld->m_pid_d = floatToHalf(error_entity->v_val.d);
-          ld->m_pid_p_v = floatToHalf(error_entity->v_val.p_val);
-          ld->m_pid_i_v = floatToHalf(error_entity->v_val.i_val);
-          ld->m_pid_i2_v = floatToHalf(error_entity->v_val.i2_val);
-          ld->m_pid_d_v = floatToHalf(error_entity->v_val.d_val);
-
-          ld->g_pid_p = floatToHalf(error_entity->w_val.p);
-          ld->g_pid_i = floatToHalf(error_entity->w_val.i);
-          ld->g_pid_i2 = floatToHalf(error_entity->w_val.i2);
-          ld->g_pid_d = floatToHalf(error_entity->w_val.d);
-          ld->g_pid_p_v = floatToHalf(error_entity->w_val.p_val);
-          ld->g_pid_i_v = floatToHalf(error_entity->w_val.i_val);
-          ld->g_pid_i2_v = floatToHalf(error_entity->w_val.i2_val);
-          ld->g_pid_d_v = floatToHalf(error_entity->w_val.d_val);
-
-          ld->s_pid_p = floatToHalf(error_entity->s_val.p);
-          ld->s_pid_i = floatToHalf(error_entity->s_val.i);
-          ld->s_pid_i2 = floatToHalf(error_entity->s_val.i2);
-          ld->s_pid_d = floatToHalf(error_entity->s_val.d);
-          ld->s_pid_p_v = floatToHalf(error_entity->s_val.p_val);
-          ld->s_pid_i_v = floatToHalf(error_entity->s_val.i_val);
-          ld->s_pid_i2_v = floatToHalf(error_entity->s_val.i2_val);
-          ld->s_pid_d_v = floatToHalf(error_entity->s_val.d_val);
-
-          if (heap_caps_get_free_size(MALLOC_CAP_INTERNAL) > 10000) {
-            log_vec.emplace_back(std::move(ld));
-            idx_slalom_log++;
-          }
+            set_data();
         }
         if (param->set_param) {
           vTaskDelay(param->logging_time);
@@ -290,7 +192,7 @@ void LoggingTask::save_sysid(std::string file_name) {
 //   // std::vector<std::shared_ptr<log_data_t2>>().swap(log_vec);
 // }
 
-void LoggingTask::dump_log(std::string file_name) {
+void IRAM_ATTR LoggingTask::dump_log(std::string file_name) {
   const TickType_t xDelay2 = 100.0 / portTICK_PERIOD_MS;
   char line_buf[LINE_BUF_SIZE];
   printf("start___\n"); // csvファイル作成トリガー
@@ -486,4 +388,103 @@ void LoggingTask::dump_log_sysid(std::string file_name) {
   printf("end___\n"); // csvファイル追記終了トリガー
 
   fclose(f);
+}
+
+void IRAM_ATTR LoggingTask::set_data() {
+  log_data_t2 *structPtr =
+      (log_data_t2 *)heap_caps_malloc(sizeof(log_data_t2), MALLOC_CAP_SPIRAM);
+  auto ld = std::shared_ptr<log_data_t2>(structPtr, heap_caps_free);
+
+  ld->img_v = floatToHalf(tgt_val->ego_in.v);
+  ld->v_l = floatToHalf(sensing_result->ego.v_l);
+  // ld->v_l = floatToHalf(sensing_result->ego.v_kf);
+  ld->v_c = floatToHalf(sensing_result->ego.v_c);
+  ld->v_c2 = floatToHalf(sensing_result->ego.v_kf);
+  ld->v_r = floatToHalf(sensing_result->ego.v_r);
+  ld->v_r_enc = (sensing_result->encoder.right);
+  ld->v_l_enc = (sensing_result->encoder.left);
+  ld->accl = floatToHalf(tgt_val->ego_in.accl);
+  ld->accl_x = floatToHalf(sensing_result->ego.w_kf);
+  ld->dist_kf = floatToHalf(sensing_result->ego.dist_kf);
+
+  // ld->accl_x = floatToHalf((float)tgt_val->ego_in.state);
+  // ld->accl = floatToHalf(tgt_val->v_error);
+  // ld->accl_x = floatToHalf(tgt_val->w_error);
+
+  ld->img_w = floatToHalf(tgt_val->ego_in.w);
+  ld->w_lp = floatToHalf(sensing_result->ego.w_lp);
+  ld->alpha = floatToHalf(tgt_val->ego_in.alpha);
+
+  ld->img_dist = floatToHalf(tgt_val->ego_in.img_dist);
+  ld->dist = floatToHalf(tgt_val->ego_in.dist);
+
+  ld->img_ang =
+      floatToHalf((tgt_val->ego_in.img_ang + sensing_result->ego.duty.sen_ang) *
+                  180 / m_PI);
+  ld->ang = floatToHalf(tgt_val->ego_in.ang * 180 / m_PI);
+  ld->ang_kf = floatToHalf(sensing_result->ego.ang_kf * 180 / m_PI);
+
+  ld->left90_lp = floatToHalf(sensing_result->ego.left90_lp);
+  ld->left45_lp = floatToHalf(sensing_result->ego.left45_lp);
+  // ld->front_lp = floatToHalf(sensing_result->ego.front_lp);
+  ld->right45_lp = floatToHalf(sensing_result->ego.right45_lp);
+  ld->right90_lp = floatToHalf(sensing_result->ego.right90_lp);
+
+  // ld->left45_2_lp = floatToHalf(sensing_result->ego.left45_2_lp);
+  // ld->right45_2_lp = floatToHalf(sensing_result->ego.right45_2_lp);
+
+  ld->battery_lp = floatToHalf(sensing_result->ego.batt_kf);
+  ld->duty_l = floatToHalf(sensing_result->ego.duty.duty_l);
+  ld->duty_r = floatToHalf(sensing_result->ego.duty.duty_r);
+
+  ld->ff_duty_front = floatToHalf(sensing_result->ego.duty.ff_duty_front);
+  ld->ff_duty_roll = floatToHalf(sensing_result->ego.duty.ff_duty_roll);
+  ld->ff_duty_rpm_r = floatToHalf(sensing_result->ego.duty.ff_duty_rpm_r);
+  ld->ff_duty_rpm_l = floatToHalf(sensing_result->ego.duty.ff_duty_rpm_l);
+
+  ld->motion_type = static_cast<int>(tgt_val->motion_type);
+
+  ld->duty_sensor_ctrl = floatToHalf(sensing_result->ego.duty.sen);
+
+  ld->sen_log_l45 = floatToHalf(sensing_result->sen.l45.sensor_dist);
+  ld->sen_log_r45 = floatToHalf(sensing_result->sen.r45.sensor_dist);
+
+  ld->motion_timestamp = tgt_val->nmr.timstamp;
+  ld->sen_calc_time = sensing_result->calc_time;
+  ld->sen_calc_time2 = sensing_result->calc_time2;
+  ld->pln_calc_time = tgt_val->calc_time;
+  ld->pln_calc_time2 = tgt_val->calc_time2;
+  ld->pln_time_diff = tgt_val->calc_time_diff;
+
+  ld->m_pid_p = floatToHalf(error_entity->v_val.p);
+  ld->m_pid_i = floatToHalf(error_entity->v_val.i);
+  ld->m_pid_i2 = floatToHalf(error_entity->v_val.i2);
+  ld->m_pid_d = floatToHalf(error_entity->v_val.d);
+  ld->m_pid_p_v = floatToHalf(error_entity->v_val.p_val);
+  ld->m_pid_i_v = floatToHalf(error_entity->v_val.i_val);
+  ld->m_pid_i2_v = floatToHalf(error_entity->v_val.i2_val);
+  ld->m_pid_d_v = floatToHalf(error_entity->v_val.d_val);
+
+  ld->g_pid_p = floatToHalf(error_entity->w_val.p);
+  ld->g_pid_i = floatToHalf(error_entity->w_val.i);
+  ld->g_pid_i2 = floatToHalf(error_entity->w_val.i2);
+  ld->g_pid_d = floatToHalf(error_entity->w_val.d);
+  ld->g_pid_p_v = floatToHalf(error_entity->w_val.p_val);
+  ld->g_pid_i_v = floatToHalf(error_entity->w_val.i_val);
+  ld->g_pid_i2_v = floatToHalf(error_entity->w_val.i2_val);
+  ld->g_pid_d_v = floatToHalf(error_entity->w_val.d_val);
+
+  ld->s_pid_p = floatToHalf(error_entity->s_val.p);
+  ld->s_pid_i = floatToHalf(error_entity->s_val.i);
+  ld->s_pid_i2 = floatToHalf(error_entity->s_val.i2);
+  ld->s_pid_d = floatToHalf(error_entity->s_val.d);
+  ld->s_pid_p_v = floatToHalf(error_entity->s_val.p_val);
+  ld->s_pid_i_v = floatToHalf(error_entity->s_val.i_val);
+  ld->s_pid_i2_v = floatToHalf(error_entity->s_val.i2_val);
+  ld->s_pid_d_v = floatToHalf(error_entity->s_val.d_val);
+
+  if (heap_caps_get_free_size(MALLOC_CAP_INTERNAL) > 10000) {
+    log_vec.emplace_back(std::move(ld));
+    idx_slalom_log++;
+  }
 }

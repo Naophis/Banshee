@@ -19,6 +19,7 @@ public:
   uint8_t read1byte(const uint8_t address);
   int16_t read2byte(const uint8_t address);
   int16_t read2byte_2(const uint8_t address);
+  int16_t IRAM_ATTR read_2byte(const uint8_t address);
 
   void req_read1byte_itr(const uint8_t address);
   uint8_t read_1byte_itr();

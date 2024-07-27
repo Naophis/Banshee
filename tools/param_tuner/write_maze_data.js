@@ -57,7 +57,7 @@ const callerFun = async () => {
           let txt = fs.readFileSync(`${__dirname}/maze_data/${file}`, {
             encoding: "utf-8",
           });
-          var file_name = file.replaceAll("yaml", "txt");
+          var file_name = file.replace("yaml", "txt");
           var saveData = yaml.load(txt);
           var str = `${file_name}@${JSON.stringify(saveData)}`;
           write(str);
@@ -74,7 +74,7 @@ const callerFun = async () => {
       let txt = fs.readFileSync(`${__dirname}/maze_data/${list[idx]}`, {
         encoding: "utf-8",
       });
-      var file_name = list[idx].replaceAll("yaml", "txt");
+      var file_name = list[idx].replace("yaml", "txt");
       var saveData = yaml.load(txt);
       var wall = new Array(saveData.maze_data.maze_size);
       for (var i = 0; i < saveData.maze_data.maze_size; i++) {
@@ -107,7 +107,7 @@ let ready = function () {
   port = new SerialPort(
     comport,
     {
-      baudRate: 2000000,
+      baudRate: 3000000,
       // baudRate: 115200,
     },
     (e) => {

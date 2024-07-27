@@ -53,7 +53,7 @@
 
 void init_uart() {
   uart_config_t uart_config;
-  uart_config.baud_rate = 2 * 1000 * 1000;
+  uart_config.baud_rate = 3 * 1000 * 1000;
   uart_config.data_bits = UART_DATA_8_BITS;
   uart_config.parity = UART_PARITY_DISABLE;
   uart_config.stop_bits = UART_STOP_BITS_1;

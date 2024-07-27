@@ -172,7 +172,7 @@ void SensingTask::task() {
     const float tmp_dt = ((float)se->calc_time) / 1000000.0;
     now_gyro_time = esp_timer_get_time();
     const float gyro_dt = ((float)(now_gyro_time - last_gyro_time)) / 1000000.0;
-    gyro_if.req_read2byte_itr(0x26);
+    // gyro_if.req_read2byte_itr(0x26);
     start2 = esp_timer_get_time();
 
     if (skip_sensing) {
@@ -369,7 +369,8 @@ void SensingTask::task() {
     }
 
     // gyro_if.req_read2byte_itr(0x26);
-    se->gyro_list[4] = gyro_if.read_2byte_itr();
+    // se->gyro_list[4] = gyro_if.read_2byte_itr();
+    se->gyro_list[4] = gyro_if.read_2byte(0x26);
     se->gyro.raw = se->gyro_list[4];
     se->gyro.data = (float)(se->gyro_list[4]);
     // int32_t enc_r = (enc_if.read2byte(0x00, 0x00, true) & 0xFFFF) >> 2;
