@@ -66,6 +66,8 @@ private:
   static void timer_200us_callback(void *arg);
   static void timer_250us_callback(void *arg);
 
+  void exec_adc(adc2_channel_t channel, adc_bits_width_t width_bit, int *raw_out);
+
   void calc_vel(float gyro_dt, float enc_l_dt, float enc_r_dt);
   void set_gpio_state(gpio_num_t gpio_num, int state) {
     const int num = (int)gpio_num;

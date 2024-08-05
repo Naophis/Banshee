@@ -113,6 +113,10 @@ void SensingTask::encoder_init(const pcnt_unit_t unit, const gpio_num_t pinA,
   pcnt_counter_resume(unit);
 }
 
+void IRAM_ATTR SensingTask::exec_adc(adc2_channel_t channel, adc_bits_width_t width_bit, int *raw_out) {
+  adc2_get_raw(channel, width_bit, raw_out);
+}
+
 void SensingTask::task() {
   // timer_init_grp0_timer0();
   if (!GY_MODE) {
@@ -176,7 +180,7 @@ void SensingTask::task() {
     start2 = esp_timer_get_time();
 
     if (skip_sensing) {
-      adc2_get_raw(BATTERY, width, &sensing_result->battery.raw);
+      exec_adc(BATTERY, width, &sensing_result->battery.raw);
     }
 
     if (pt->search_mode && tgt_val->motion_type == MotionType::STRAIGHT) {
@@ -218,14 +222,14 @@ void SensingTask::task() {
     // LED_OFF ADC
     if (skip_sensing) {
       if (r90) {
-        adc2_get_raw(SEN_R90, width,
+        exec_adc(SEN_R90, width,
                      &sensing_result->led_sen_before.right90.raw);
       } else {
         sensing_result->led_sen_before.right90.raw = 0;
       }
-      adc2_get_raw(BATTERY, width, &sensing_result->battery.raw);
+      exec_adc(BATTERY, width, &sensing_result->battery.raw);
       if (l90) {
-        adc2_get_raw(SEN_L90, width,
+        exec_adc(SEN_L90, width,
                      &sensing_result->led_sen_before.left90.raw);
       } else {
         sensing_result->led_sen_before.left90.raw = 0;
@@ -233,13 +237,13 @@ void SensingTask::task() {
     } else {
 
       if (r45) {
-        adc2_get_raw(SEN_R45, width,
+        exec_adc(SEN_R45, width,
                      &sensing_result->led_sen_before.right45.raw);
       } else {
         sensing_result->led_sen_before.right45.raw = 0;
       }
       if (l45) {
-        adc2_get_raw(SEN_L45, width,
+        exec_adc(SEN_L45, width,
                      &sensing_result->led_sen_before.left45.raw);
       } else {
         sensing_result->led_sen_before.left45.raw = 0;
@@ -308,7 +312,7 @@ void SensingTask::task() {
         for (int i = 0; i < param->led_light_delay_cnt; i++) {
           lec_cnt++;
         }
-        adc2_get_raw(SEN_R90, width, &se->led_sen_after.right90.raw);
+        exec_adc(SEN_R90, width, &se->led_sen_after.right90.raw);
       }
       if (l90) { // L90
         set_gpio_state(LED_A0, true);
@@ -318,7 +322,7 @@ void SensingTask::task() {
         for (int i = 0; i < param->led_light_delay_cnt; i++) {
           lec_cnt++;
         }
-        adc2_get_raw(SEN_L90, width, &se->led_sen_after.left90.raw);
+        exec_adc(SEN_L90, width, &se->led_sen_after.left90.raw);
       }
       if (r45) { // R45
         set_gpio_state(LED_A0, false);
@@ -328,7 +332,7 @@ void SensingTask::task() {
         for (int i = 0; i < param->led_light_delay_cnt; i++) {
           lec_cnt++;
         }
-        adc2_get_raw(SEN_R45, width, &se->led_sen_after.right45.raw);
+        exec_adc(SEN_R45, width, &se->led_sen_after.right45.raw);
       }
       if (l45) { // L45
         set_gpio_state(LED_A0, true);
@@ -338,7 +342,7 @@ void SensingTask::task() {
         for (int i = 0; i < param->led_light_delay_cnt; i++) {
           lec_cnt++;
         }
-        adc2_get_raw(SEN_L45, width, &se->led_sen_after.left45.raw);
+        exec_adc(SEN_L45, width, &se->led_sen_after.left45.raw);
       }
     }
 
