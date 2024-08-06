@@ -70,14 +70,20 @@ uint8_t AS5147P::read1byte(const uint8_t address) { return 0; }
 
 int16_t AS5147P::read2byte(const uint16_t address) { return 0; }
 
-uint32_t AS5147P::read2byte(const uint8_t address1, const uint8_t address2,
-                            bool rorl) {
+uint32_t IRAM_ATTR AS5147P::read2byte(const uint8_t address1,
+                                      const uint8_t address2, bool rorl) {
   esp_err_t ret;
-  spi_transaction_t t;
 
-  memset(&t, 0, sizeof(t)); // Zero out the transaction
-  t.flags = SPI_TRANS_USE_TXDATA | SPI_TRANS_USE_RXDATA;
-  t.length = 16; // SPI_ADDRESS(8bit) + SPI_DATA(8bit)
+  DRAM_ATTR static spi_transaction_t t;
+  static bool is_initialized = false;
+
+  if (!is_initialized) {
+    memset(&t, 0, sizeof(t)); // Zero out the transaction once
+    t.flags = SPI_TRANS_USE_TXDATA | SPI_TRANS_USE_RXDATA;
+    t.length = 16; // SPI_ADDRESS(8bit) + SPI_DATA(8bit)
+    is_initialized = true;
+  }
+
   auto res = _spiCalcEvenParity(address1 | READ_FLAG2);
   if (res) {
     t.tx_data[0] = (address1 | READ_FLAG2 | PARITY_FLAG);
@@ -95,15 +101,8 @@ uint32_t AS5147P::read2byte(const uint8_t address1, const uint8_t address2,
   assert(ret == ESP_OK);
 
   return (int32_t)((uint16_t)(t.rx_data[0]) << 8) | (uint16_t)(t.rx_data[1]);
-
-  // uint16_t before = (uint16_t)((t.rx_data[0] << 8) | (t.rx_data[1]));
-  // uint16_t after = (uint16_t)(t.rx_data[0] << 6) | (t.rx_data[1] >> 2);
-
-  // printf("before: %d, after: %d\n", before, after);
-
-  // return after; //(uint32_t)((uint16_t)(t.rx_data[0]) << 8) |
-  //(uint16_t)(t.rx_data[1]);
 }
+
 
 int16_t AS5147P::read2byte_2(const uint8_t address1, const uint8_t address2) {
   return 0;

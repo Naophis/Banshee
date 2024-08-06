@@ -14,7 +14,9 @@ MainTask::MainTask() {
 MainTask::~MainTask() {}
 
 void MainTask::create_task(const BaseType_t xCoreID) {
-  xTaskCreatePinnedToCore(task_entry_point, "main_task", 8192, this, 2, &handle,
+  // xTaskCreatePinnedToCore(task_entry_point, "main_task", 8192, this, 2, th,
+  //                         xCoreID);
+  xTaskCreatePinnedToCore(task_entry_point, "main_task", 8192, this, 2, NULL,
                           xCoreID);
 }
 void MainTask::task_entry_point(void *task_instance) {
@@ -85,13 +87,13 @@ TurnType MainTask::cast_turn_type(std::string str) {
     return TurnType::Dia90;
   return TurnType::None;
 }
-void MainTask::dump1() {
+void IRAM_ATTR MainTask::dump1() {
   notify_handle = xTaskGetCurrentTaskHandle();
   mp->reset_gyro_ref_with_check();
   tgt_val->nmr.motion_type = MotionType::SENSING_DUMP;
   tgt_val->nmr.timstamp++;
-  xQueueReset(*qh);
-  xQueueSendToFront(*qh, &tgt_val, 1);
+
+  xTaskNotify(*th, (uint32_t)tgt_val.get(), eSetValueWithOverwrite);
   while (1) {
 
     printf("%c[2J", ESC);   /* 画面消去 */
@@ -108,7 +110,7 @@ void MainTask::dump1() {
     printf("accel_x: %f\t(%f)\n", sensing_result->ego.accel_x_raw,
            sensing_result->ego.accel_x_raw / 9806.65 *
                param->accel_x_param.gain);
-    printf("accel_y: %d\n", sensing_result->accel_y.raw);
+    // printf("accel_y: %d\n", sensing_result->accel_y.raw);
     printf("battery: %0.3f (%d)\n", sensing_result->ego.battery_lp,
            sensing_result->battery.raw);
     printf("encoder: %ld, %ld\n", sensing_result->encoder.left,
@@ -179,8 +181,8 @@ void MainTask::dump1() {
         (sensing_result->accel_x.raw - tgt_val->accel_x_zero_p_offset) * 9.8;
     printf("accel: %3.3f, %6.6f\n", sensing_result->ego.accel_x_raw, tgt_gain);
 
-    printf("duty: %3.3f, %3.3f\n", sensing_result->ego.duty.duty_l,
-           sensing_result->ego.duty.duty_r);
+    // printf("duty: %3.3f, %3.3f\n", sensing_result->ego.duty.duty_l,
+    //        sensing_result->ego.duty.duty_r);
 
     printf("planning_time: %d\n", tgt_val->calc_time);
     printf("planning_time_diff: %d\n", tgt_val->calc_time_diff);
@@ -195,11 +197,13 @@ void MainTask::dump1() {
 }
 
 void MainTask::dump2() {
-
+  notify_handle = xTaskGetCurrentTaskHandle();
+  mp->reset_gyro_ref_with_check();
   tgt_val->nmr.motion_type = MotionType::SENSING_DUMP;
   tgt_val->nmr.timstamp++;
-  xQueueReset(*qh);
-  xQueueSendToFront(*qh, &tgt_val, 1);
+
+  xTaskNotify(*th, (uint32_t)tgt_val.get(), eSetValueWithOverwrite);
+
   while (1) {
     printf("%d, %d, %d, %d, %d\n", sensing_result->led_sen.left90.raw,
            sensing_result->led_sen.left45.raw,
@@ -1618,8 +1622,7 @@ void MainTask::req_error_reset() {
   tgt_val->pl_req.error_ang_reset = 1;
   tgt_val->pl_req.error_dist_reset = 1;
   tgt_val->pl_req.time_stamp++;
-  xQueueReset(*qh);
-  xQueueSendToFront(*qh, &tgt_val, 1);
+  xTaskNotify(*th, (uint32_t)tgt_val.get(), eSetValueWithOverwrite);
 }
 
 void MainTask::test_system_identification(bool para) {

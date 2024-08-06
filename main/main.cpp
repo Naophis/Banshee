@@ -121,7 +121,7 @@ std::shared_ptr<PlanningTask> pt = std::make_shared<PlanningTask>();
 std::shared_ptr<LoggingTask> lt = std::make_shared<LoggingTask>();
 std::shared_ptr<MainTask> mt = std::make_shared<MainTask>();
 // std::shared_ptr<Sensing> sn = std::make_shared<Sensing>();
-
+TaskHandle_t xTaskHandler;
 SensingTask st;
 
 std::shared_ptr<sensing_result_entity_t> get_sensing_entity() {
@@ -159,12 +159,24 @@ extern "C" void app_main() {
   // sn->set_planning_task(pt);
   // sn->create_task(0);
 
+  // xTaskCreatePinnedToCore(periodic_task, "pt", 2048, NULL, 1, &pt2, 1);
+  // xTaskCreatePinnedToCore(notify_task, "nt", 2048, NULL, 1, NULL, 0);
+  // while (1) {
+  //   auto start = esp_timer_get_time();
+  //   write(0x7fff);
+  //   const auto data = read(16, 0);
+  //   auto end = esp_timer_get_time();
+  //   printf("data: %ld, %lld\n", data, end - start);
+
+  //   vTaskDelay(250.0 / portTICK_RATE_MS);
+  // }
   st.set_sensing_entity(sensing_entity);
   st.set_tgt_val(tgt_val);
   st.set_main_task(mt);
   st.set_input_param_entity(param);
   st.set_planning_task(pt);
   st.set_queue_handler(xQueue);
+  st.set_task_handler(xTaskHandler);
   st.create_task(0);
 
   // sn->init();
@@ -174,6 +186,8 @@ extern "C" void app_main() {
   pt->set_tgt_val(tgt_val);
   pt->set_error_entity(error_entity);
   pt->set_queue_handler(xQueue);
+  pt->set_task_handler(xTaskHandler);
+  // pt->set_task_handler((TaskHandle_t) NULL);
   // pt->set_sensing(sn);
   pt->create_task(0);
 
@@ -190,16 +204,14 @@ extern "C" void app_main() {
   mt->set_planning_task(pt);
   mt->set_logging_task(lt);
   mt->set_queue_handler(xQueue);
+  mt->set_task_handler(xTaskHandler);
+  // mt->set_task_handler((TaskHandle_t) NULL);
   mt->create_task(1);
 
   esp_task_wdt_reset();
   esp_task_wdt_add(xTaskGetIdleTaskHandleForCPU(0));
   esp_task_wdt_add(xTaskGetIdleTaskHandleForCPU(1));
 
-  // init_i2c_master();
-  uint8_t writeBuffer[2];
-  writeBuffer[0] = 0x00;
-  writeBuffer[1] = 0x00;
   while (1) {
     vTaskDelay(5000.0 / portTICK_RATE_MS);
     if (mt->ui->button_state()) {

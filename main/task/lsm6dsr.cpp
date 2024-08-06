@@ -119,26 +119,29 @@ int16_t LSM6DSR::read2byte_2(const uint8_t address) {
   return 0;
 }
 
-int16_t LSM6DSR::read2byte(const uint8_t address) {
+int16_t IRAM_ATTR LSM6DSR::read2byte(const uint8_t address) {
+
   esp_err_t ret;
-  spi_transaction_t t;
-  memset(&t, 0, sizeof(t)); // Zero out the transaction
-  t.flags = SPI_TRANS_USE_TXDATA | SPI_TRANS_USE_RXDATA;
-  t.length = 24; // SPI_ADDRESS(8bit) + SPI_DATA(8bit)
+  DRAM_ATTR static spi_transaction_t t;
+  static bool is_initialized = false;
+
+  if (!is_initialized) {
+    memset(&t, 0, sizeof(t)); // Zero out the transaction once
+    t.flags = SPI_TRANS_USE_TXDATA | SPI_TRANS_USE_RXDATA;
+    t.length = 24; // SPI_ADDRESS(8bit) + SPI_DATA(8bit)
+    is_initialized = true;
+  }
+
   t.tx_data[0] = (address | READ_FLAG);
   t.tx_data[1] = 0;
   t.tx_data[2] = 0;
+
   ret = spi_device_polling_transmit(spi, &t); // Transmit!
-  assert(ret == ESP_OK);                      // Should have had no issues.
-  // for (int i = 0; i < 3; i++) {
-  //   printf("%d, ", t.rx_data[i]);
-  // }
-  // printf("\n");
-  // auto a = (signed short)((((unsigned short)(t.rx_data[1] & 0xff)) << 8) |
-  //                         ((unsigned short)(t.rx_data[2] & 0xff)));
-  // auto b = (signed short)((((unsigned short)(t.rx_data[2] & 0xff)) << 8) |
-  //                         ((unsigned short)(t.rx_data[1] & 0xff)));
-  // printf("(%d, %d)\n", a, b);
+  // auto data = (signed short)((((unsigned short)(t.rx_data[2] & 0xff)) << 8) |
+  //                            ((unsigned short)(t.rx_data[1] & 0xff)));
+  // printf("Time: %lld, %lld, %d\n", end_time - start_time, end_time2 -
+  // end_time,
+  //        data);
 
   return (signed short)((((unsigned short)(t.rx_data[2] & 0xff)) << 8) |
                         ((unsigned short)(t.rx_data[1] & 0xff)));
@@ -160,11 +163,12 @@ int16_t IRAM_ATTR LSM6DSR::read_2byte(const uint8_t address) {
   t.tx_data[1] = 0;
   t.tx_data[2] = 0;
 
-  int64_t start_time = esp_timer_get_time();
-  spi_device_polling_start(spi, &t, portMAX_DELAY);
-  int64_t end_time = esp_timer_get_time();
-  spi_device_polling_end(spi, portMAX_DELAY);
-  int64_t end_time2 = esp_timer_get_time();
+  spi_device_polling_transmit(spi, &t); // Transmit!
+  // int64_t start_time = esp_timer_get_time();
+  // spi_device_polling_start(spi, &t, portMAX_DELAY);
+  // int64_t end_time = esp_timer_get_time();
+  // spi_device_polling_end(spi, portMAX_DELAY);
+  // int64_t end_time2 = esp_timer_get_time();
   // auto data = (signed short)((((unsigned short)(t.rx_data[2] & 0xff)) << 8) |
   //                            ((unsigned short)(t.rx_data[1] & 0xff)));
   // printf("Time: %lld, %lld, %d\n", end_time - start_time, end_time2 -
@@ -234,9 +238,9 @@ void LSM6DSR::setup() {
     ;
 
   write1byte(LSM6DSRX_CTRL9_XL, 0xE2); // I3CモードをDisableに設定
-  vTaskDelay(10.0/ portTICK_PERIOD_MS);
+  vTaskDelay(10.0 / portTICK_PERIOD_MS);
   write1byte(LSM6DSRX_CTRL4_C, 0x06); // I2CモードをDisableに設定
-  vTaskDelay(10.0/ portTICK_PERIOD_MS);
+  vTaskDelay(10.0 / portTICK_PERIOD_MS);
 
   // 加速度計の設定
   write1byte(LSM6DSRX_CTRL1_XL, 0xAA); // 4g
@@ -244,9 +248,9 @@ void LSM6DSR::setup() {
   // write1byte(LSM6DSRX_CTRL1_XL, 0xA6); // 16g
   // 加速度計のスケールを±8gに設定
   // 加速度計の出力データレートを416Hzに設定
-  vTaskDelay(10.0/ portTICK_PERIOD_MS);
+  vTaskDelay(10.0 / portTICK_PERIOD_MS);
   write1byte(LSM6DSRX_CTRL8_XL, 0xB0); // 加速度計のLPFを100Hzに設定
-  vTaskDelay(10.0/ portTICK_PERIOD_MS);
+  vTaskDelay(10.0 / portTICK_PERIOD_MS);
 
   // ジャイロの設定
   write1byte(LSM6DSRX_CTRL2_G, 0xA1);
@@ -259,7 +263,7 @@ void LSM6DSR::setup() {
   // ジャイロのスケールを±4000deg/sに設定
   // ジャイロの出力データレートを6.66Hzに設定
 
-  vTaskDelay(10.0/ portTICK_PERIOD_MS);
+  vTaskDelay(10.0 / portTICK_PERIOD_MS);
 }
 int LSM6DSR::read_gyro_z() { return read2byte(0x26); }
 int LSM6DSR::read_accel_x() { return read2byte(0x3B); }

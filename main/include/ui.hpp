@@ -50,6 +50,8 @@ public:
   QueueHandle_t *qh;
 
   void set_queue_handler(QueueHandle_t &_qh) { qh = &_qh; }
+  TaskHandle_t *th;
+  void set_task_handler(TaskHandle_t &_th) { th = &_th; }
   void init_i2c_master();
 
   vector<uint8_t> blight_level_list;

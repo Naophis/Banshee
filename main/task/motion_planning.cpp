@@ -27,9 +27,8 @@ void MotionPlanning::set_planning_task(std::shared_ptr<PlanningTask> &_pt) {
 void MotionPlanning::set_logging_task(std::shared_ptr<LoggingTask> &_lt) {
   lt = _lt; //
 }
-MotionResult MotionPlanning::go_straight(param_straight_t &p,
-                                         std::shared_ptr<Adachi> &adachi,
-                                         bool search_mode) {
+MotionResult IRAM_ATTR MotionPlanning::go_straight(
+    param_straight_t &p, std::shared_ptr<Adachi> &adachi, bool search_mode) {
   tgt_val->nmr.v_max = p.v_max;
   tgt_val->nmr.v_end = p.v_end;
   tgt_val->nmr.accl = p.accl;
@@ -71,8 +70,8 @@ MotionResult MotionPlanning::go_straight(param_straight_t &p,
     tgt_val->nmr.motion_type = p.motion_type;
   }
   tgt_val->nmr.timstamp++;
-  xQueueReset(*qh);
-  xQueueSendToFront(*qh, &tgt_val, 1);
+
+  xTaskNotify(*th, (uint32_t)tgt_val.get(), eSetValueWithOverwrite);
   vTaskDelay(1.0 / portTICK_RATE_MS);
   if (search_mode) {
     adachi->update();
@@ -124,8 +123,8 @@ MotionResult MotionPlanning::go_straight(param_straight_t &p,
         tgt_val->nmr.decel = p.decel;
         tgt_val->nmr.dist = 10;
         tgt_val->nmr.timstamp++;
-        xQueueReset(*qh);
-        xQueueSendToFront(*qh, &tgt_val, 1);
+
+        xTaskNotify(*th, (uint32_t)tgt_val.get(), eSetValueWithOverwrite);
         vTaskDelay(100.0 / portTICK_RATE_MS);
 
         return MotionResult::ERROR;
@@ -137,19 +136,19 @@ MotionResult MotionPlanning::go_straight(param_straight_t &p,
   return MotionResult::NONE;
 }
 
-MotionResult MotionPlanning::go_straight(param_straight_t &p) {
+MotionResult IRAM_ATTR MotionPlanning::go_straight(param_straight_t &p) {
   return go_straight(p, fake_adachi, false);
 }
 
-MotionResult MotionPlanning::pivot_turn(param_roll_t &p) {
+MotionResult IRAM_ATTR MotionPlanning::pivot_turn(param_roll_t &p) {
   // 一度初期化
   pt->motor_enable();
   reset_tgt_data();
   reset_ego_data();
   tgt_val->motion_type = MotionType::NONE;
   tgt_val->nmr.timstamp++;
-  xQueueReset(*qh);
-  xQueueSendToFront(*qh, &tgt_val, 1);
+
+  xTaskNotify(*th, (uint32_t)tgt_val.get(), eSetValueWithOverwrite);
   vTaskDelay(1.0 / portTICK_RATE_MS);
 
   tgt_val->nmr.v_max = 0;
@@ -174,8 +173,8 @@ MotionResult MotionPlanning::pivot_turn(param_roll_t &p) {
   tgt_val->nmr.motion_type = MotionType::PIVOT;
   tgt_val->nmr.sct = SensorCtrlType::NONE;
   tgt_val->nmr.timstamp++;
-  xQueueReset(*qh);
-  xQueueSendToFront(*qh, &tgt_val, 1);
+
+  xTaskNotify(*th, (uint32_t)tgt_val.get(), eSetValueWithOverwrite);
   vTaskDelay(10.0 / portTICK_RATE_MS);
   const auto sr = sensing_result;
   int c = 0;
@@ -195,8 +194,8 @@ MotionResult MotionPlanning::pivot_turn(param_roll_t &p) {
         reset_ego_data();
         tgt_val->motion_type = MotionType::NONE;
         tgt_val->nmr.timstamp++;
-        xQueueReset(*qh);
-        xQueueSendToFront(*qh, &tgt_val, 1);
+
+        xTaskNotify(*th, (uint32_t)tgt_val.get(), eSetValueWithOverwrite);
         vTaskDelay(1.0 / portTICK_RATE_MS);
 
         tgt_val->nmr.v_max = 0;
@@ -222,8 +221,8 @@ MotionResult MotionPlanning::pivot_turn(param_roll_t &p) {
         tgt_val->nmr.sct = SensorCtrlType::NONE;
         tgt_val->nmr.timstamp++;
         c = 0;
-        xQueueReset(*qh);
-        xQueueSendToFront(*qh, &tgt_val, 1);
+
+        xTaskNotify(*th, (uint32_t)tgt_val.get(), eSetValueWithOverwrite);
         vTaskDelay(10.0 / portTICK_RATE_MS);
       }
     }
@@ -233,28 +232,30 @@ MotionResult MotionPlanning::pivot_turn(param_roll_t &p) {
   }
   return MotionResult::NONE;
 }
-void MotionPlanning::req_error_reset() {
+void IRAM_ATTR MotionPlanning::req_error_reset() {
   tgt_val->pl_req.error_vel_reset = 1;
   tgt_val->pl_req.error_gyro_reset = 1;
   tgt_val->pl_req.error_ang_reset = 1;
   tgt_val->pl_req.error_dist_reset = 1;
   tgt_val->pl_req.time_stamp++;
-  xQueueReset(*qh);
-  xQueueSendToFront(*qh, &tgt_val, 1);
+
+  xTaskNotify(*th, (uint32_t)tgt_val.get(), eSetValueWithOverwrite);
 }
-MotionResult MotionPlanning::slalom(slalom_param2_t &sp, TurnDirection td,
-                                    next_motion_t &next_motion) {
+MotionResult IRAM_ATTR MotionPlanning::slalom(slalom_param2_t &sp,
+                                              TurnDirection td,
+                                              next_motion_t &next_motion) {
   return slalom(sp, td, next_motion, false);
 }
 
-MotionResult MotionPlanning::slalom(slalom_param2_t &sp, TurnDirection td,
-                                    next_motion_t &next_motion, bool dia) {
+MotionResult IRAM_ATTR MotionPlanning::slalom(slalom_param2_t &sp,
+                                              TurnDirection td,
+                                              next_motion_t &next_motion,
+                                              bool dia) {
   return slalom(sp, td, next_motion, dia, fake_adachi, false);
 }
-MotionResult MotionPlanning::slalom(slalom_param2_t &sp, TurnDirection td,
-                                    next_motion_t &next_motion, bool dia,
-                                    std::shared_ptr<Adachi> &adachi,
-                                    bool search_mode) {
+MotionResult IRAM_ATTR MotionPlanning::slalom(
+    slalom_param2_t &sp, TurnDirection td, next_motion_t &next_motion, bool dia,
+    std::shared_ptr<Adachi> &adachi, bool search_mode) {
   bool find = false;
   bool find_r = false;
   bool find_l = false;
@@ -546,8 +547,8 @@ MotionResult MotionPlanning::slalom(slalom_param2_t &sp, TurnDirection td,
   tgt_val->ego_in.sla_param.limit_time_count =
       (int)(tgt_val->nmr.sla_time * 2 / dt);
   tgt_val->nmr.timstamp++;
-  xQueueReset(*qh);
-  xQueueSendToFront(*qh, &tgt_val, 1);
+
+  xTaskNotify(*th, (uint32_t)tgt_val.get(), eSetValueWithOverwrite);
   vTaskDelay(1.0 / portTICK_RATE_MS);
   if (search_mode) {
     vTaskDelay(1.0 / portTICK_RATE_MS);
@@ -607,10 +608,10 @@ MotionResult MotionPlanning::slalom(slalom_param2_t &sp, TurnDirection td,
   }
   return MotionResult::NONE;
 }
-void MotionPlanning::normal_slalom(param_normal_slalom_t &p,
-                                   param_straight_t &p_str) {}
+void IRAM_ATTR MotionPlanning::normal_slalom(param_normal_slalom_t &p,
+                                             param_straight_t &p_str) {}
 
-void MotionPlanning::reset_tgt_data() {
+void IRAM_ATTR MotionPlanning::reset_tgt_data() {
   tgt_val->tgt_in.v_max = 0;
   tgt_val->tgt_in.end_v = 0;
   tgt_val->tgt_in.accl = 0;
@@ -631,13 +632,12 @@ void MotionPlanning::reset_tgt_data() {
   tgt_val->global_pos.img_dist = 0;
   tgt_val->nmr.tgt_reset_req = true;
   // TODO
-  xQueueReset(*qh);
-  xQueueSendToFront(*qh, &tgt_val, 1);
+  xTaskNotify(*th, (uint32_t)tgt_val.get(), eSetValueWithOverwrite);
   vTaskDelay(1.0 / portTICK_RATE_MS);
   tgt_val->nmr.tgt_reset_req = false;
 }
 
-void MotionPlanning::reset_ego_data() {
+void IRAM_ATTR MotionPlanning::reset_ego_data() {
   tgt_val->ego_in.accl = 0;
   tgt_val->ego_in.alpha = 0;
   tgt_val->ego_in.ang = 0;
@@ -666,8 +666,7 @@ void MotionPlanning::reset_ego_data() {
   tgt_val->motion_type = MotionType::NONE;
   tgt_val->nmr.timstamp++;
 
-  xQueueReset(*qh);
-  xQueueSendToFront(*qh, &tgt_val, 1);
+  xTaskNotify(*th, (uint32_t)tgt_val.get(), eSetValueWithOverwrite);
   vTaskDelay(1.0 / portTICK_RATE_MS);
   tgt_val->nmr.ego_reset_req = false;
 
@@ -675,7 +674,7 @@ void MotionPlanning::reset_ego_data() {
   vTaskDelay(1.0 / portTICK_RATE_MS);
 }
 
-void MotionPlanning::reset_gyro_ref() {
+void IRAM_ATTR MotionPlanning::reset_gyro_ref() {
   const TickType_t xDelay = 1 / portTICK_PERIOD_MS;
   float gyro_raw_data_sum = 0;
   float accel_x_raw_data_sum = 0;
@@ -691,15 +690,15 @@ void MotionPlanning::reset_gyro_ref() {
   tgt_val->accel_x_zero_p_offset = accel_x_raw_data_sum / RESET_GYRO_LOOP_CNT;
   tgt_val->accel_y_zero_p_offset = accel_y_raw_data_sum / RESET_GYRO_LOOP_CNT;
 }
-void MotionPlanning::reset_gyro_ref_with_check() {
+void IRAM_ATTR MotionPlanning::reset_gyro_ref_with_check() {
   // return;
   ui->motion_check();
   reset_gyro_ref();
 }
 
-void MotionPlanning::coin() { ui->coin(120); }
+void IRAM_ATTR MotionPlanning::coin() { ui->coin(120); }
 
-MotionResult MotionPlanning::front_ctrl(bool limit) {
+MotionResult IRAM_ATTR MotionPlanning::front_ctrl(bool limit) {
   req_error_reset();
   vTaskDelay(2 / portTICK_PERIOD_MS);
   tgt_val->nmr.v_max = 0;
@@ -719,8 +718,8 @@ MotionResult MotionPlanning::front_ctrl(bool limit) {
   tgt_val->nmr.dia_mode = false;
   tgt_val->ego_in.sla_param.counter = 1;
   tgt_val->nmr.timstamp++;
-  xQueueReset(*qh);
-  xQueueSendToFront(*qh, &tgt_val, 1);
+
+  xTaskNotify(*th, (uint32_t)tgt_val.get(), eSetValueWithOverwrite);
 
   unsigned int cnt = 0;
   unsigned int max_cnt = 0;
@@ -757,7 +756,7 @@ MotionResult MotionPlanning::front_ctrl(bool limit) {
   return MotionResult::NONE;
 }
 
-void MotionPlanning::keep() {
+void IRAM_ATTR MotionPlanning::keep() {
   tgt_val->nmr.v_max = 0;
   tgt_val->nmr.v_end = 0;
   tgt_val->nmr.accl = 0;
@@ -776,8 +775,8 @@ void MotionPlanning::keep() {
   tgt_val->nmr.dia_mode = false;
   tgt_val->nmr.sct = SensorCtrlType::NONE;
   tgt_val->nmr.timstamp++;
-  xQueueReset(*qh);
-  xQueueSendToFront(*qh, &tgt_val, 1);
+
+  xTaskNotify(*th, (uint32_t)tgt_val.get(), eSetValueWithOverwrite);
 
   while (1) {
     vTaskDelay(1.0 / portTICK_RATE_MS);
@@ -786,7 +785,7 @@ void MotionPlanning::keep() {
     }
   }
 }
-void MotionPlanning::exec_path_running(param_set_t &p_set) {
+void IRAM_ATTR MotionPlanning::exec_path_running(param_set_t &p_set) {
   ego.x = ego.y = ego.ang = 0;
   ego.dir = Direction::North;
   dia = false;
@@ -963,15 +962,16 @@ void MotionPlanning::exec_path_running(param_set_t &p_set) {
   lt->dump_log(slalom_log_file);
 }
 
-MotionResult MotionPlanning::search_front_ctrl(param_straight_t &p) {
+MotionResult IRAM_ATTR MotionPlanning::search_front_ctrl(param_straight_t &p) {
   return MotionResult::NONE;
 }
 
-MotionResult MotionPlanning::wall_off(param_straight_t &p, bool dia) {
+MotionResult IRAM_ATTR MotionPlanning::wall_off(param_straight_t &p, bool dia) {
   return MotionResult::NONE;
 }
 
-void MotionPlanning::wall_off(TurnDirection td, param_straight_t &ps_front) {
+void IRAM_ATTR MotionPlanning::wall_off(TurnDirection td,
+                                        param_straight_t &ps_front) {
 
   bool exist = false;
   if (td == TurnDirection::Right) {
@@ -999,8 +999,8 @@ void MotionPlanning::wall_off(TurnDirection td, param_straight_t &ps_front) {
   tgt_val->nmr.timstamp++;
   float tmp_dist_before = tgt_val->global_pos.dist;
   float tmp_dist_after = tmp_dist_before;
-  xQueueReset(*qh);
-  xQueueSendToFront(*qh, &tgt_val, 1);
+
+  xTaskNotify(*th, (uint32_t)tgt_val.get(), eSetValueWithOverwrite);
   vTaskDelay(1.0 / portTICK_RATE_MS);
   if (td == TurnDirection::Right) {
     while (true) {
@@ -1155,8 +1155,8 @@ void MotionPlanning::wall_off(TurnDirection td, param_straight_t &ps_front) {
   }
 }
 
-bool MotionPlanning::wall_off_dia(TurnDirection td,
-                                  param_straight_t &ps_front) {
+bool IRAM_ATTR MotionPlanning::wall_off_dia(TurnDirection td,
+                                            param_straight_t &ps_front) {
   tgt_val->nmr.v_max = ps_front.v_max;
   tgt_val->nmr.v_end = ps_front.v_end;
   tgt_val->nmr.accl = ps_front.accl;
@@ -1240,7 +1240,7 @@ bool MotionPlanning::wall_off_dia(TurnDirection td,
           return false;
         }
       }
-      
+
       if (std::abs(tmp_dist_after - tmp_dist_before) >=
           std::abs(param->wall_off_dist.diff_check_dist_dia)) {
         if (sensing_result->ego.right45_dist < param->dia_turn_th_r) {
@@ -1264,9 +1264,10 @@ bool MotionPlanning::wall_off_dia(TurnDirection td,
   }
 }
 
-void MotionPlanning::calc_dia135_offset(param_straight_t &front,
-                                        param_straight_t &back,
-                                        TurnDirection dir, bool exec_wall_off) {
+void IRAM_ATTR MotionPlanning::calc_dia135_offset(param_straight_t &front,
+                                                  param_straight_t &back,
+                                                  TurnDirection dir,
+                                                  bool exec_wall_off) {
   float offset_l = 0;
   float offset_r = 0;
   float offset = 0;
@@ -1332,9 +1333,10 @@ void MotionPlanning::calc_dia135_offset(param_straight_t &front,
   }
 }
 
-void MotionPlanning::calc_dia45_offset(param_straight_t &front,
-                                       param_straight_t &back,
-                                       TurnDirection dir, bool exec_wall_off) {
+void IRAM_ATTR MotionPlanning::calc_dia45_offset(param_straight_t &front,
+                                                 param_straight_t &back,
+                                                 TurnDirection dir,
+                                                 bool exec_wall_off) {
   float offset_l = 0;
   float offset_r = 0;
   float offset = 0;
@@ -1403,7 +1405,7 @@ void MotionPlanning::calc_dia45_offset(param_straight_t &front,
     back.dist += offset * ROOT2;
   }
 }
-void MotionPlanning::system_identification(MotionType mt, float volt_l,
+void IRAM_ATTR MotionPlanning::system_identification(MotionType mt, float volt_l,
                                            float volt_r, float time) {
   req_error_reset();
   vTaskDelay(2 / portTICK_PERIOD_MS);

@@ -13,8 +13,8 @@ PlanningTask::PlanningTask() {}
 
 PlanningTask::~PlanningTask() {}
 void PlanningTask::create_task(const BaseType_t xCoreID) {
-  xTaskCreatePinnedToCore(task_entry_point, "planning_task", 8192, this, 4,
-                          &handle, xCoreID);
+  xTaskCreatePinnedToCore(task_entry_point, "planning_task", 8192, this, 4, th,
+                          xCoreID);
   motor_qh_enable = xQueueCreate(4, sizeof(motor_req_t *));
   suction_qh_enable = xQueueCreate(4, sizeof(motor_req_t *));
 }
@@ -54,10 +54,11 @@ void IRAM_ATTR PlanningTask::pid_gain_data(pid_error_t &in, pid_error_t &save) {
   // pid_val_data(in, save);
 }
 
-void IRAM_ATTR PlanningTask::set_ctrl_val(pid_error2_t &val, float error_p, float error_i,
-                                float error_i2, float error_d, float val_p,
-                                float val_i, float val_i2, float val_d,
-                                float zz, float z) {
+void IRAM_ATTR PlanningTask::set_ctrl_val(pid_error2_t &val, float error_p,
+                                          float error_i, float error_i2,
+                                          float error_d, float val_p,
+                                          float val_i, float val_i2,
+                                          float val_d, float zz, float z) {
   val.p = error_p;
   val.i = error_i;
   val.i2 = error_i2;
@@ -75,8 +76,8 @@ void IRAM_ATTR PlanningTask::pid_val_data(pid_error_t &in, pid_error_t &save) {
   // error_entity_ptr->error_d = in.error_d;
 }
 
-float IRAM_ATTR PlanningTask::interp1d(vector<float> &vx, vector<float> &vy, float x,
-                             bool extrapolate) {
+float IRAM_ATTR PlanningTask::interp1d(vector<float> &vx, vector<float> &vy,
+                                       float x, bool extrapolate) {
   int size = vx.size();
   int i = 0;
   if (x >= vx[size - 2]) {
@@ -437,14 +438,8 @@ void PlanningTask::task() {
     mpc_step = 1;
     tgt_val->tgt_in.time_step2 = param_ro->sakiyomi_time;
 
-    auto res = xQueueReceive(*qh, &receive_req, 0);
+    recv_notify();
 
-    if (res == pdTRUE) {
-      cp_request();
-      first_req = true;
-    }
-
-    // sn->task(search_mode, mode_select, res == pdTRUE);
     start2 = esp_timer_get_time();
 
     // 物理量ベース計算
@@ -510,7 +505,8 @@ void PlanningTask::task() {
     global_msec_timer++;
 
     end = esp_timer_get_time();
-    tgt_val->calc_time = (int16_t)(end - start2);
+    tgt_val->calc_time = (int16_t)(end - start);
+    // printf("calc_time: %d\n", tgt_val->calc_time);
     vTaskDelay(xDelay);
   }
 }
@@ -1078,8 +1074,8 @@ bool IRAM_ATTR PlanningTask::judge_motor_pwm(float duty, uint8_t type) {
   return true;
 }
 
-void IRAM_ATTR PlanningTask::limitter(float &kp, float &ki, float &kb, float &kd,
-                            pid_param_t &limitter) {
+void IRAM_ATTR PlanningTask::limitter(float &kp, float &ki, float &kb,
+                                      float &kd, pid_param_t &limitter) {
   if (limitter.mode == 0) {
     return;
   }
@@ -1200,7 +1196,7 @@ void IRAM_ATTR PlanningTask::change_pwm_freq(float duty_l, float duty_r) {
 }
 
 void IRAM_ATTR PlanningTask::set_next_duty(float duty_l, float duty_r,
-                                 float duty_suction) {
+                                           float duty_suction) {
   if (motor_en) {
     change_pwm_freq(duty_l, duty_r);
   }
@@ -1285,11 +1281,15 @@ void IRAM_ATTR PlanningTask::pl_req_activate() {
   }
 }
 
-float PlanningTask::get_feadforward_front(TurnDirection td) { return 0; }
-float PlanningTask::get_feadforward_front() { return 0; }
-float PlanningTask::get_feadforward_roll() { return 0; }
-float PlanningTask::get_rpm_ff_val(TurnDirection td) { return 0; }
-float PlanningTask::satuate_sen_duty(float duty_sen) { return duty_sen; }
+float IRAM_ATTR PlanningTask::get_feadforward_front(TurnDirection td) {
+  return 0;
+}
+float IRAM_ATTR PlanningTask::get_feadforward_front() { return 0; }
+float IRAM_ATTR PlanningTask::get_feadforward_roll() { return 0; }
+float IRAM_ATTR PlanningTask::get_rpm_ff_val(TurnDirection td) { return 0; }
+float IRAM_ATTR PlanningTask::satuate_sen_duty(float duty_sen) {
+  return duty_sen;
+}
 void IRAM_ATTR PlanningTask::calc_tgt_duty() {
 
   float duty_sen = 0;
@@ -2303,7 +2303,7 @@ void IRAM_ATTR PlanningTask::calc_tgt_duty() {
   copy_error_entity(error_entity);
 }
 
-void PlanningTask::cp_tgt_val() {
+void IRAM_ATTR PlanningTask::cp_tgt_val() {
   tgt_val->ego_in.accl = mpc_next_ego.accl;
   tgt_val->ego_in.alpha = mpc_next_ego.alpha;
   tgt_val->ego_in.pivot_state = mpc_next_ego.pivot_state;
@@ -2403,6 +2403,7 @@ void IRAM_ATTR PlanningTask::cp_request() {
   motion_req_timestamp = receive_req->nmr.timstamp;
 
   tgt_val->tgt_in.v_max = receive_req->nmr.v_max;
+  // printf("v_max: %f\n", tgt_val->tgt_in.v_max);
 
   if (receive_req->nmr.motion_type == MotionType::STRAIGHT ||
       receive_req->nmr.motion_type == MotionType::SLA_FRONT_STR) {
@@ -2659,4 +2660,24 @@ void IRAM_ATTR PlanningTask::calc_sensor_dist_diff() {
   // {
   //   sensing_result->sen_dist_log.list.pop_front();
   // }
+}
+
+void IRAM_ATTR PlanningTask::recv_notify() {
+  uint32_t ulReceivedValue;
+  // auto start_que_rec = esp_timer_get_time();
+  BaseType_t xResult = xTaskNotifyWait(0x00,             // clear bit mask
+                                       0xffffffff,       // recv bit mask
+                                       &ulReceivedValue, // recieve data
+                                       0 // us_to_ticks(1) // timeout
+  );
+  // auto end_que_rec = esp_timer_get_time();
+  // printf("addr: %ld, %lld\n", ulReceivedValue, end_que_rec - start_que_rec);
+  if (xResult == pdTRUE) {
+    // printf("planning_task: %ld\n", ulReceivedValue);
+    if ((uint32_t)tgt_val.get() == ulReceivedValue) {
+      receive_req = (motion_tgt_val_t *)ulReceivedValue;
+      cp_request();
+    }
+    first_req = true;
+  }
 }

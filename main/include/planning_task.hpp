@@ -80,6 +80,8 @@ public:
   motion_tgt_val_t *receive_req;
 
   void set_queue_handler(QueueHandle_t &_qh) { qh = &_qh; }
+  TaskHandle_t *th;
+  void set_task_handler(TaskHandle_t &_th) { th = &_th; }
   std::vector<float> log_table;
 
   t_ego mpc_next_ego;
@@ -152,6 +154,8 @@ private:
   void calc_vel();
 
   void calc_filter();
+
+  void recv_notify();
 
   duty_t tgt_duty;
   int fail_check_ang = 0;

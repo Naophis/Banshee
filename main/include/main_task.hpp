@@ -65,6 +65,12 @@ public:
     mp->set_queue_handler(_qh);
     ui->set_queue_handler(_qh);
   }
+  TaskHandle_t *th;
+  void set_task_handler(TaskHandle_t &_th) {
+    th = &_th;
+    mp->set_task_handler(_th);
+    ui->set_task_handler(_th);
+  }
   void notify() {
     xTaskNotifyGive(notify_handle); //
   }

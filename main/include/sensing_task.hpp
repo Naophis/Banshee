@@ -31,6 +31,8 @@ public:
 
   QueueHandle_t *qh;
   void set_queue_handler(QueueHandle_t &_qh) { qh = &_qh; }
+  TaskHandle_t *th;
+  void set_task_handler(TaskHandle_t &_th) { th = &_th; }
   std::shared_ptr<MainTask> mt;
   void set_main_task(std::shared_ptr<MainTask> &_mt) {
     mt = _mt; //
@@ -66,10 +68,11 @@ private:
   static void timer_200us_callback(void *arg);
   static void timer_250us_callback(void *arg);
 
-  void exec_adc(adc2_channel_t channel, adc_bits_width_t width_bit, int *raw_out);
+  void exec_adc(adc2_channel_t channel, adc_bits_width_t width_bit,
+                int *raw_out);
 
   void calc_vel(float gyro_dt, float enc_l_dt, float enc_r_dt);
-  void set_gpio_state(gpio_num_t gpio_num, int state) {
+  void IRAM_ATTR set_gpio_state(gpio_num_t gpio_num, int state) {
     const int num = (int)gpio_num;
     if (num < 32) {
       if (state) {
