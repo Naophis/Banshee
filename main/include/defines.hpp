@@ -89,6 +89,12 @@ constexpr gpio_num_t SUCTION_PWM = GPIO_NUM_35;
 #define SEN_L45 ADC2_CHANNEL_7
 #define BATTERY ADC2_CHANNEL_9
 
+#define SEN_R90_GPIO GPIO_NUM_13
+#define SEN_L90_GPIO GPIO_NUM_15
+#define SEN_R45_GPIO GPIO_NUM_17
+#define SEN_L45_GPIO GPIO_NUM_18
+#define BATTERY_GPIO GPIO_NUM_20
+
 #define MAX(a, b) ((a) > (b) ? (a) : (b))
 #define MIN(a, b) ((a) < (b) ? (a) : (b))
 

@@ -5,6 +5,7 @@
 #include "defines.hpp"
 #include "driver/pcnt.h"
 #include "driver/timer.h"
+#include "driver/rtc_io.h"
 #include "esp_timer.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/queue.h"

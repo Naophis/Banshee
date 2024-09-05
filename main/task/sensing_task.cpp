@@ -113,8 +113,12 @@ void SensingTask::encoder_init(const pcnt_unit_t unit, const gpio_num_t pinA,
   pcnt_counter_resume(unit);
 }
 
-void IRAM_ATTR SensingTask::exec_adc(adc2_channel_t channel, adc_bits_width_t width_bit, int *raw_out) {
+void IRAM_ATTR SensingTask::exec_adc(adc2_channel_t channel,
+                                     adc_bits_width_t width_bit, int *raw_out) {
+  // auto start = esp_timer_get_time();
   adc2_get_raw(channel, width_bit, raw_out);
+  // auto end = esp_timer_get_time();
+  // printf("adc: %d , %d\n", (int16_t)(end - start), *raw_out);
 }
 
 void SensingTask::task() {
@@ -135,6 +139,26 @@ void SensingTask::task() {
   // adc2_config_channel_atten(SEN_L45_2, atten);
   adc2_config_channel_atten(SEN_L90, atten);
   adc2_config_channel_atten(BATTERY, atten);
+
+  rtc_gpio_init(SEN_R90_GPIO);
+  rtc_gpio_set_direction(SEN_R90_GPIO, RTC_GPIO_MODE_DISABLED);
+  rtc_gpio_pulldown_dis(SEN_R90_GPIO);
+  rtc_gpio_pullup_dis(SEN_R90_GPIO);
+
+  rtc_gpio_init(SEN_R45_GPIO);
+  rtc_gpio_set_direction(SEN_R45_GPIO, RTC_GPIO_MODE_DISABLED);
+  rtc_gpio_pulldown_dis(SEN_R45_GPIO);
+  rtc_gpio_pullup_dis(SEN_R45_GPIO);
+
+  rtc_gpio_init(SEN_L45_GPIO);
+  rtc_gpio_set_direction(SEN_L45_GPIO, RTC_GPIO_MODE_DISABLED);
+  rtc_gpio_pulldown_dis(SEN_L45_GPIO);
+  rtc_gpio_pullup_dis(SEN_L45_GPIO);
+
+  rtc_gpio_init(SEN_L90_GPIO);
+  rtc_gpio_set_direction(SEN_L90_GPIO, RTC_GPIO_MODE_DISABLED);
+  rtc_gpio_pulldown_dis(SEN_L90_GPIO);
+  rtc_gpio_pullup_dis(SEN_L90_GPIO);
 
   // esp_timer_start_periodic(timer_200us, 200);
   // esp_timer_start_periodic(timer_250us, 250);
@@ -222,29 +246,24 @@ void SensingTask::task() {
     // LED_OFF ADC
     if (skip_sensing) {
       if (r90) {
-        exec_adc(SEN_R90, width,
-                     &sensing_result->led_sen_before.right90.raw);
+        exec_adc(SEN_R90, width, &sensing_result->led_sen_before.right90.raw);
       } else {
         sensing_result->led_sen_before.right90.raw = 0;
       }
-      exec_adc(BATTERY, width, &sensing_result->battery.raw);
       if (l90) {
-        exec_adc(SEN_L90, width,
-                     &sensing_result->led_sen_before.left90.raw);
+        exec_adc(SEN_L90, width, &sensing_result->led_sen_before.left90.raw);
       } else {
         sensing_result->led_sen_before.left90.raw = 0;
       }
     } else {
 
       if (r45) {
-        exec_adc(SEN_R45, width,
-                     &sensing_result->led_sen_before.right45.raw);
+        exec_adc(SEN_R45, width, &sensing_result->led_sen_before.right45.raw);
       } else {
         sensing_result->led_sen_before.right45.raw = 0;
       }
       if (l45) {
-        exec_adc(SEN_L45, width,
-                     &sensing_result->led_sen_before.left45.raw);
+        exec_adc(SEN_L45, width, &sensing_result->led_sen_before.left45.raw);
       } else {
         sensing_result->led_sen_before.left45.raw = 0;
       }

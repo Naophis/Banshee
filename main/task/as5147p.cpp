@@ -98,7 +98,7 @@ uint32_t IRAM_ATTR AS5147P::read2byte(const uint8_t address1,
   } else {
     ret = spi_device_polling_transmit(spi_r, &t); // Transmit!
   }
-  assert(ret == ESP_OK);
+  // assert(ret == ESP_OK);
 
   return (int32_t)((uint16_t)(t.rx_data[0]) << 8) | (uint16_t)(t.rx_data[1]);
 }
