@@ -163,7 +163,10 @@ int16_t IRAM_ATTR LSM6DSR::read_2byte(const uint8_t address) {
   t.tx_data[1] = 0;
   t.tx_data[2] = 0;
 
-  spi_device_polling_transmit(spi, &t); // Transmit!
+  // auto start = esp_timer_get_time();
+  ret = spi_device_polling_transmit(spi, &t); // Transmit!
+  // auto end = esp_timer_get_time();
+  // printf("Time: %lld\n", end - start);
   // int64_t start_time = esp_timer_get_time();
   // spi_device_polling_start(spi, &t, portMAX_DELAY);
   // int64_t end_time = esp_timer_get_time();

@@ -180,6 +180,24 @@ private:
   float backup_r;
   int file_idx;
   slalom_param2_t sla_p;
+
+  std::vector<std::pair<TurnType, std::string>> turn_name_list = {
+      {TurnType::None, "straight"},    //
+      {TurnType::Normal, "normal"},    //
+      {TurnType::Large, "large"},      //
+      {TurnType::Orval, "orval"},      //
+      {TurnType::Dia45, "dia45"},      //
+      {TurnType::Dia135, "dia135"},    //
+      {TurnType::Dia90, "dia90"},      //
+      {TurnType::Dia45_2, "dia45_2"},  //
+      {TurnType::Dia135_2, "dia135_2"} //
+  };
+
+  std::vector<std::pair<StraightType, std::string>> straight_name_list = {
+      {StraightType::Search, "search"},          //
+      {StraightType::FastRun, "fast_run"},       //
+      {StraightType::FastRunDia, "fast_run_dia"} //
+  };
 };
 
 #endif

@@ -128,26 +128,6 @@ constexpr float LOW_BATTERY_TH = 11.7;
 
 constexpr uint16_t RESET_GYRO_LOOP_CNT = 512;
 
-static const std::initializer_list<std::pair<TurnType, std::string>>
-    turn_name_list = {
-        {TurnType::None, "straight"},    //
-        {TurnType::Normal, "normal"},    //
-        {TurnType::Large, "large"},      //
-        {TurnType::Orval, "orval"},      //
-        {TurnType::Dia45, "dia45"},      //
-        {TurnType::Dia135, "dia135"},    //
-        {TurnType::Dia90, "dia90"},      //
-        {TurnType::Dia45_2, "dia45_2"},  //
-        {TurnType::Dia135_2, "dia135_2"} //
-};
-
-static const std::initializer_list<std::pair<StraightType, std::string>>
-    straight_name_list = {
-        {StraightType::Search, "search"},          //
-        {StraightType::FastRun, "fast_run"},       //
-        {StraightType::FastRunDia, "fast_run_dia"} //
-};
-
 static const std::string slalom_log_file("/spiflash/sla.log");
 static const std::string sysid_log_file("/spiflash/sysid.log");
 static const std::string maze_log_file("/spiflash/maze.txt");
