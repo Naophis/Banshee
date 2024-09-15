@@ -1654,7 +1654,7 @@ void MainTask::test_system_identification(bool para) {
     lt->start_slalom_log();
   }
   if (para) {
-    mp->system_identification(MotionType::SYS_ID_PARA, sys.test.sysid_duty,
+    mp->system_identification(MotionType::SYS_ID_PARA, -sys.test.sysid_duty,
                               sys.test.sysid_duty, sys.test.sysid_time);
   } else {
     if (rorl == TurnDirection::Right) {

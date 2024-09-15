@@ -110,19 +110,21 @@ void init_gpio() {
   // gpio_set_direction((gpio_num_t)GPIO_OUTPUT_IO_8,
 }
 
-std::shared_ptr<input_param_t> param = std::make_shared<input_param_t>();
-std::shared_ptr<sensing_result_entity_t> sensing_entity =
+DRAM_ATTR std::shared_ptr<input_param_t> param =
+    std::make_shared<input_param_t>();
+DRAM_ATTR std::shared_ptr<sensing_result_entity_t> sensing_entity =
     std::make_shared<sensing_result_entity_t>();
-std::shared_ptr<motion_tgt_val_t> tgt_val =
+DRAM_ATTR std::shared_ptr<motion_tgt_val_t> tgt_val =
     std::make_shared<motion_tgt_val_t>();
-std::shared_ptr<pid_error_entity_t> error_entity =
+DRAM_ATTR std::shared_ptr<pid_error_entity_t> error_entity =
     std::make_shared<pid_error_entity_t>();
-std::shared_ptr<PlanningTask> pt = std::make_shared<PlanningTask>();
-std::shared_ptr<LoggingTask> lt = std::make_shared<LoggingTask>();
-std::shared_ptr<MainTask> mt = std::make_shared<MainTask>();
+DRAM_ATTR std::shared_ptr<PlanningTask> pt = std::make_shared<PlanningTask>();
+DRAM_ATTR std::shared_ptr<LoggingTask> lt = std::make_shared<LoggingTask>();
+DRAM_ATTR std::shared_ptr<MainTask> mt = std::make_shared<MainTask>();
+DRAM_ATTR std::shared_ptr<SensingTask> st = std::make_shared<SensingTask>();
 // std::shared_ptr<Sensing> sn = std::make_shared<Sensing>();
 TaskHandle_t xTaskHandler;
-SensingTask st;
+// SensingTask st;
 
 std::shared_ptr<sensing_result_entity_t> get_sensing_entity() {
   return sensing_entity;
@@ -153,31 +155,22 @@ extern "C" void app_main() {
   tgt_val->ego_in.w = 0;
   param->gyro_param.gyro_w_gain_left = 0.0002645;
 
-  // sn->set_sensing_entity(sensing_entity);
-  // sn->set_tgt_val(tgt_val);
-  // sn->set_input_param_entity(param);
-  // sn->set_planning_task(pt);
-  // sn->create_task(0);
-
-  // xTaskCreatePinnedToCore(periodic_task, "pt", 2048, NULL, 1, &pt2, 1);
-  // xTaskCreatePinnedToCore(notify_task, "nt", 2048, NULL, 1, NULL, 0);
-  // while (1) {
-  //   auto start = esp_timer_get_time();
-  //   write(0x7fff);
-  //   const auto data = read(16, 0);
-  //   auto end = esp_timer_get_time();
-  //   printf("data: %ld, %lld\n", data, end - start);
-
-  //   vTaskDelay(250.0 / portTICK_RATE_MS);
-  // }
-  st.set_sensing_entity(sensing_entity);
-  st.set_tgt_val(tgt_val);
-  st.set_main_task(mt);
-  st.set_input_param_entity(param);
-  st.set_planning_task(pt);
-  st.set_queue_handler(xQueue);
-  st.set_task_handler(xTaskHandler);
-  st.create_task(0);
+  // st.set_sensing_entity(sensing_entity);
+  // st.set_tgt_val(tgt_val);
+  // st.set_main_task(mt);
+  // st.set_input_param_entity(param);
+  // st.set_planning_task(pt);
+  // st.set_queue_handler(xQueue);
+  // st.set_task_handler(xTaskHandler);
+  // st.create_task(0);
+  st->set_sensing_entity(sensing_entity);
+  st->set_tgt_val(tgt_val);
+  st->set_main_task(mt);
+  st->set_input_param_entity(param);
+  st->set_planning_task(pt);
+  st->set_queue_handler(xQueue);
+  st->set_task_handler(xTaskHandler);
+  st->create_task(0);
 
   // sn->init();
 

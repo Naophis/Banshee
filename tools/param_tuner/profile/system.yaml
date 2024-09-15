@@ -56,6 +56,8 @@ mode: 5 # 探索スラローム sla_wall_ref_l/r
 # mode: 13 # keep_pos
 # mode: 14 # sensing
 # mode: 15 # sensor calib
+# mode: 16 # system identification (para)
+# mode: 17 # system identification (roll)
 # mode: 20 # pivot turn n
 # mode: 21 # pivot turn n2
 # mode: 22 # encoder_test
@@ -65,7 +67,7 @@ test: # テスト走行時に使用するパラメータ群
   end_v: 10
   accl: 2800
   decel: -2400
-  dist: 90  #直進全部
+  dist: 180  #直進全部
   # dist: 540 #直進全部　
   # dist: 180 # スラロームテスト
   dia: 0
@@ -97,7 +99,7 @@ test: # テスト走行時に使用するパラメータ群
   turn_times: 0
   ignore_opp_sen: 0 #斜めターン後の直進テスト 0無効、1斜め制御なし、2斜め制御あり
   sysid_test_mode: 0 #システム同定のテスト:0 直進、1回転
-  sysid_duty: 4.25 #duty 
-  sysid_time: 2000 #duty 
+  sysid_duty: 1.5 #duty 
+  sysid_time: 1250 #duty 
   start_turn: 0 #開幕ターンテスト
   

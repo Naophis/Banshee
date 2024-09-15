@@ -4,8 +4,8 @@
 #include "as5147p.hpp"
 #include "defines.hpp"
 #include "driver/pcnt.h"
-#include "driver/timer.h"
 #include "driver/rtc_io.h"
+#include "driver/timer.h"
 #include "esp_timer.h"
 #include "freertos/FreeRTOS.h"
 #include "freertos/queue.h"
@@ -88,6 +88,31 @@ private:
         GPIO.out1_w1tc.val = BIT(num - 32);
       }
     }
+  }
+  void IRAM_ATTR led_driver(gpio_num_t io1, int state1, gpio_num_t io2,
+                            int state2, gpio_num_t io3, int state3) {
+    const int num1 = (int)io1;
+    const int num2 = (int)io2;
+    const int num3 = (int)io3;
+    uint32_t out_wlts = 0;
+    uint32_t out_wltc = 0;
+    if (state1) {
+      out_wlts |= BIT(num1);
+    } else {
+      out_wltc |= BIT(num1);
+    }
+    if (state2) {
+      out_wlts |= BIT(num2);
+    } else {
+      out_wltc |= BIT(num2);
+    }
+    if (state3) {
+      out_wlts |= BIT(num3);
+    } else {
+      out_wltc |= BIT(num3);
+    }
+    GPIO.out_w1ts = out_wlts;
+    GPIO.out_w1tc = out_wltc;
   }
 
   float calc_sensor(float data, float a, float b);

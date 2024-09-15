@@ -1405,8 +1405,9 @@ void IRAM_ATTR MotionPlanning::calc_dia45_offset(param_straight_t &front,
     back.dist += offset * ROOT2;
   }
 }
-void IRAM_ATTR MotionPlanning::system_identification(MotionType mt, float volt_l,
-                                           float volt_r, float time) {
+void IRAM_ATTR MotionPlanning::system_identification(MotionType mt,
+                                                     float volt_l, float volt_r,
+                                                     float time) {
   req_error_reset();
   vTaskDelay(2 / portTICK_PERIOD_MS);
   tgt_val->nmr.v_max = 0;
@@ -1426,7 +1427,11 @@ void IRAM_ATTR MotionPlanning::system_identification(MotionType mt, float volt_l
   tgt_val->ego_in.sla_param.counter = 1;
   tgt_val->nmr.sys_id.left_v = volt_l;
   tgt_val->nmr.sys_id.right_v = volt_r;
+  tgt_val->nmr.sys_id.enable = true;
   tgt_val->nmr.timstamp++;
 
+  xTaskNotify(*th, (uint32_t)tgt_val.get(), eSetValueWithOverwrite);
+
   vTaskDelay(time / portTICK_RATE_MS);
+  tgt_val->nmr.sys_id.enable = false;
 }

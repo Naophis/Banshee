@@ -1198,6 +1198,15 @@ void IRAM_ATTR PlanningTask::change_pwm_freq(float duty_l, float duty_r) {
 void IRAM_ATTR PlanningTask::set_next_duty(float duty_l, float duty_r,
                                            float duty_suction) {
   if (motor_en) {
+    // if (receive_req->nmr.sys_id.enable) {
+    //   duty_l =
+    //       ABS(receive_req->nmr.sys_id.left_v / sensing_result->ego.batt_kf *
+    //       100);
+    //   duty_r = ABS(receive_req->nmr.sys_id.right_v /
+    //   sensing_result->ego.batt_kf *
+    //                100);
+    //   // duty_suction = receive_req->nmr.sys_id.duty_suction;
+    // }
     change_pwm_freq(duty_l, duty_r);
   }
   if (suction_en) {
@@ -1519,7 +1528,6 @@ void IRAM_ATTR PlanningTask::calc_tgt_duty() {
       vel_pid.step(&error_entity.v.error_p, &param_ro->motor_pid.p,
                    &param_ro->motor_pid.i, &param_ro->motor_pid.d, &reset_req,
                    &dt, &duty_c);
-
       set_ctrl_val(error_entity.v_val, error_entity.v.error_p,
                    error_entity.v.error_i, 0, error_entity.v.error_d, 0, 0, 0,
                    0, 0, 0);
@@ -1528,13 +1536,21 @@ void IRAM_ATTR PlanningTask::calc_tgt_duty() {
         const auto diff_dist =
             tgt_val->ego_in.img_dist - sensing_result->ego.dist_kf;
         duty_c = param_ro->motor_pid2.p * error_entity.v.error_p +
-                 param_ro->motor_pid2.i * diff_dist +
-                 param_ro->motor_pid2.d * error_entity.v.error_d;
+                 param_ro->motor_pid2.i * error_entity.v.error_i * dt +
+                 param_ro->motor_pid2.d * error_entity.v.error_d / dt;
+        float torq = duty_c;
+        float i = torq / param_ro->Km;
+        float w = tgt_val->ego_in.v / (param_ro->tire / 2) *
+                  (param_ro->gear_a / param_ro->gear_b);
+        float v = (i * param_ro->Resist) + (w * param_ro->Ke);
 
-        set_ctrl_val(error_entity.v_val, error_entity.v.error_p, 0, diff_dist,
-                     error_entity.v.error_d,
+        printf("torq: %f, i: %f, w: %f, volt: %f, v_c: %f, v_c: %f\n", torq, i, w,
+               v, tgt_val->ego_in.v, sensing_result->ego.v_c);
+        duty_c = v;
+        set_ctrl_val(error_entity.v_val, error_entity.v.error_p,
+                     error_entity.v.error_i, 0, error_entity.v.error_d,
                      param_ro->motor_pid2.p * error_entity.v.error_p,
-                     param_ro->motor_pid2.i * diff_dist, 0,
+                     param_ro->motor_pid2.i * error_entity.v.error_i, 0,
                      param_ro->motor_pid2.d * error_entity.v.error_d, 0, 0);
       } else if (param_ro->motor_pid2.mode == 2) {
         const auto diff_dist =
@@ -2440,6 +2456,7 @@ void IRAM_ATTR PlanningTask::cp_request() {
   tgt_val->dia_state.left_save = false;
   tgt_val->dia_state.right_save = false;
   tgt_val->dia_state.left_old = tgt_val->dia_state.right_old = 0;
+
   if (!(tgt_val->motion_type == MotionType::NONE ||
         tgt_val->motion_type == MotionType::STRAIGHT ||
         tgt_val->motion_type == MotionType::PIVOT_PRE ||

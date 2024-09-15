@@ -30,11 +30,14 @@ void LoggingTask::set_error_entity(
 
 void LoggingTask::start_slalom_log() {
   req_logging_active = true;
+  // active_slalom_log = true;
+  // log_mode = false;
   idx_slalom_log = 0;
   // std::vector<std::unique_ptr<log_data_t2>>().swap(log_vec);
   log_vec.clear();
   log_vec.shrink_to_fit();
   sysidlog_vec.clear();
+  sysidlog_vec.shrink_to_fit();
   // log_vec.resize(param->log_size);
   // for (int i = 0; i < param->log_size; i++) {
   //   log_vec[i] = std::make_shared<log_data_t2>();
@@ -91,7 +94,7 @@ void LoggingTask::task() {
       if (logging_active) {
         if (idx_slalom_log <= param->log_size) {
           // auto ld = std::make_shared<log_data_t2>();
-            set_data();
+          set_data();
         }
         if (param->set_param) {
           vTaskDelay(param->logging_time);
@@ -103,7 +106,9 @@ void LoggingTask::task() {
       }
     } else {
       if (logging_active) {
+        // printf("loggin active\n");
         if (active_slalom_log && idx_slalom_log <= time) {
+          // printf("loggin active: push data\n");
           auto ld = std::make_shared<sysid_log>();
 
           ld->v_l = floatToHalf(sensing_result->ego.v_l);
@@ -376,18 +381,22 @@ void IRAM_ATTR LoggingTask::dump_log(std::string file_name) {
 void LoggingTask::dump_log_sysid(std::string file_name) {
 
   const TickType_t xDelay2 = 100.0 / portTICK_PERIOD_MS;
-  FILE *f = fopen(file_name.c_str(), "rb");
-  if (f == NULL)
-    return;
-  char line_buf[LINE_BUF_SIZE];
   printf("start___\n"); // csvファイル作成トリガー
   vTaskDelay(xDelay2);
   printf("index,v_l,v_c,v_r,w,volt_l,volt_r\n");
-  while (fgets(line_buf, sizeof(line_buf), f) != NULL)
-    printf("%s\n", line_buf);
+  int c = 0;
+  for (const auto &ld : sysidlog_vec) {
+    printf("%d,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f,%0.3f\n", //
+           ++c,                                        //
+           halfToFloat(ld->v_l),                       //
+           halfToFloat(ld->v_c),                       //
+           halfToFloat(ld->v_r),                       //
+           halfToFloat(ld->w_lp),                      //
+           halfToFloat(ld->volt_l),                    //
+           halfToFloat(ld->volt_r));                   //
+  }
   printf("end___\n"); // csvファイル追記終了トリガー
 
-  fclose(f);
 }
 
 void IRAM_ATTR LoggingTask::set_data() {

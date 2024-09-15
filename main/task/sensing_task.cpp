@@ -198,10 +198,8 @@ void SensingTask::task() {
     se->calc_time = (int16_t)(start - start_before);
     se->sensing_timestamp = start;
     const float tmp_dt = ((float)se->calc_time) / 1000000.0;
-    now_gyro_time = esp_timer_get_time();
-    const float gyro_dt = ((float)(now_gyro_time - last_gyro_time)) / 1000000.0;
     // gyro_if.req_read2byte_itr(0x26);
-    start2 = esp_timer_get_time();
+    start2 = now_gyro_time; // esp_timer_get_time();
 
     if (skip_sensing) {
       exec_adc(BATTERY, width, &sensing_result->battery.raw);
@@ -324,9 +322,7 @@ void SensingTask::task() {
         r45 = l45 = true;
       }
       if (r90) { // R90
-        set_gpio_state(LED_A0, false);
-        set_gpio_state(LED_A1, false);
-        set_gpio_state(LED_EN, true);
+        led_driver(LED_A0, false, LED_A1, false, LED_EN, true);
         lec_cnt = 0;
         for (int i = 0; i < param->led_light_delay_cnt; i++) {
           lec_cnt++;
@@ -334,9 +330,7 @@ void SensingTask::task() {
         exec_adc(SEN_R90, width, &se->led_sen_after.right90.raw);
       }
       if (l90) { // L90
-        set_gpio_state(LED_A0, true);
-        set_gpio_state(LED_A1, false);
-        set_gpio_state(LED_EN, true);
+        led_driver(LED_A0, true, LED_A1, false, LED_EN, true);
         lec_cnt = 0;
         for (int i = 0; i < param->led_light_delay_cnt; i++) {
           lec_cnt++;
@@ -344,9 +338,7 @@ void SensingTask::task() {
         exec_adc(SEN_L90, width, &se->led_sen_after.left90.raw);
       }
       if (r45) { // R45
-        set_gpio_state(LED_A0, false);
-        set_gpio_state(LED_A1, true);
-        set_gpio_state(LED_EN, true);
+        led_driver(LED_A0, false, LED_A1, true, LED_EN, true);
         lec_cnt = 0;
         for (int i = 0; i < param->led_light_delay_cnt; i++) {
           lec_cnt++;
@@ -354,9 +346,7 @@ void SensingTask::task() {
         exec_adc(SEN_R45, width, &se->led_sen_after.right45.raw);
       }
       if (l45) { // L45
-        set_gpio_state(LED_A0, true);
-        set_gpio_state(LED_A1, true);
-        set_gpio_state(LED_EN, true);
+        led_driver(LED_A0, true, LED_A1, true, LED_EN, true);
         lec_cnt = 0;
         for (int i = 0; i < param->led_light_delay_cnt; i++) {
           lec_cnt++;
@@ -365,7 +355,7 @@ void SensingTask::task() {
       }
     }
 
-    end2 = esp_timer_get_time();
+    // end2 = esp_timer_get_time();
     set_gpio_state(LED_EN, false);
 
     // se->battery.data = linearInterpolation(x, y, se->battery.raw);
@@ -391,12 +381,12 @@ void SensingTask::task() {
       se->led_sen.front.raw = 0;
     }
 
-    // gyro_if.req_read2byte_itr(0x26);
-    // se->gyro_list[4] = gyro_if.read_2byte_itr();
+    now_gyro_time = esp_timer_get_time();
     se->gyro_list[4] = gyro_if.read_2byte(0x26);
+    const auto gyro_dt = ((float)(now_gyro_time - last_gyro_time)) / 1000000.0;
     se->gyro.raw = se->gyro_list[4];
     se->gyro.data = (float)(se->gyro_list[4]);
-    // int32_t enc_r = (enc_if.read2byte(0x00, 0x00, true) & 0xFFFF) >> 2;
+
     now_enc_r_time = esp_timer_get_time();
     int32_t enc_r = enc_if.read2byte(0x3F, 0xFF, true) & 0x3FFF;
     const auto enc_r_dt =
@@ -404,7 +394,6 @@ void SensingTask::task() {
     se->encoder.right_old = se->encoder.right;
     se->encoder.right = enc_r;
 
-    // int32_t enc_l = (enc_if.read2byte(0x00, 0x00, false) & 0xFFFF) >> 2;
     now_enc_l_time = esp_timer_get_time();
     int32_t enc_l = enc_if.read2byte(0x3F, 0xFF, false) & 0x3FFF;
     const auto enc_l_dt =
@@ -414,11 +403,8 @@ void SensingTask::task() {
 
     calc_vel(gyro_dt, enc_l_dt, enc_r_dt);
 
-    // cout << enc_r << ", " << enc_l << endl;
     end = esp_timer_get_time();
     se->calc_time2 = (int16_t)(end - start);
-    // printf("sen: %d, %d\n", (int16_t)(end - start), (int16_t)(end2 -
-    // start2));
     vTaskDelay(1.0 / portTICK_PERIOD_MS);
   }
 }

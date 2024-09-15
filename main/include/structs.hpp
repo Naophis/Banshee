@@ -597,6 +597,7 @@ typedef struct {
 typedef struct {
   volatile float right_v;
   volatile float left_v;
+  volatile bool enable = false;
 } sys_id_t;
 
 typedef struct {
