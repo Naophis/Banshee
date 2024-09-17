@@ -11,7 +11,7 @@ if [ -z "$port" ]; then
     port=`ls /dev/ttyACM* 2>/dev/null`
 fi
 echo ${port}
-esptool.py --chip esp32s3 -p ${port} -b 2000000 --before=default_reset --after=hard_reset write_flash --flash_mode dio \
+esptool.py --chip esp32s3 -p ${port} -b 3000000 --before=default_reset --after=hard_reset write_flash --flash_mode dio \
 --flash_freq 80m --flash_size 4MB \
 0x0 ${bootloader} \
 0x8000 ${partition} \

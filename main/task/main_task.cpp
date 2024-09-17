@@ -359,6 +359,8 @@ void MainTask::load_hw_param() {
       getItem(root, "led_light_delay_cnt2")->valuedouble;
   param->search_sen_ctrl_limitter =
       getItem(root, "search_sen_ctrl_limitter")->valuedouble;
+  param->ff_front_gain_14 =
+      getItem(root, "ff_front_gain_14")->valuedouble;
   param->ff_roll_gain_before =
       getItem(root, "ff_roll_gain_before")->valuedouble;
   param->ff_roll_gain_after = getItem(root, "ff_roll_gain_after")->valuedouble;
@@ -1406,6 +1408,8 @@ void MainTask::task() {
 
   if (sys.user_mode != 0) {
     mount();
+    // mock slalom();
+    // test_search_sla(false);
     if (sys.user_mode == 1) {
       printf("test_sla\n");
       test_sla();
@@ -1420,7 +1424,7 @@ void MainTask::task() {
       test_run_sla();
     } else if (sys.user_mode == 5) {
       printf("test_search_sla\n");
-      test_search_sla();
+      test_search_sla(true);
     } else if (sys.user_mode == 6) {
       printf("test_front_wall_offset\n");
       test_front_wall_offset();
@@ -2161,7 +2165,7 @@ void MainTask::test_sla() {
   }
 }
 
-void MainTask::test_search_sla() {
+void MainTask::test_search_sla(bool mode) {
 
   file_idx = 0;
 

@@ -8,8 +8,8 @@ straight:
     alpha: 10
   fast_run:
     v_max: 7000
-    accl: 28000
-    decel: -24000
+    accl: 30000
+    decel: -28000
     w_max: 5
     w_end: 0.1
     alpha: 10
@@ -54,7 +54,7 @@ large:
   pow_n: 4
   rad: 58.5
   time: 0.03764062499999759
-  front: { left: 11.574750443229803, right: 15.574750443229803 }
+  front: { left: 8.074750443229803, right: 9.074750443229803 }
   back: { left: 30.41286867878093, right: 30.41286867878093 }
 dia45:
   v: 1600

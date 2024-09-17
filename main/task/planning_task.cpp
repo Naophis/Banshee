@@ -1544,8 +1544,8 @@ void IRAM_ATTR PlanningTask::calc_tgt_duty() {
                   (param_ro->gear_a / param_ro->gear_b);
         float v = (i * param_ro->Resist) + (w * param_ro->Ke);
 
-        printf("torq: %f, i: %f, w: %f, volt: %f, v_c: %f, v_c: %f\n", torq, i, w,
-               v, tgt_val->ego_in.v, sensing_result->ego.v_c);
+        printf("torq: %f, i: %f, w: %f, volt: %f, v_c: %f, v_c: %f\n", torq, i,
+               w, v, tgt_val->ego_in.v, sensing_result->ego.v_c);
         duty_c = v;
         set_ctrl_val(error_entity.v_val, error_entity.v.error_p,
                      error_entity.v.error_i, 0, error_entity.v.error_d,
@@ -2173,6 +2173,11 @@ void IRAM_ATTR PlanningTask::calc_tgt_duty() {
   if (tgt_val->motion_type == MotionType::WALL_OFF ||
       tgt_val->motion_type == MotionType::WALL_OFF_DIA) {
     ff_front = param_ro->ff_roll_gain_before * ff_front;
+    mpc_next_ego.ff_duty_front = ff_front;
+  }
+
+  if (tgt_val->motion_type == MotionType::SLA_BACK_STR) {
+    ff_front = param_ro->ff_front_gain_14 * ff_front;
     mpc_next_ego.ff_duty_front = ff_front;
   }
 

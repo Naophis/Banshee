@@ -16,8 +16,8 @@ normal_sla_offset_back: 3
 front_dist_offset0: 94.0 # pivot時の前壁補正ref
 pivot_back_enable_front_th: 120 # バック判断のための壁有無しきい値
 pivot_back_offset: 7.50 # pivot時の前壁補正後のバック距離のオフセット
-pivot_back_dist0: 15.0 # pivot時の前壁補正後のバック距離のオフセット
-pivot_back_dist1: 12.0 # pivot時の前壁補正後のバック距離のオフセット
+pivot_back_dist0: 10.0 # pivot時の前壁補正後のバック距離のオフセット
+pivot_back_dist1: 10.0 # pivot時の前壁補正後のバック距離のオフセット
 # スラロームオフセット距離壁補正リファレンス値
 # sla_wall_ref_l: 44.0
 # sla_wall_ref_r: 49.5
@@ -76,7 +76,7 @@ wall_off_hold_noexist_th_r2: 60
 # 壁切れ オフセット距離
 wall_off_hold_dist_str_l: -7.25
 wall_off_hold_dist_str_r: -5.5
-wall_off_hold_dist_str_l_exist: -7.5
+wall_off_hold_dist_str_l_exist: -7.25
 wall_off_hold_dist_str_r_exist: -6.5
 # wall_off_hold_dist_str_l: 1.0
 # wall_off_hold_dist_str_r: 0.0
@@ -97,7 +97,7 @@ wall_off_wait_dist_dia: 85
 diff_dist_th_l: 200
 diff_dist_th_r: 200
 wall_off_diff_check_dist: 90
-wall_off_diff_check_dist_dia: 60
+wall_off_diff_check_dist_dia: 37.5
 diff_check_dist_dia_2: 15
 
 # 壁切れ：前壁補正
@@ -117,7 +117,7 @@ wall_off_hold_noexist_dia_th_l: 50
 wall_off_hold_noexist_dia_th_r: 55
 # 壁切れ オフセット距離
 wall_off_hold_dist_dia_l2: -1.0
-wall_off_hold_dist_dia_r2: 2.0
+wall_off_hold_dist_dia_r2: -2.00
 #斜めターン壁有り補正
 dia_turn_th_l: 55
 dia_turn_th_r: 55

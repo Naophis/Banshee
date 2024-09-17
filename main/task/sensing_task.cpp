@@ -332,7 +332,7 @@ void SensingTask::task() {
       if (l90) { // L90
         led_driver(LED_A0, true, LED_A1, false, LED_EN, true);
         lec_cnt = 0;
-        for (int i = 0; i < param->led_light_delay_cnt; i++) {
+        for (int i = 0; i < param->led_light_delay_cnt2; i++) {
           lec_cnt++;
         }
         exec_adc(SEN_L90, width, &se->led_sen_after.left90.raw);
@@ -340,7 +340,7 @@ void SensingTask::task() {
       if (r45) { // R45
         led_driver(LED_A0, false, LED_A1, true, LED_EN, true);
         lec_cnt = 0;
-        for (int i = 0; i < param->led_light_delay_cnt; i++) {
+        for (int i = 0; i < param->led_light_delay_cnt2; i++) {
           lec_cnt++;
         }
         exec_adc(SEN_R45, width, &se->led_sen_after.right45.raw);
@@ -348,7 +348,7 @@ void SensingTask::task() {
       if (l45) { // L45
         led_driver(LED_A0, true, LED_A1, true, LED_EN, true);
         lec_cnt = 0;
-        for (int i = 0; i < param->led_light_delay_cnt; i++) {
+        for (int i = 0; i < param->led_light_delay_cnt2; i++) {
           lec_cnt++;
         }
         exec_adc(SEN_L45, width, &se->led_sen_after.left45.raw);

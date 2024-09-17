@@ -83,7 +83,7 @@ MotionResult IRAM_ATTR MotionPlanning::go_straight(
       p.motion_type == MotionType::SLA_BACK_STR ||
       p.motion_type == MotionType::BACK_STRAIGHT) {
     if (std::abs(p.dist) > 5) {
-      vTaskDelay(2.0 / portTICK_RATE_MS);
+      vTaskDelay(1.0 / portTICK_RATE_MS);
     }
   }
 
@@ -555,8 +555,6 @@ MotionResult IRAM_ATTR MotionPlanning::slalom(
     adachi->update();
   }
   while (1) {
-    vTaskDelay(1.0 / portTICK_RATE_MS);
-
     if (tgt_val->nmr.motion_mode == RUN_MODE2::SLALOM_RUN2) {
       if (tgt_val->ego_in.pivot_state == 3 &&
           std::abs(tgt_val->ego_in.ang * 180 / m_PI) > 10) {
@@ -577,6 +575,7 @@ MotionResult IRAM_ATTR MotionPlanning::slalom(
     if (tgt_val->fss.error != static_cast<int>(FailSafe::NONE)) {
       return MotionResult::ERROR;
     }
+    vTaskDelay(1.0 / portTICK_RATE_MS);
   }
 
   ps_back.v_max = MAX(sp.v, next_motion.v_max);

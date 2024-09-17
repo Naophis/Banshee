@@ -376,6 +376,7 @@ typedef struct {
   float pivot_angle_90 = 90;
   float wall_off_front_move_dist_th = 90;
   float wall_off_front_move_dia_dist_th = 90;
+  float ff_front_gain_14 = 1;
   float ff_roll_gain_before = 1;
   float ff_roll_gain_after = 1;
   pid_param_t motor_pid;

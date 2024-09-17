@@ -136,7 +136,7 @@ private:
   void test_pivot_n2();
   void test_sla();
   void test_run_sla();
-  void test_search_sla();
+  void test_search_sla(bool mode);
   void test_front_wall_offset();
   void test_sla_walloff();
   void test_dia_walloff();
