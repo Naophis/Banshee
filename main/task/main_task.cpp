@@ -359,8 +359,7 @@ void MainTask::load_hw_param() {
       getItem(root, "led_light_delay_cnt2")->valuedouble;
   param->search_sen_ctrl_limitter =
       getItem(root, "search_sen_ctrl_limitter")->valuedouble;
-  param->ff_front_gain_14 =
-      getItem(root, "ff_front_gain_14")->valuedouble;
+  param->ff_front_gain_14 = getItem(root, "ff_front_gain_14")->valuedouble;
   param->ff_roll_gain_before =
       getItem(root, "ff_roll_gain_before")->valuedouble;
   param->ff_roll_gain_after = getItem(root, "ff_roll_gain_after")->valuedouble;
@@ -827,17 +826,26 @@ void MainTask::load_sensor_param() {
     std::getline(ifs, buf);
     str += buf;
   }
-  cJSON *root = cJSON_CreateObject(), *normal, *normal_ref, *normal_exist, *dia,
-        *normal2, *normal2_ref, *normal2_exist, *dia_ref, *dia_exist, *search,
-        *search_ref, *search_exist, *gain;
+  cJSON *root = cJSON_CreateObject(), *normal, *normal_ref, *normal_expand,
+        *normal_exist, *dia, *normal2, *normal2_ref, *normal2_exist, *dia_ref,
+        *dia_exist, *search, *search_ref, *search_exist, *gain;
   root = cJSON_Parse(str.c_str());
 
   normal = getItem(root, "normal");
   normal_ref = getItem(normal, "ref");
+  normal_expand = getItem(normal, "expand");
   normal_exist = getItem(normal, "exist");
   normal2 = getItem(root, "normal2");
   normal2_ref = getItem(normal2, "ref");
   normal2_exist = getItem(normal2, "exist");
+
+  param->sen_ref_p.normal.expand.right45 =
+      getItem(normal_expand, "right45")->valuedouble;
+  param->sen_ref_p.normal.expand.left45 =
+      getItem(normal_expand, "left45")->valuedouble;
+  param->sen_ref_p.normal.expand.dist =
+      getItem(normal_expand, "dist")->valuedouble;
+
   param->sen_ref_p.normal.ref.right45 =
       getItem(normal_ref, "right45")->valuedouble;
   param->sen_ref_p.normal.ref.left45 =

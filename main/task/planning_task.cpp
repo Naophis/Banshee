@@ -663,17 +663,23 @@ float IRAM_ATTR PlanningTask::check_sen_error() {
   float dist_mod = (int)(tgt_val->ego_in.dist / param_ro->dist_mod_num);
   float tmp_dist = tgt_val->ego_in.dist - param_ro->dist_mod_num * dist_mod;
 
-  if (tmp_dist < 10) {
-    sensing_result->ego.exist_r_wall = sensing_result->ego.right45_dist <
-                                       param_ro->sen_ref_p.search_exist.right45;
-    sensing_result->ego.exist_l_wall = sensing_result->ego.left45_dist <
-                                       param_ro->sen_ref_p.search_exist.left45;
+  bool expand_right = false;
+  bool expand_left = false;
+  if (tgt_val->motion_type == MotionType::STRAIGHT) {
+    if ((0 < tmp_dist) && (tmp_dist < param_ro->sen_ref_p.normal.expand.dist)) {
+      expand_right = sensing_result->ego.right45_dist <
+                     param_ro->sen_ref_p.search_exist.right45;
+      expand_left = sensing_result->ego.left45_dist <
+                    param_ro->sen_ref_p.search_exist.left45;
+    }
   }
 
   auto exist_right45 = param_ro->sen_ref_p.normal.exist.right45;
   auto exist_left45 = param_ro->sen_ref_p.normal.exist.left45;
   auto exist_right45_2 = param_ro->sen_ref_p.normal2.exist.right45;
   auto exist_left45_2 = param_ro->sen_ref_p.normal2.exist.left45;
+  auto exist_right45_expand = param_ro->sen_ref_p.normal.expand.right45;
+  auto exist_left45_expand = param_ro->sen_ref_p.normal.expand.left45;
 
   //前壁が近すぎるときはエスケープ
   if (!(10 < sensing_result->ego.left90_mid_dist &&
@@ -687,17 +693,20 @@ float IRAM_ATTR PlanningTask::check_sen_error() {
         param_ro->sen_ref_p.normal.ref.kireme_r) {
       if ((1 < sensing_result->ego.right45_dist &&
            sensing_result->ego.right45_dist < exist_right45)) {
-        // if (search_mode) {
-        //   error += param_ro->sen_ref_p.normal.ref.right45 -
-        //            sensing_result->ego.right45_dist;
-        //   check++;
-        // } else {
         if (ABS(tgt_val->global_pos.dist - right_keep.star_dist) >
             param_ro->right_keep_dist_th) {
           error += param_ro->sen_ref_p.normal.ref.right45 -
                    sensing_result->ego.right45_dist;
           check++;
-          // }
+        }
+      } else if (expand_right &&
+                 (1 < sensing_result->ego.right45_dist &&
+                  sensing_result->ego.right45_dist < exist_right45_expand)) {
+        if (ABS(tgt_val->global_pos.dist - right_keep.star_dist) >
+            param_ro->right_keep_dist_th) {
+          error += param_ro->sen_ref_p.normal.ref.right45 -
+                   sensing_result->ego.right45_dist;
+          check++;
         }
       } else {
         right_keep.star_dist = tgt_val->global_pos.dist;
@@ -710,17 +719,20 @@ float IRAM_ATTR PlanningTask::check_sen_error() {
         param_ro->sen_ref_p.normal.ref.kireme_l) {
       if ((1 < sensing_result->ego.left45_dist &&
            sensing_result->ego.left45_dist < exist_left45)) {
-        // if (search_mode) {
-        //   error -= param_ro->sen_ref_p.normal.ref.left45 -
-        //            sensing_result->ego.left45_dist;
-        //   check++;
-        // } else {
         if (ABS(tgt_val->global_pos.dist - left_keep.star_dist) >
             param_ro->left_keep_dist_th) {
           error -= param_ro->sen_ref_p.normal.ref.left45 -
                    sensing_result->ego.left45_dist;
           check++;
-          // }
+        }
+      } else if (expand_left &&
+                 (1 < sensing_result->ego.left45_dist &&
+                  sensing_result->ego.left45_dist < exist_left45_expand)) {
+        if (ABS(tgt_val->global_pos.dist - left_keep.star_dist) >
+            param_ro->left_keep_dist_th) {
+          error -= param_ro->sen_ref_p.normal.ref.left45 -
+                   sensing_result->ego.left45_dist;
+          check++;
         }
       } else {
         left_keep.star_dist = tgt_val->global_pos.dist;

@@ -54,15 +54,55 @@ enum class Direction : int {
   Undefined = 255,
   Null = 0
 };
-
-typedef struct {
+struct candidate_route_info_t {
   std::set<Direction> candidate_dir_set;
   bool selected = false;
   Direction select_dir = Direction::Null;
-  float from_dist;
-  int x;
-  int y;
-} candidate_route_info_t;
+  float from_dist = 0.0f;
+  int x = 0;
+  int y = 0;
+
+  // デフォルトコンストラクタ
+  candidate_route_info_t() = default;
+
+  // ムーブコンストラクタ
+  candidate_route_info_t(candidate_route_info_t &&other) noexcept
+      : candidate_dir_set(std::move(other.candidate_dir_set)),
+        selected(other.selected), select_dir(other.select_dir),
+        from_dist(other.from_dist), x(other.x), y(other.y) {}
+
+  // ムーブ代入演算子
+  candidate_route_info_t &operator=(candidate_route_info_t &&other) noexcept {
+    if (this != &other) {
+      candidate_dir_set = std::move(other.candidate_dir_set);
+      selected = other.selected;
+      select_dir = other.select_dir;
+      from_dist = other.from_dist;
+      x = other.x;
+      y = other.y;
+    }
+    return *this;
+  }
+
+  // コピーコンストラクタ
+  candidate_route_info_t(const candidate_route_info_t &other)
+      : candidate_dir_set(other.candidate_dir_set), selected(other.selected),
+        select_dir(other.select_dir), from_dist(other.from_dist), x(other.x),
+        y(other.y) {}
+
+  // コピー代入演算子
+  candidate_route_info_t &operator=(const candidate_route_info_t &other) {
+    if (this != &other) {
+      candidate_dir_set = other.candidate_dir_set;
+      selected = other.selected;
+      select_dir = other.select_dir;
+      from_dist = other.from_dist;
+      x = other.x;
+      y = other.y;
+    }
+    return *this;
+  }
+};
 
 typedef struct {
   Direction dir;

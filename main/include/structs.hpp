@@ -259,8 +259,15 @@ typedef struct {
 } sen_search_param_t;
 
 typedef struct {
+  float dist;
+  float right45;
+  float left45;
+} sen_expand_param_t;
+
+typedef struct {
   sen_ref_param3_t ref;
   sen_ref_param3_t exist;
+  sen_expand_param_t expand;
 } sen_ref_param2_t;
 
 typedef struct {
