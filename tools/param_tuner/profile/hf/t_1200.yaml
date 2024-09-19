@@ -26,8 +26,8 @@ orval:
   pow_n: 4
   rad: 49.5
   time: 0.08490625000000233
-  rad2: 49.0
-  time2: 0.08404687500000205
+  rad2: 49.5
+  time2: 0.08490625000000233
   front: { left: 18, right: 18 }
   back: { left: 5, right: 5 }
 normal:

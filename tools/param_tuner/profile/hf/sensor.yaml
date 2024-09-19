@@ -7,6 +7,10 @@ normal:
     kireme_l: 1.750
     # kireme_r: 2.25
     # kireme_l: 2.25
+  expand:
+    right45: 55.0 
+    left45: 55.0
+    dist: 30 #dist mod90
   exist:
     right45: 46.5
     left45: 46.5
