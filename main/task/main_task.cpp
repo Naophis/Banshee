@@ -843,6 +843,10 @@ void MainTask::load_sensor_param() {
       getItem(normal_expand, "right45")->valuedouble;
   param->sen_ref_p.normal.expand.left45 =
       getItem(normal_expand, "left45")->valuedouble;
+  param->sen_ref_p.normal.expand.right45_2 =
+      getItem(normal_expand, "right45_2")->valuedouble;
+  param->sen_ref_p.normal.expand.left45_2 =
+      getItem(normal_expand, "left45_2")->valuedouble;
   param->sen_ref_p.normal.expand.dist =
       getItem(normal_expand, "dist")->valuedouble;
 

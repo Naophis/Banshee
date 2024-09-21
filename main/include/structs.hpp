@@ -262,6 +262,8 @@ typedef struct {
   float dist;
   float right45;
   float left45;
+  float right45_2;
+  float left45_2;
 } sen_expand_param_t;
 
 typedef struct {

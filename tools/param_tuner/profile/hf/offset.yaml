@@ -16,8 +16,8 @@ normal_sla_offset_back: 3
 front_dist_offset0: 94.0 # pivot時の前壁補正ref
 pivot_back_enable_front_th: 120 # バック判断のための壁有無しきい値
 pivot_back_offset: 7.50 # pivot時の前壁補正後のバック距離のオフセット
-pivot_back_dist0: 10.0 # pivot時の前壁補正後のバック距離のオフセット
-pivot_back_dist1: 10.0 # pivot時の前壁補正後のバック距離のオフセット
+pivot_back_dist0: 8.0 # pivot時の前壁補正後のバック距離のオフセット
+pivot_back_dist1: 8.0 # pivot時の前壁補正後のバック距離のオフセット
 # スラロームオフセット距離壁補正リファレンス値
 # sla_wall_ref_l: 44.0
 # sla_wall_ref_r: 49.5
