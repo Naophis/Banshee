@@ -274,14 +274,12 @@ void SensingTask::task() {
     // LED_OFF ADC
     // 超信地旋回中は発光をサボる
     bool led_on = true;
-    if (tgt_val->motion_type == MotionType::PIVOT ||
-        tgt_val->motion_type == MotionType::SLALOM) {
+    if (tgt_val->motion_type == MotionType::PIVOT) {
       led_on = false;
-      // if (tgt_val->ego_in.sla_param.counter >
-      //     (tgt_val->ego_in.sla_param.limit_time_count / 2)) {
-      //   led_on = true;
-      // }
-    };
+    }
+    if (tgt_val->motion_type == MotionType::SLALOM) {
+      led_on = true;
+    }
     if (pt->mode_select) {
       led_on = false;
     }
@@ -321,6 +319,20 @@ void SensingTask::task() {
         r90 = l90 = true;
         r45 = l45 = true;
       }
+      if (pt->tgt_val->motion_type == MotionType::SLALOM) {
+        r90 = l90 = r45 = l45 = false;
+        if (pt->tgt_val->tt == TurnType::Normal) {
+          if (pt->tgt_val->td == TurnDirection::Right) {
+            l90 = true;
+          } else {
+            r90 = true;
+          }
+        }
+        // if (tgt_val->ego_in.sla_param.counter >
+        //     (tgt_val->ego_in.sla_param.limit_time_count / 2)) {
+        //   r90 = l90 = r45 = l45 = true;
+        // }
+      }
       if (r90) { // R90
         led_driver(LED_A0, false, LED_A1, false, LED_EN, true);
         lec_cnt = 0;
@@ -328,6 +340,8 @@ void SensingTask::task() {
           lec_cnt++;
         }
         exec_adc(SEN_R90, width, &se->led_sen_after.right90.raw);
+      } else {
+        se->led_sen_after.right90.raw = 0;
       }
       if (l90) { // L90
         led_driver(LED_A0, true, LED_A1, false, LED_EN, true);
@@ -336,6 +350,8 @@ void SensingTask::task() {
           lec_cnt++;
         }
         exec_adc(SEN_L90, width, &se->led_sen_after.left90.raw);
+      } else {
+        se->led_sen_after.left90.raw = 0;
       }
       if (r45) { // R45
         led_driver(LED_A0, false, LED_A1, true, LED_EN, true);
@@ -344,6 +360,8 @@ void SensingTask::task() {
           lec_cnt++;
         }
         exec_adc(SEN_R45, width, &se->led_sen_after.right45.raw);
+      } else {
+        se->led_sen_after.right45.raw = 0;
       }
       if (l45) { // L45
         led_driver(LED_A0, true, LED_A1, true, LED_EN, true);
@@ -352,6 +370,8 @@ void SensingTask::task() {
           lec_cnt++;
         }
         exec_adc(SEN_L45, width, &se->led_sen_after.left45.raw);
+      } else {
+        se->led_sen_after.left45.raw = 0;
       }
     }
 

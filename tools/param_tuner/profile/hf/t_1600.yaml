@@ -15,8 +15,8 @@ straight:
     alpha: 10
   fast_run_dia:
     v_max: 4500
-    accl: 17500
-    decel: -17500
+    accl: 24000
+    decel: -24000
     w_max: 5
     w_end: 0.1
     alpha: 10

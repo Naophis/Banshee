@@ -73,7 +73,7 @@ MotionResult IRAM_ATTR MotionPlanning::go_straight(
 
   xTaskNotify(*th, (uint32_t)tgt_val.get(), eSetValueWithOverwrite);
   vTaskDelay(1.0 / portTICK_RATE_MS);
-  if (search_mode) {
+  if (search_mode && adachi != nullptr) {
     adachi->update();
   }
 
@@ -91,11 +91,56 @@ MotionResult IRAM_ATTR MotionPlanning::go_straight(
 
   float tmp_dist_before = tgt_val->global_pos.dist;
   float tmp_dist_after = tmp_dist_before;
+  int wall_off_state = 0;
+
+  bool exist = false;
+  bool exist_right = false;
+  bool exist_left = false;
+  if (search_mode) {
+    exist_right = sensing_result->ego.right45_dist <
+                  param->wall_off_dist.wall_off_exist_wall_th_r;
+    exist_left = sensing_result->ego.left45_dist <
+                 param->wall_off_dist.wall_off_exist_wall_th_l;
+  }
+
   while (1) {
     vTaskDelay(1.0 / portTICK_RATE_MS);
     cnt++;
     if (std::abs(tgt_val->ego_in.dist) >= std::abs(p.dist)) {
       break;
+    }
+
+    if (search_mode && param->wall_off_dist.search_wall_off_enable) {
+      // watch wall off
+      if (wall_off_state == 0) {
+        if (sensing_result->ego.right45_dist <
+                param->wall_off_dist.exist_dist_r &&
+            exist_right) {
+          wall_off_state = 1;
+        } else if (sensing_result->ego.left45_dist <
+                       param->wall_off_dist.exist_dist_l &&
+                   exist_left) {
+          wall_off_state = 2;
+        }
+      } else if (wall_off_state == 1 && exist_right) {
+        if (sensing_result->ego.right45_dist >
+            param->wall_off_dist.noexist_th_r2) {
+          wall_off_state = 3;
+          // tgt_val->ego_in.dist -=
+          //     param->wall_off_dist.search_wall_off_r_dist_offset;
+          p.dist = param->wall_off_dist.search_wall_off_r_dist_offset;
+          return go_straight(p, fake_adachi, false);
+        }
+      } else if (wall_off_state == 2 && exist_left) {
+        if (sensing_result->ego.left45_dist >
+            param->wall_off_dist.noexist_th_l2) {
+          wall_off_state = 3;
+          // tgt_val->ego_in.dist -=
+          //     param->wall_off_dist.search_wall_off_l_dist_offset;
+          p.dist = param->wall_off_dist.search_wall_off_l_dist_offset;
+          return go_straight(p, fake_adachi, false);
+        }
+      }
     }
 
     tmp_dist_after = tgt_val->global_pos.dist;
@@ -500,6 +545,8 @@ MotionResult IRAM_ATTR MotionPlanning::slalom(
   tgt_val->nmr.motion_mode = RUN_MODE2::SLAROM_RUN;
   tgt_val->nmr.motion_type = MotionType::SLALOM;
   tgt_val->nmr.sct = SensorCtrlType::NONE;
+  tgt_val->nmr.td = td;
+  tgt_val->nmr.tt = sp.type;
   // tgt_val->ego_in.v = sp.v;//強制的に速度を指定
 
   if (sp.type == TurnType::Orval) {
@@ -554,7 +601,13 @@ MotionResult IRAM_ATTR MotionPlanning::slalom(
     vTaskDelay(1.0 / portTICK_RATE_MS);
     adachi->update();
   }
+  bool find_in = false;
+  bool find_out = false;
+  int count = 0;
+  int count_save = 0;
+  int limit_count = tgt_val->ego_in.sla_param.limit_time_count;
   while (1) {
+    count++;
     if (tgt_val->nmr.motion_mode == RUN_MODE2::SLALOM_RUN2) {
       if (tgt_val->ego_in.pivot_state == 3 &&
           std::abs(tgt_val->ego_in.ang * 180 / m_PI) > 10) {
@@ -566,7 +619,33 @@ MotionResult IRAM_ATTR MotionPlanning::slalom(
         break;
       }
     } else {
-
+      if (sp.type == TurnType::Normal && !find_in) {
+        if (td == TurnDirection::Right) {
+          if (sensing_result->ego.left90_dist <
+              param->normal_sla_l_wall_off_th_in) {
+            find_in = true;
+          }
+        } else if (td == TurnDirection::Left) {
+          if (sensing_result->ego.right90_dist <
+              param->normal_sla_r_wall_off_th_in) {
+            find_in = true;
+          }
+        }
+      } else if (sp.type == TurnType::Normal && find_in && !find_out) {
+        if (td == TurnDirection::Right) {
+          if (sensing_result->ego.left90_dist >
+              param->normal_sla_l_wall_off_th_out) {
+            find_out = true;
+            count_save = count;
+          }
+        } else {
+          if (sensing_result->ego.right90_dist >
+              param->normal_sla_r_wall_off_th_out) {
+            find_out = true;
+            count_save = count;
+          }
+        }
+      }
       if (tgt_val->ego_in.sla_param.counter >= (sp.time * 2 / dt)) {
         tgt_val->ego_in.w = 0;
         break;
@@ -577,7 +656,35 @@ MotionResult IRAM_ATTR MotionPlanning::slalom(
     }
     vTaskDelay(1.0 / portTICK_RATE_MS);
   }
-
+  if (sp.type == TurnType::Normal && find_in && find_out && count_save > 0) {
+    if (td == TurnDirection::Right) {
+      if (ABS(count_save - param->normal_sla_l_wall_off_ref_cnt) >
+              param->normal_sla_l_wall_off_margin &&
+          (count_save > param->normal_sla_l_wall_off_ref_cnt)) {
+        ps_back.dist -= param->normal_sla_l_wall_off_dist;
+      } else if (ABS(count_save - param->normal_sla_l_wall_off_ref_cnt) >
+                     param->normal_sla_l_wall_off_margin &&
+                 (count_save < param->normal_sla_l_wall_off_ref_cnt)) {
+        ps_back.dist += param->normal_sla_l_wall_off_dist;
+      }
+      if (ps_back.dist < 1) {
+        ps_back.dist = 1;
+      }
+    } else {
+      if (ABS(count_save - param->normal_sla_r_wall_off_ref_cnt) >
+              param->normal_sla_r_wall_off_margin &&
+          (count_save > param->normal_sla_r_wall_off_ref_cnt)) {
+        ps_back.dist -= param->normal_sla_r_wall_off_dist;
+      } else if (ABS(count_save - param->normal_sla_r_wall_off_ref_cnt) >
+                     param->normal_sla_r_wall_off_margin &&
+                 (count_save < param->normal_sla_r_wall_off_ref_cnt)) {
+        ps_back.dist += param->normal_sla_r_wall_off_dist;
+      }
+      if (ps_back.dist < 1) {
+        ps_back.dist = 1;
+      }
+    }
+  }
   ps_back.v_max = MAX(sp.v, next_motion.v_max);
   ps_back.v_end = next_motion.v_end;
   ps_back.accl = next_motion.accl;
@@ -743,7 +850,8 @@ MotionResult IRAM_ATTR MotionPlanning::front_ctrl(bool limit) {
       cnt = 0;
     }
     // printf("%f %f %f\n", sensing_result->ego.left90_dist,
-    //        sensing_result->ego.front_dist, sensing_result->ego.right90_dist);
+    //        sensing_result->ego.front_dist,
+    //        sensing_result->ego.right90_dist);
     max_cnt++;
     if (!limit) {
       if (cnt > param->sen_ref_p.search_exist.front_ctrl_th)
@@ -1051,11 +1159,13 @@ void IRAM_ATTR MotionPlanning::wall_off(TurnDirection td,
     }
     while (true) {
       // if (40 < sensing_result->ego.left90_far_dist &&
-      //     sensing_result->ego.left90_far_dist < param->front_dist_offset2 &&
-      //     40 < sensing_result->ego.right90_far_dist &&
-      //     sensing_result->ego.right90_far_dist < param->front_dist_offset2) {
+      //     sensing_result->ego.left90_far_dist < param->front_dist_offset2
+      //     && 40 < sensing_result->ego.right90_far_dist &&
+      //     sensing_result->ego.right90_far_dist < param->front_dist_offset2)
+      //     {
       //   ps_front.dist -=
-      //       (param->front_dist_offset2 - sensing_result->ego.front_far_dist);
+      //       (param->front_dist_offset2 -
+      //       sensing_result->ego.front_far_dist);
       //   return;
       // }
       if (exist) {

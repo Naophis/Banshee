@@ -328,6 +328,10 @@ typedef struct {
   float wall_off_exist_wall_th_l;
   float wall_off_exist_wall_th_r;
 
+  bool search_wall_off_enable;
+  float search_wall_off_l_dist_offset;
+  float search_wall_off_r_dist_offset;
+
   float ctrl_exist_wall_th_l;
   float ctrl_exist_wall_th_r;
   float go_straight_wide_ctrl_th;
@@ -519,6 +523,16 @@ typedef struct {
   float tire_tread;
   float right_keep_dist_th = 0;
   float left_keep_dist_th = 0;
+  float normal_sla_l_wall_off_th_in = 100;
+  float normal_sla_r_wall_off_th_in = 100;
+  float normal_sla_l_wall_off_th_out = 100;
+  float normal_sla_r_wall_off_th_out = 100;
+  float normal_sla_l_wall_off_ref_cnt = 100;
+  float normal_sla_r_wall_off_ref_cnt = 100;
+  float normal_sla_l_wall_off_dist = 5;
+  float normal_sla_r_wall_off_dist = 5;
+  float normal_sla_l_wall_off_margin = 10;
+  float normal_sla_r_wall_off_margin = 10;
 } input_param_t;
 
 typedef struct {
@@ -624,6 +638,8 @@ typedef struct {
   volatile float sla_time;
   volatile float sla_pow_n;
   volatile float sla_rad;
+  volatile TurnDirection td;
+  volatile TurnType tt;
   volatile RUN_MODE2 motion_mode;
   volatile MotionType motion_type;
 
@@ -676,6 +692,8 @@ typedef struct {
   dia_state_t dia_state;
   float v_error;
   float w_error;
+  TurnDirection td;
+  TurnType tt;
 } motion_tgt_val_t;
 
 typedef struct {

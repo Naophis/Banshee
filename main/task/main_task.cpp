@@ -365,7 +365,27 @@ void MainTask::load_hw_param() {
   param->ff_roll_gain_after = getItem(root, "ff_roll_gain_after")->valuedouble;
 
   param->left_keep_dist_th = getItem(root, "left_keep_dist_th")->valuedouble;
-  param->right_keep_dist_th = getItem(root, "right_keep_dist_th")->valuedouble;
+
+  param->normal_sla_l_wall_off_th_in =
+      getItem(root, "normal_sla_l_wall_off_th_in")->valueint;
+  param->normal_sla_r_wall_off_th_in =
+      getItem(root, "normal_sla_r_wall_off_th_in")->valueint;
+  param->normal_sla_l_wall_off_th_out =
+      getItem(root, "normal_sla_l_wall_off_th_out")->valueint;
+  param->normal_sla_r_wall_off_th_out =
+      getItem(root, "normal_sla_r_wall_off_th_out")->valueint;
+  param->normal_sla_l_wall_off_ref_cnt =
+      getItem(root, "normal_sla_l_wall_off_ref_cnt")->valueint;
+  param->normal_sla_r_wall_off_ref_cnt =
+      getItem(root, "normal_sla_r_wall_off_ref_cnt")->valueint;
+  param->normal_sla_l_wall_off_dist =
+      getItem(root, "normal_sla_l_wall_off_dist")->valueint;
+  param->normal_sla_r_wall_off_dist =
+      getItem(root, "normal_sla_r_wall_off_dist")->valueint;
+  param->normal_sla_l_wall_off_margin =
+      getItem(root, "normal_sla_l_wall_off_margin")->valueint;
+  param->normal_sla_r_wall_off_margin =
+      getItem(root, "normal_sla_r_wall_off_margin")->valueint;
 
   const unsigned long motor_hz = getItem(root, "MotorHz")->valueint;
   const unsigned long suction_motor_hz = getItem(root, "SuctionHz")->valueint;
@@ -747,6 +767,12 @@ void MainTask::load_offset_param() {
       getItem(root, "wall_off_exist_wall_th_l")->valuedouble;
   param->wall_off_dist.wall_off_exist_wall_th_r =
       getItem(root, "wall_off_exist_wall_th_r")->valuedouble;
+  param->wall_off_dist.search_wall_off_l_dist_offset =
+      getItem(root, "search_wall_off_l_dist_offset")->valuedouble;
+  param->wall_off_dist.search_wall_off_r_dist_offset =
+      getItem(root, "search_wall_off_r_dist_offset")->valuedouble;
+  param->wall_off_dist.search_wall_off_enable =
+      getItem(root, "search_wall_off_enable")->valueint;
 
   param->wall_off_dist.ctrl_exist_wall_th_l =
       getItem(root, "ctrl_exist_wall_th_l")->valuedouble;
@@ -2490,7 +2516,7 @@ void MainTask::test_dia_walloff() {
 }
 
 void MainTask::test_sla_walloff() {
-  rorl = ui->select_direction();
+  // rorl = ui->select_direction();
 
   // if (rorl == TurnDirection::Right) {
   //   param->sen_ref_p.normal.exist.right45 = 1;
@@ -2499,10 +2525,10 @@ void MainTask::test_sla_walloff() {
   // }
   mp->reset_gyro_ref_with_check();
 
-  if (sys.test.suction_active) {
-    pt->suction_enable(sys.test.suction_duty, sys.test.suction_duty_low);
-    vTaskDelay(500.0 / portTICK_PERIOD_MS);
-  }
+  // if (sys.test.suction_active) {
+  //   pt->suction_enable(sys.test.suction_duty, sys.test.suction_duty_low);
+  //   vTaskDelay(500.0 / portTICK_PERIOD_MS);
+  // }
 
   reset_tgt_data();
   reset_ego_data();
@@ -2515,8 +2541,8 @@ void MainTask::test_sla_walloff() {
   // pt->active_logging(_f);
 
   ps.v_max = sys.test.v_max;
-  ps.v_end = sys.test.v_max;
-  ps.dist = param->cell + param->offset_start_dist;
+  ps.v_end = 300;
+  ps.dist = param->offset_start_dist_search;
   ps.accl = sys.test.accl;
   ps.decel = sys.test.decel;
   ps.sct = SensorCtrlType::Straight;
@@ -2524,10 +2550,21 @@ void MainTask::test_sla_walloff() {
   ps.wall_off_dist_r = 0;
   ps.wall_off_dist_l = 0;
   ps.dia_mode = false;
-  mp->go_straight(ps);
+  mp->go_straight(ps, mp->fake_adachi, false);
 
-  ps.dist = param->cell2 - 5;
-  mp->wall_off(rorl, ps);
+  ps.v_max = sys.test.v_max;
+  ps.v_end = sys.test.v_max;
+  ps.dist = param->cell;
+  ps.accl = sys.test.accl;
+  ps.decel = sys.test.decel;
+  ps.sct = SensorCtrlType::Straight;
+  ps.wall_off_req = WallOffReq::NONE;
+  ps.wall_off_dist_r = 0;
+  ps.wall_off_dist_l = 0;
+  ps.dia_mode = false;
+  mp->go_straight(ps, mp->fake_adachi, true);
+
+  ps.dist = param->cell2 / 2 - 5;
   ps.v_max = sys.test.v_max;
   ps.v_end = 20;
   ps.accl = sys.test.accl;

@@ -3,8 +3,8 @@ dt: 0.001
 # tire2: 13.60125
 
 tire_tread: 38.0
-tire: 13.4650
-tire2: 13.4750
+tire: 13.4550
+tire2: 13.4650
 # offset_start_dist: 21.0
 offset_start_dist_search: 15.0
 offset_start_dist: 4.0
@@ -311,3 +311,16 @@ led_blight: [0x0d, 0x0d, 0x0d, 0x0d, 0x0d, 0x0d]
 
 left_keep_dist_th: 8
 right_keep_dist_th: 8
+
+normal_sla_l_wall_off_th_in: 100
+normal_sla_r_wall_off_th_in: 110
+normal_sla_l_wall_off_th_out: 135
+normal_sla_r_wall_off_th_out: 145
+normal_sla_l_wall_off_ref_cnt: 150 #125~160
+normal_sla_r_wall_off_ref_cnt: 150 #125~160
+normal_sla_l_wall_off_dist: 0
+normal_sla_r_wall_off_dist: 0
+# normal_sla_l_wall_off_dist: 0
+# normal_sla_r_wall_off_dist: 0
+normal_sla_l_wall_off_margin: 30
+normal_sla_r_wall_off_margin: 30

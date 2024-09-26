@@ -8,21 +8,21 @@ pivot_angle_180: 180.0
 # 探索スラローム
 th_offset_dist: 52
 sla_front_ctrl_th: 135.0 # 探索時前壁補正条件しきい時間
-front_dist_offset: 107.250 # 探索時の前壁補正 大→短くなる
+front_dist_offset: 110.50 # 探索時の前壁補正 大→短くなる
 
 normal_sla_offset_front: 5
 normal_sla_offset_back: 3
 
-front_dist_offset0: 94.0 # pivot時の前壁補正ref
+front_dist_offset0: 109.0 # pivot時の前壁補正ref
 pivot_back_enable_front_th: 120 # バック判断のための壁有無しきい値
-pivot_back_offset: 7.50 # pivot時の前壁補正後のバック距離のオフセット
+pivot_back_offset: 0.0 # pivot時の前壁補正後のバック距離のオフセット
 pivot_back_dist0: 8.0 # pivot時の前壁補正後のバック距離のオフセット
 pivot_back_dist1: 8.0 # pivot時の前壁補正後のバック距離のオフセット
 # スラロームオフセット距離壁補正リファレンス値
 # sla_wall_ref_l: 44.0
 # sla_wall_ref_r: 49.5
-sla_wall_ref_l: 43.0
-sla_wall_ref_r: 44.0
+sla_wall_ref_l: 46.5
+sla_wall_ref_r: 45.5
 sla_max_offset_dist: 6
 
 # Orvalスラロームオフセット距離壁補正リファレンス値
@@ -60,6 +60,9 @@ wall_off_hold_dist: 30
 ctrl_exist_wall_th_l: 50
 ctrl_exist_wall_th_r: 50
 go_straight_wide_ctrl_th: 75
+search_wall_off_l_dist_offset: 46.5
+search_wall_off_r_dist_offset: 46
+search_wall_off_enable: 1
 
 # 壁切れ壁あり判定
 wall_off_exist_wall_th_l: 50

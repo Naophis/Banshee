@@ -116,7 +116,7 @@ MotionResult SearchController::go_straight_wrapper(param_set_t &p_set,
   }
   p.search_str_wide_ctrl_l = left_exist;
   p.search_str_wide_ctrl_r = right_exist;
-  return mp->go_straight(p, fake_adachi, false);
+  return mp->go_straight(p, adachi, true);
 
   return MotionResult::NONE;
 }
@@ -364,7 +364,7 @@ MotionResult SearchController::pivot(param_set_t &p_set, float diff) {
     p.dist =
         param->cell / 2 + param->pivot_back_dist0 - param->pivot_back_offset;
   } else {
-    p.dist = param->cell / 2;
+    p.dist = param->cell / 2 + param->pivot_back_dist1;
   }
   p.motion_type = MotionType::PIVOT_AFTER;
   p.sct = SensorCtrlType::Straight;

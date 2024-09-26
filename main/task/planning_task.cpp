@@ -2469,11 +2469,16 @@ void IRAM_ATTR PlanningTask::cp_request() {
   tgt_val->tgt_in.v_max = receive_req->nmr.v_max;
   // printf("v_max: %f\n", tgt_val->tgt_in.v_max);
 
+  tgt_val->td = TurnDirection::None;
+  tgt_val->tt = TurnType::None;
   if (receive_req->nmr.motion_type == MotionType::STRAIGHT ||
       receive_req->nmr.motion_type == MotionType::SLA_FRONT_STR) {
     if (tgt_val->ego_in.v > receive_req->nmr.v_max) {
       tgt_val->tgt_in.v_max = tgt_val->ego_in.v;
     }
+  } else if (receive_req->nmr.motion_type == MotionType::SLALOM) {
+    tgt_val->td = receive_req->nmr.td;
+    tgt_val->tt = receive_req->nmr.tt;
   }
 
   tgt_val->tgt_in.end_v = receive_req->nmr.v_end;
