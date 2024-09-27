@@ -1,4 +1,4 @@
-source tools/rosws/install/setup.bash
+#source tools/rosws/install/setup.bash
 if [ $# -ne 0 ];then
     idx=$1
     if expr "$idx" : "[0-9]*$" >&/dev/null; then
