@@ -1,6 +1,6 @@
 straight:
   search:
-    v_max: 450
+    v_max: 425
     # v_max: 385
     # v_max: 550
     accl: 2500

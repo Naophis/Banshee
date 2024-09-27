@@ -296,8 +296,8 @@ battery_param:
   # lp_delay: 0.25
   lp_delay: 0.5
 led_param:
-  # lp_delay: 0.925
-  lp_delay: 1
+  lp_delay: 0.995
+  # lp_delay: 1
 kalman_config:
   # q_ang: 0.01 #大：応答早
   # q_bias: 0.01 # 大：gyro_wの値を類似する

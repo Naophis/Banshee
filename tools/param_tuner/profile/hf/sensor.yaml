@@ -63,8 +63,8 @@ search:
     kireme_l: 0
   exist:
     front: 135
-    right45: 65
-    left45: 65
+    right45: 60
+    left45: 60
 
     right90: 55
     left90: 55

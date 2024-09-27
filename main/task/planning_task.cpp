@@ -668,7 +668,8 @@ float IRAM_ATTR PlanningTask::check_sen_error() {
   bool expand_right_2 = false;
   bool expand_left_2 = false;
   if (tgt_val->motion_type == MotionType::STRAIGHT) {
-    if ((0 < tmp_dist) && (tmp_dist < param_ro->sen_ref_p.normal.expand.dist)) {
+    if ((0 < tmp_dist) && (tmp_dist < param_ro->sen_ref_p.normal.expand.dist) &&
+        tgt_val->tgt_in.tgt_dist >= 90) {
       expand_right = sensing_result->ego.right45_dist <
                      param_ro->sen_ref_p.search_exist.right45;
       expand_left = sensing_result->ego.left45_dist <
